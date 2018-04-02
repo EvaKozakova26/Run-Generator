@@ -10,21 +10,29 @@
 
     <ImageView
         android:id="@+id/imgProfile"
+        android:layout_marginTop="30dp"
         android:layout_width="150dp"
-        android:layout_height="150dp" />
+        android:layout_height="150dp"
+        android:layout_gravity="center"
+        android:background="@color/imageBackground"/>
 
     <ProgressBar
         android:id="@+id/progress_exps"
+        android:layout_marginTop="10dp"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+
     />
 
     <TextView
         android:id="@+id/textViewPlayerLevel"
+        android:layout_marginBottom="150dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Level X"/>
+        android:text="Level X"
+        android:gravity="center"
+        android:textSize="30sp"/>
 
     <Button
         android:id="@+id/btnGo"
