@@ -2,8 +2,8 @@
 <resources>
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorAccent">#ff4081</color>
     <color name="btnRunColor">#2ad</color>
     <color name="imageBackground">#0fcc18</color>
-    <color name="progressBarColor">#06870c</color>
+    <color name="progressBarColor">#2ab330</color>
 </resources>
