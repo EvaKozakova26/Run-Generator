@@ -28,5 +28,14 @@ public class PlayerProfileActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        Button btnQuests = findViewById(R.id.btnQuestList);
+        btnQuests.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(PlayerProfileActivity.this, QuestsActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 }

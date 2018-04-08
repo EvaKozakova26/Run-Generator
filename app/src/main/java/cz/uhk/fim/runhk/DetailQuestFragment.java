@@ -1,4 +1,4 @@
-package cz.uhk.fim.runhk.model;
+package cz.uhk.fim.runhk;
 
 
 import android.os.Bundle;
