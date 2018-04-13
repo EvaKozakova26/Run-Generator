@@ -1,4 +1,4 @@
-package cz.uhk.fim.runhk;
+package cz.uhk.fim.runhk.fragments;
 
 
 import android.os.Bundle;

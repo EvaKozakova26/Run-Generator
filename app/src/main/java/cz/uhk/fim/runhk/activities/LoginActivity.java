@@ -1,4 +1,4 @@
-package cz.uhk.fim.runhk;
+package cz.uhk.fim.runhk.activities;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -31,6 +31,8 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import cz.uhk.fim.runhk.R;
 
 import static android.Manifest.permission.READ_CONTACTS;
 

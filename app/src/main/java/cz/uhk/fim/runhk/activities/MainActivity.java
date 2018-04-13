@@ -1,10 +1,12 @@
-package cz.uhk.fim.runhk;
+package cz.uhk.fim.runhk.activities;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+
+import cz.uhk.fim.runhk.R;
 
 public class MainActivity extends AppCompatActivity {
     Button btnRun;

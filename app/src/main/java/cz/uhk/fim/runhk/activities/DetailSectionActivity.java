@@ -1,7 +1,10 @@
-package cz.uhk.fim.runhk;
+package cz.uhk.fim.runhk.activities;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import cz.uhk.fim.runhk.fragments.DetailQuestFragment;
+import cz.uhk.fim.runhk.R;
 
 public class DetailSectionActivity extends AppCompatActivity {
 

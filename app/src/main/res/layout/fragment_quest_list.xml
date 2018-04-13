@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="cz.uhk.fim.runhk.QuestListFragment"
+    tools:context="cz.uhk.fim.runhk.fragments.QuestListFragment"
     android:orientation="vertical">
 
     <!-- TODO: Update blank fragment layout -->
