@@ -23,6 +23,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import cz.uhk.fim.runhk.R;
+import cz.uhk.fim.runhk.fragments.QuestFragment;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -44,6 +45,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        if (findViewById(R.id.fragmentContainer) != null) {
+            QuestFragment questFragment = new QuestFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.fragmentContainer, questFragment) // kam to chci a co
+                    .commit();
+        }
 
 
     }
