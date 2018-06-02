@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -17,6 +18,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import cz.uhk.fim.runhk.R;
+import cz.uhk.fim.runhk.model.Player;
 
 public class PlayerProfileActivity extends AppCompatActivity {
 
@@ -36,6 +38,15 @@ public class PlayerProfileActivity extends AppCompatActivity {
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
+        Player player = new Player("bezdyjoe", "kozakev26@gmail.com", "Voldemort26", 10, 78);
+
+        progressBar.setProgress(player.getExps());
+        TextView textViewLevel = findViewById(R.id.textViewPlayerLevel);
+        TextView textViewNick = findViewById(R.id.textViewPlayerNickname);
+
+        textViewLevel.setText("Level " + player.getLevel());
+        textViewNick.setText(player.getNickname());
+        textViewNick.setTextSize(15);
 
         Button btnGo = findViewById(R.id.btnGo);
         btnGo.setOnClickListener(new View.OnClickListener() {
@@ -46,12 +57,15 @@ public class PlayerProfileActivity extends AppCompatActivity {
                         .addOnSuccessListener(PlayerProfileActivity.this, new OnSuccessListener<Location>() {
                             @Override
                             public void onSuccess(Location location) {
-                                lat = location.getLatitude();
-                                lon = location.getLongitude();
+
                                 if (location == null) {
                                     lat = 50;
                                     lon = 50;
+                                } else {
+                                    lat = location.getLatitude();
+                                    lon = location.getLongitude();
                                 }
+
                             }
                         });
 

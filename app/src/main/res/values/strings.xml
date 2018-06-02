@@ -3,6 +3,7 @@
     <string name="title_activity_maps">Map</string>
     <string name="run_for_life">RUN FOR LIFE</string>
     <string name="title_activity_login">Sign in</string>
+    <string name="level">Level</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>

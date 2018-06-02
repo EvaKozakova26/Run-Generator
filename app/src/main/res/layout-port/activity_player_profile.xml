@@ -22,15 +22,22 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:progress="70"
         android:progressTint="@color/progressBarColor" />
+
+    <TextView
+        android:id="@+id/textViewPlayerNickname"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="nick"
+        android:gravity="center"
+        android:textSize="30sp" />
 
     <TextView
         android:id="@+id/textViewPlayerLevel"
         android:layout_marginBottom="150dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Level 1"
+        android:text="@string/level"
         android:gravity="center"
         android:textSize="30sp"/>
 
