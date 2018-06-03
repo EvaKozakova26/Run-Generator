@@ -11,23 +11,14 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.Executor;
-
 import cz.uhk.fim.runhk.R;
-import cz.uhk.fim.runhk.activities.MapsActivity;
-import cz.uhk.fim.runhk.activities.PlayerProfileActivity;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -60,50 +51,8 @@ public class QuestFragment extends Fragment implements View.OnClickListener {
         view.findViewById(R.id.btnPlay).setOnClickListener(this);
 
         listLaTLon = new ArrayList<>();
-        listLaTLon.add(lat);
-        listLaTLon.add(lon);
 
-        new AsyncTask<Void, Void, List<Double>>() {
-
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-            }
-
-            @Override
-            protected List<Double> doInBackground(Void... voids) {
-                System.out.println("background madafakas");
-
-                fusedLocationProviderClient.getLastLocation()
-                        .addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
-                            @Override
-                            public void onSuccess(Location location) {
-                                System.out.println("jsem tu madafakas ?");
-
-                                if (location == null) {
-                                    lat = 50;
-                                    lon = 50;
-                                } else {
-
-                                    lat = location.getLatitude();
-                                    lon = location.getLongitude();
-                                }
-
-                                listLaTLon.add(lat);
-                                listLaTLon.add(lon);
-                                System.out.println("lat" + lat + "lissr " + listLaTLon.get(0));
-                            }
-                        });
-
-                return listLaTLon;
-
-            }
-
-            @Override
-            protected void onPostExecute(List<Double> doubles) {
-
-            }
-        }.execute();
+        getLastKnownLocation();
 
         return view;
     }
@@ -111,11 +60,6 @@ public class QuestFragment extends Fragment implements View.OnClickListener {
     public void setOnButtonClickedInterface(OnButtonClickedInterface onButtonClickedInterface1) {
         onButtonClickedInterface = onButtonClickedInterface1;
     }
-
-    public void onPlaySelected(View view) {
-        Toast.makeText(getContext(), lat + " " + lon, Toast.LENGTH_LONG).show();
-    }
-
 
     @Override
     public void onClick(View v) {
@@ -126,6 +70,7 @@ public class QuestFragment extends Fragment implements View.OnClickListener {
             case R.id.btnStop:
                 onButtonClickedInterface.onStopSelected(v);
                 break;
+            default:
         }
     }
 
@@ -146,6 +91,40 @@ public class QuestFragment extends Fragment implements View.OnClickListener {
             throw new ClassCastException(context.toString()
                     + " must implement OnButtonClickInterface");
         }
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    private void getLastKnownLocation() {
+        new AsyncTask<Void, Void, List<Double>>() {
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+            }
+
+            @SuppressLint("MissingPermission")
+            @Override
+            protected List<Double> doInBackground(Void... voids) {
+
+                fusedLocationProviderClient.getLastLocation()
+                        .addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
+                            @Override
+                            public void onSuccess(Location location) {
+                                if (location == null) {
+                                    lat = 50;
+                                    lon = 50;
+                                } else {
+
+                                    lat = location.getLatitude();
+                                    lon = location.getLongitude();
+                                }
+                                listLaTLon.add(lat);
+                                listLaTLon.add(lon);
+                            }
+                        });
+                return listLaTLon;
+            }
+        }.execute();
     }
 }
 
