@@ -2,6 +2,7 @@ package cz.uhk.fim.runhk.fragments;
 
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -31,7 +32,9 @@ import cz.uhk.fim.runhk.activities.PlayerProfileActivity;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class QuestFragment extends Fragment {
+public class QuestFragment extends Fragment implements View.OnClickListener {
+
+    OnButtonClickedInterface onButtonClickedInterface;
 
     FusedLocationProviderClient fusedLocationProviderClient;
 
@@ -54,6 +57,7 @@ public class QuestFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_quest, container, false);
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getContext());
+        view.findViewById(R.id.btnPlay).setOnClickListener(this);
 
         listLaTLon = new ArrayList<>();
         listLaTLon.add(lat);
@@ -101,15 +105,11 @@ public class QuestFragment extends Fragment {
             }
         }.execute();
 
-        btnPlay = view.findViewById(R.id.btnPlay);
-        btnPlay.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onPlaySelected(v);
-            }
-        });
-
         return view;
+    }
+
+    public void setOnButtonClickedInterface(OnButtonClickedInterface onButtonClickedInterface1) {
+        onButtonClickedInterface = onButtonClickedInterface1;
     }
 
     public void onPlaySelected(View view) {
@@ -117,5 +117,35 @@ public class QuestFragment extends Fragment {
     }
 
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btnPlay:
+                onButtonClickedInterface.onPlaySelected(v, lat, lon);
+                break;
+            case R.id.btnStop:
+                onButtonClickedInterface.onStopSelected(v);
+                break;
+        }
+    }
 
+    public interface OnButtonClickedInterface {
+        void onPlaySelected(View view, double lat, double lon);
+
+        void onStopSelected(View view);
+    }
+
+    //overeni, ze se interface nasetoval
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        try {
+            onButtonClickedInterface = (OnButtonClickedInterface) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString()
+                    + " must implement OnButtonClickInterface");
+        }
+    }
 }
+

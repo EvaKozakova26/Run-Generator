@@ -15,13 +15,11 @@
         android:layout_height="400dp"
         tools:context="cz.uhk.fim.runhk.activities.MapsActivity" />
 
-    <FrameLayout
-        android:id="@+id/fragmentContainer"
+    <fragment
+        android:id="@+id/fragmentQuest"
+        android:name="cz.uhk.fim.runhk.fragments.QuestFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-
-    </FrameLayout>
+        android:layout_height="match_parent"></fragment>
 
 
 </LinearLayout>

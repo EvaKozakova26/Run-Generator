@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.view.View;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -13,13 +14,15 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import cz.uhk.fim.runhk.R;
 import cz.uhk.fim.runhk.fragments.QuestFragment;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, QuestFragment.OnButtonClickedInterface {
 
     private GoogleMap mMap;
+    SupportMapFragment mapFragment;
 
     double lat;
     double lon;
@@ -29,17 +32,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
 
-        if (findViewById(R.id.fragmentContainer) != null) {
+        QuestFragment questFragment1 = (QuestFragment) getSupportFragmentManager().findFragmentById(R.id.fragmentQuest);
+        questFragment1.setOnButtonClickedInterface(this);
+
+
+        if (findViewById(R.id.fragmentQuest) != null) {
             QuestFragment questFragment = new QuestFragment();
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.fragmentContainer, questFragment) // kam to chci a co
+                    .add(R.id.fragmentQuest, questFragment) // kam to chci a co
                     .commit();
         }
+
+
+        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
 
 
     }
@@ -59,15 +68,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        Intent intent = new Intent();
-        lat = getIntent().getFloatExtra("lat", (float) lat);
-        lon = getIntent().getFloatExtra("lon", (float) lon);
-
         // Add a marker to your position and move the camera
         LatLng myLocation = new LatLng(lat, lon);
         mMap.addMarker(new MarkerOptions().position(myLocation).title("You are here"));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 12.5f));
 
+    }
+
+    @Override
+    public void onPlaySelected(View view, double latX, double lonX) {
+        lat = latX;
+        lon = lonX;
+        System.out.println("onPLaySeledcted");
+        mapFragment.getMapAsync(this);
+    }
+
+    @Override
+    public void onStopSelected(View view) {
 
     }
 }
