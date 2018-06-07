@@ -1,20 +1,17 @@
 package cz.uhk.fim.runhk.activities;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
-import android.support.v4.app.FragmentActivity;
+import android.location.Location;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.view.View;
 
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.PolylineOptions;
 
 import cz.uhk.fim.runhk.R;
 import cz.uhk.fim.runhk.fragments.QuestFragment;
@@ -76,9 +73,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     @Override
-    public void onPlaySelected(View view, double latX, double lonX) {
-        lat = latX;
-        lon = lonX;
+    public void onPlaySelected(View view, Location currentLocation) {
+        lat = currentLocation.getLatitude();
+        lon = currentLocation.getLongitude();
         System.out.println("onPLaySeledcted");
         mapFragment.getMapAsync(this);
     }
