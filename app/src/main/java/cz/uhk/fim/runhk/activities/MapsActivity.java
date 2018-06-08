@@ -16,13 +16,15 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import cz.uhk.fim.runhk.R;
 import cz.uhk.fim.runhk.fragments.QuestFragment;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, QuestFragment.OnButtonClickedInterface {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, QuestFragment.OnButtonClickedInterface, QuestFragment.onLocationUpdateInterface {
 
     private GoogleMap mMap;
     SupportMapFragment mapFragment;
 
     double lat;
     double lon;
+
+    LatLng myLocation;
 
     @SuppressLint("MissingPermission")
     @Override
@@ -31,7 +33,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         setContentView(R.layout.activity_maps);
 
         QuestFragment questFragment1 = (QuestFragment) getSupportFragmentManager().findFragmentById(R.id.fragmentQuest);
-        questFragment1.setOnButtonClickedInterface(this);
+        //  questFragment1.setOnButtonClickedInterface(this);
+        questFragment1.setOnLocationUpdateInterface(this);
 
 
         if (findViewById(R.id.fragmentQuest) != null) {
@@ -48,6 +51,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
 
 
+        myLocation = new LatLng(0, 0);
     }
 
 
@@ -65,23 +69,41 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
+        updateLocation();
         // Add a marker to your position and move the camera
-        LatLng myLocation = new LatLng(lat, lon);
-        mMap.addMarker(new MarkerOptions().position(myLocation).title("You are here"));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 12.5f));
 
+        mMap.addMarker(new MarkerOptions().position(myLocation).title("You are here"));
+
+    }
+
+    private void updateLocation() {
+        myLocation = new LatLng(lat, lon);
     }
 
     @Override
-    public void onPlaySelected(View view, Location currentLocation) {
-        lat = currentLocation.getLatitude();
-        lon = currentLocation.getLongitude();
-        System.out.println("onPLaySeledcted");
-        mapFragment.getMapAsync(this);
+    public void onPlaySelected(View view, Location currentLocation, boolean continueUpdate) {
+
+
     }
 
     @Override
-    public void onStopSelected(View view) {
+    public void onStopSelected(View view, boolean continueUpdate) {
+
+    }
+
+    @Override
+    public void onLocationUpdate(Location currentLocation) {
+        if (currentLocation == null) {
+            return;
+        } else {
+            lat = currentLocation.getLatitude();
+            lon = currentLocation.getLongitude();
+            System.out.println("onPLaySeledcted");
+            myLocation = new LatLng(lat, lon);
+            mMap.addMarker(new MarkerOptions().position(myLocation).title("You are here"));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 12.5f));
+        }
 
     }
 }

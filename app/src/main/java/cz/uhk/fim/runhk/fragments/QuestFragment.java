@@ -63,6 +63,8 @@ public class QuestFragment extends Fragment implements View.OnClickListener {
 
     private OnButtonClickedInterface onButtonClickedInterface;
 
+    private onLocationUpdateInterface onLocationUpdateInterface;
+
     private FusedLocationProviderClient fusedLocationProviderClient;
 
     private LocationRequest mLocationRequestHighAccuracy;
@@ -79,6 +81,8 @@ public class QuestFragment extends Fragment implements View.OnClickListener {
 
     double lat;
     double lon;
+
+    boolean continueUpdate = false;
 
     private List<Double> listLaTLon;
 
@@ -102,7 +106,7 @@ public class QuestFragment extends Fragment implements View.OnClickListener {
 
         mLocationRequestHighAccuracy = new LocationRequest();
         mLocationRequestHighAccuracy.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        mLocationRequestHighAccuracy.setInterval(2000);
+        mLocationRequestHighAccuracy.setInterval(4000);
 
         // Update values using data stored in the Bundle. - //TODO to check if needed
         updateValuesFromBundle(savedInstanceState);
@@ -124,19 +128,31 @@ public class QuestFragment extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btnPlay:
-                onButtonClickedInterface.onPlaySelected(v, mCurrentLocation);
+                continueUpdate = true;
+                while (continueUpdate) {
+                    onButtonClickedInterface.onPlaySelected(v, mCurrentLocation, continueUpdate);
+                }
                 break;
             case R.id.btnStop:
-                onButtonClickedInterface.onStopSelected(v);
+                continueUpdate = false;
+                onButtonClickedInterface.onStopSelected(v, continueUpdate);
                 break;
             default:
         }
     }
 
     public interface OnButtonClickedInterface {
-        void onPlaySelected(View view, Location currentLocation);
+        void onPlaySelected(View view, Location currentLocation, boolean continueUpdate);
 
-        void onStopSelected(View view);
+        void onStopSelected(View view, boolean continueUpdate);
+    }
+
+    public interface onLocationUpdateInterface {
+        void onLocationUpdate(Location currentLocation);
+    }
+
+    public void setOnLocationUpdateInterface(QuestFragment.onLocationUpdateInterface onLocationUpdateInterface) {
+        this.onLocationUpdateInterface = onLocationUpdateInterface;
     }
 
     //overeni, ze se interface nasetoval
@@ -258,10 +274,11 @@ public class QuestFragment extends Fragment implements View.OnClickListener {
         };
     }
 
-    private void updateLocation() {
-        if (mCurrentLocation != null) {
+    private void updateLocation() { //TODO - proc je nekdy interface Null ???
+        if (mCurrentLocation != null && onLocationUpdateInterface != null) {
             Toast.makeText(getContext(), String.valueOf(mCurrentLocation.getLatitude())
                     + String.valueOf(mCurrentLocation.getLongitude()), Toast.LENGTH_SHORT).show();
+            onLocationUpdateInterface.onLocationUpdate(mCurrentLocation);
         } else {
             Toast.makeText(getContext(), "mas nulovou lokaci madafaka", Toast.LENGTH_SHORT).show();
         }
