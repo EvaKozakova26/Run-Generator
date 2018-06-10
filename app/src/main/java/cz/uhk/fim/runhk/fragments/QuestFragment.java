@@ -20,6 +20,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.ApiException;
@@ -50,7 +51,7 @@ import cz.uhk.fim.runhk.activities.MapsActivity;
  */
 public class QuestFragment extends Fragment implements View.OnClickListener {
 
-    private static final String TAG = MapsActivity.class.getSimpleName();
+    private static final String TAG = QuestFragment.class.getSimpleName();
 
     protected static final int REQUEST_CHECK_SETTINGS = 0x1;
 
@@ -82,7 +83,6 @@ public class QuestFragment extends Fragment implements View.OnClickListener {
     double lat;
     double lon;
 
-    boolean continueUpdate = false;
 
     private List<Double> listLaTLon;
 
@@ -97,9 +97,10 @@ public class QuestFragment extends Fragment implements View.OnClickListener {
         View view = inflater.inflate(R.layout.fragment_quest, container, false);
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getContext());
         view.findViewById(R.id.btnPlay).setOnClickListener(this);
+        view.findViewById(R.id.btnStop).setOnClickListener(this);
 
         listLaTLon = new ArrayList<>();
-        mRequestingLocationUpdates = true;
+        mRequestingLocationUpdates = false;
 
         //to tu už nebudu potřebovat
         getLastKnownLocation();
@@ -115,6 +116,7 @@ public class QuestFragment extends Fragment implements View.OnClickListener {
 
         createLocationCallback();
         buildLocationSettingsRequest();
+        Log.i(TAG, "Vola se onCreateView");
 
         return view;
     }
@@ -128,15 +130,19 @@ public class QuestFragment extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btnPlay:
-                continueUpdate = true;
-                while (continueUpdate) {
-                    onButtonClickedInterface.onPlaySelected(v, mCurrentLocation, continueUpdate);
+                mRequestingLocationUpdates = true;
+                if (mRequestingLocationUpdates && checkPermissions()) {
+                    System.out.println(mRequestingLocationUpdates + "clickedGo");
+                    startLocationUpdates();
+                    Log.i(TAG, "Vola se onClickedPlay.");
+                } else if (!checkPermissions()) {
+                    requestPermissions();
                 }
+
+                updateLocation();
                 break;
             case R.id.btnStop:
-                continueUpdate = false;
-                onButtonClickedInterface.onStopSelected(v, continueUpdate);
-                break;
+                stopLocationUpdates();
             default:
         }
     }
@@ -153,6 +159,7 @@ public class QuestFragment extends Fragment implements View.OnClickListener {
 
     public void setOnLocationUpdateInterface(QuestFragment.onLocationUpdateInterface onLocationUpdateInterface) {
         this.onLocationUpdateInterface = onLocationUpdateInterface;
+        Log.i(TAG, "vola setOnLocationUpdateInterface");
     }
 
     //overeni, ze se interface nasetoval
@@ -161,10 +168,11 @@ public class QuestFragment extends Fragment implements View.OnClickListener {
         super.onAttach(context);
 
         try {
-            onButtonClickedInterface = (OnButtonClickedInterface) context;
+            onLocationUpdateInterface = (onLocationUpdateInterface) context;
+            Log.i(TAG, "vola se onAttach");
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
-                    + " must implement OnButtonClickInterface");
+                    + " must implement OnLocationUpdateInterface");
         }
     }
 
@@ -174,16 +182,20 @@ public class QuestFragment extends Fragment implements View.OnClickListener {
         // Within {@code onPause()}, we remove location updates. Here, we resume receiving
         // location updates if the user has requested them.
         if (mRequestingLocationUpdates && checkPermissions()) {
+            System.out.println(mRequestingLocationUpdates);
             startLocationUpdates();
         } else if (!checkPermissions()) {
             requestPermissions();
         }
-
+        Log.i(TAG, "Vola se onResume");
+        Log.i(TAG, "jak je v onResume interface" + onLocationUpdateInterface);
         updateLocation();
+
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.i(TAG, "vola se onActiviyResult");
         switch (requestCode) {
             // Check for the integer request code originally supplied to startResolutionForResult().
             case REQUEST_CHECK_SETTINGS:
@@ -207,6 +219,7 @@ public class QuestFragment extends Fragment implements View.OnClickListener {
      */
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
+        Log.i(TAG, "vola se onSaveInstanceState");
         savedInstanceState.putBoolean(KEY_REQUESTING_LOCATION_UPDATES, mRequestingLocationUpdates);
         savedInstanceState.putParcelable(KEY_LOCATION, mCurrentLocation);
         super.onSaveInstanceState(savedInstanceState);
@@ -218,7 +231,7 @@ public class QuestFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
-        Log.i(TAG, "onRequestPermissionResult");
+        Log.i(TAG, "vola se onRequestPermissionResult");
         if (requestCode == REQUEST_PERMISSIONS_REQUEST_CODE) {
             if (grantResults.length <= 0) {
                 // If user interaction was interrupted, the permission request is cancelled and you
@@ -262,6 +275,7 @@ public class QuestFragment extends Fragment implements View.OnClickListener {
     }
 
     private void createLocationCallback() {
+        Log.i(TAG, "vola se createLoacationCallback");
         mLocationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
@@ -275,15 +289,18 @@ public class QuestFragment extends Fragment implements View.OnClickListener {
     }
 
     private void updateLocation() { //TODO - proc je nekdy interface Null ???
+        Log.i(TAG, "vola se updateLocation");
+        Log.i(TAG, "mCurrentLocatio je" + mCurrentLocation);
+        Log.i(TAG, "interface je " + onLocationUpdateInterface);
         if (mCurrentLocation != null && onLocationUpdateInterface != null) {
             Toast.makeText(getContext(), String.valueOf(mCurrentLocation.getLatitude())
                     + String.valueOf(mCurrentLocation.getLongitude()), Toast.LENGTH_SHORT).show();
             onLocationUpdateInterface.onLocationUpdate(mCurrentLocation);
+            System.out.println(mRequestingLocationUpdates + "je na jaké hodnotě?");
         } else {
-            Toast.makeText(getContext(), "mas nulovou lokaci madafaka", Toast.LENGTH_SHORT).show();
+            return;
         }
     }
-
     /**
      * Handles the Start Updates button and requests start of location updates. Does nothing if
      * updates have already been requested.
@@ -309,12 +326,14 @@ public class QuestFragment extends Fragment implements View.OnClickListener {
      * Return the current state of the permissions needed.
      */
     private boolean checkPermissions() {
+        Log.i(TAG, "vola se checkPermission");
         int permissionState = ActivityCompat.checkSelfPermission(getContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION);
         return permissionState == PackageManager.PERMISSION_GRANTED;
     }
 
     private void requestPermissions() {
+        Log.i(TAG, "vola se requestPermission");
         boolean shouldProvideRationale =
                 ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
                         Manifest.permission.ACCESS_FINE_LOCATION);
@@ -349,6 +368,7 @@ public class QuestFragment extends Fragment implements View.OnClickListener {
      * Removes location updates from the FusedLocationApi.
      */
     private void stopLocationUpdates() {
+        Log.i(TAG, "vola se stopLocationUpdates");
         if (!mRequestingLocationUpdates) {
             Log.d(TAG, "stopLocationUpdates: updates never requested, no-op.");
             return;
@@ -358,11 +378,11 @@ public class QuestFragment extends Fragment implements View.OnClickListener {
         // stopped state. Doing so helps battery performance and is especially
         // recommended in applications that request frequent location updates.
         fusedLocationProviderClient.removeLocationUpdates(mLocationCallback)
-                .addOnCompleteListener((Executor) this, new OnCompleteListener<Void>() {
+                .addOnCompleteListener(getActivity(), new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         mRequestingLocationUpdates = false;
-
+                        System.out.println(mRequestingLocationUpdates + "mel by byt false?");
                     }
                 });
     }
@@ -385,12 +405,14 @@ public class QuestFragment extends Fragment implements View.OnClickListener {
     }
 
     private void buildLocationSettingsRequest() {
+        Log.i(TAG, "Vola se buildLocatioRequestSettings");
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
         builder.addLocationRequest(mLocationRequestHighAccuracy);
         mLocationSettingsRequest = builder.build();
     }
 
     private void updateValuesFromBundle(Bundle savedInstanceState) {
+        Log.i(TAG, "vola se updateValuesFromBundle");
         if (savedInstanceState != null) {
             //TODO create buttons enabled/disabled
             // Update the value of mRequestingLocationUpdates from the Bundle, and make sure that
@@ -398,6 +420,7 @@ public class QuestFragment extends Fragment implements View.OnClickListener {
             if (savedInstanceState.keySet().contains(KEY_REQUESTING_LOCATION_UPDATES)) {
                 mRequestingLocationUpdates = savedInstanceState.getBoolean(
                         KEY_REQUESTING_LOCATION_UPDATES);
+                System.out.println("tady se to nahodou nenastavuej" + mRequestingLocationUpdates);
             }
 
             // Update the value of mCurrentLocation from the Bundle and update the UI to show the
@@ -418,7 +441,7 @@ public class QuestFragment extends Fragment implements View.OnClickListener {
 
 
     private void startLocationUpdates() {
-
+        Log.i(TAG, "vola se startLocationUpdates");
         // Begin by checking if the device has the necessary location settings.
         client.checkLocationSettings(mLocationSettingsRequest)
                 .addOnSuccessListener(getActivity(), new OnSuccessListener<LocationSettingsResponse>() {
