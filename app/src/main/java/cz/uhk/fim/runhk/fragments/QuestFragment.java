@@ -20,7 +20,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.ApiException;
@@ -41,10 +40,8 @@ import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executor;
 
 import cz.uhk.fim.runhk.R;
-import cz.uhk.fim.runhk.activities.MapsActivity;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -60,9 +57,6 @@ public class QuestFragment extends Fragment implements View.OnClickListener {
     // Keys for storing activity state in the Bundle.
     private final static String KEY_REQUESTING_LOCATION_UPDATES = "requesting-location-updates";
     private final static String KEY_LOCATION = "location";
-
-
-    private OnButtonClickedInterface onButtonClickedInterface;
 
     private onLocationUpdateInterface onLocationUpdateInterface;
 
@@ -102,7 +96,6 @@ public class QuestFragment extends Fragment implements View.OnClickListener {
         listLaTLon = new ArrayList<>();
         mRequestingLocationUpdates = false;
 
-        //to tu už nebudu potřebovat
         getLastKnownLocation();
 
         mLocationRequestHighAccuracy = new LocationRequest();
@@ -121,11 +114,6 @@ public class QuestFragment extends Fragment implements View.OnClickListener {
         return view;
     }
 
-
-    public void setOnButtonClickedInterface(OnButtonClickedInterface onButtonClickedInterface1) {
-        onButtonClickedInterface = onButtonClickedInterface1;
-    }
-
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -135,6 +123,7 @@ public class QuestFragment extends Fragment implements View.OnClickListener {
                     System.out.println(mRequestingLocationUpdates + "clickedGo");
                     startLocationUpdates();
                     Log.i(TAG, "Vola se onClickedPlay.");
+                    Toast.makeText(getContext(), "Start location updates", Toast.LENGTH_SHORT).show();
                 } else if (!checkPermissions()) {
                     requestPermissions();
                 }
@@ -142,15 +131,10 @@ public class QuestFragment extends Fragment implements View.OnClickListener {
                 updateLocation();
                 break;
             case R.id.btnStop:
+                Toast.makeText(getContext(), "Stop location updates", Toast.LENGTH_SHORT).show();
                 stopLocationUpdates();
             default:
         }
-    }
-
-    public interface OnButtonClickedInterface {
-        void onPlaySelected(View view, Location currentLocation, boolean continueUpdate);
-
-        void onStopSelected(View view, boolean continueUpdate);
     }
 
     public interface onLocationUpdateInterface {
@@ -300,26 +284,6 @@ public class QuestFragment extends Fragment implements View.OnClickListener {
         } else {
             return;
         }
-    }
-    /**
-     * Handles the Start Updates button and requests start of location updates. Does nothing if
-     * updates have already been requested.
-     */
-    public void startUpdatesButtonHandler(View view) {
-        if (!mRequestingLocationUpdates) {
-            mRequestingLocationUpdates = true;
-            startLocationUpdates();
-        }
-    }
-
-    /**
-     * Handles the Stop Updates button, and requests removal of location updates.
-     */
-    public void stopUpdatesButtonHandler(View view) {
-        // It is a good practice to remove location requests when the activity is in a paused or
-        // stopped state. Doing so helps battery performance and is especially
-        // recommended in applications that request frequent location updates.
-        stopLocationUpdates();
     }
 
     /**
@@ -491,6 +455,7 @@ public class QuestFragment extends Fragment implements View.OnClickListener {
 
     }
 
+    //TODO nastavit lastKnownLocation při startu aktivity (mapa)
     @SuppressLint("StaticFieldLeak")
     private void getLastKnownLocation() {
         new AsyncTask<Void, Void, List<Double>>() {

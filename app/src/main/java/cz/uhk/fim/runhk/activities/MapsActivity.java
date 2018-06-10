@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.view.View;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -17,7 +16,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import cz.uhk.fim.runhk.R;
 import cz.uhk.fim.runhk.fragments.QuestFragment;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, QuestFragment.OnButtonClickedInterface, QuestFragment.onLocationUpdateInterface {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, QuestFragment.onLocationUpdateInterface {
 
     private GoogleMap mMap;
     SupportMapFragment mapFragment;
@@ -37,9 +36,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         setContentView(R.layout.activity_maps);
 
         QuestFragment questFragment1 = (QuestFragment) getSupportFragmentManager().findFragmentById(R.id.fragmentQuest);
-        //  questFragment1.setOnButtonClickedInterface(this);
         questFragment1.setOnLocationUpdateInterface(this);
-
 
         if (findViewById(R.id.fragmentQuest) != null) {
             QuestFragment questFragment = new QuestFragment();
@@ -48,14 +45,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     .commit();
         }
 
-
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
     }
-
 
     /**
      * Manipulates the map once available.
@@ -74,24 +69,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         updateLocation();
         // Add a marker to your position and move the camera
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 12.5f));
-
         mMap.addMarker(new MarkerOptions().position(myLocation).title("You are here"));
 
     }
 
     private void updateLocation() {
         myLocation = new LatLng(lat, lon);
-    }
-
-    @Override
-    public void onPlaySelected(View view, Location currentLocation, boolean continueUpdate) {
-
-
-    }
-
-    @Override
-    public void onStopSelected(View view, boolean continueUpdate) {
-
     }
 
     @Override
@@ -114,8 +97,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         new LatLng(lat, lon)
                 ));
             }
-
-
 
         }
 
