@@ -20,6 +20,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.ApiException;
@@ -38,8 +39,12 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import cz.uhk.fim.runhk.R;
 
@@ -74,6 +79,11 @@ public class QuestFragment extends Fragment implements View.OnClickListener {
 
     private LocationSettingsRequest mLocationSettingsRequest;
 
+    TextView timerTextView;
+
+    boolean stopWatchesOn;
+
+
     double lat;
     double lon;
 
@@ -92,6 +102,7 @@ public class QuestFragment extends Fragment implements View.OnClickListener {
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getContext());
         view.findViewById(R.id.btnPlay).setOnClickListener(this);
         view.findViewById(R.id.btnStop).setOnClickListener(this);
+        timerTextView = view.findViewById(R.id.textViewTime);
 
         listLaTLon = new ArrayList<>();
         mRequestingLocationUpdates = false;
@@ -114,6 +125,44 @@ public class QuestFragment extends Fragment implements View.OnClickListener {
         return view;
     }
 
+//TODO popřemýšlet o async tAsku nebo service
+    public long startTime = 0;
+    public void startTimer() {
+        Timer stopwatchTimer = new Timer();
+        System.out.println("ready for time ?");
+        startTime = System.currentTimeMillis();
+
+            stopwatchTimer.scheduleAtFixedRate(new TimerTask() {
+                @Override
+                public void run() {
+                    getActivity().runOnUiThread(
+                            new Runnable() {
+
+                                @Override
+                                public void run() {
+                                    System.out.println("sem v runu");
+                                    if (stopWatchesOn) {
+                                        timerTextView.setText(stopwatch());
+                                        System.out.println("jede cas");
+                                    }
+                                }
+                            }
+                    );
+
+                }
+            }, 0, 10);
+
+    }
+
+    // Returns the combined string for the stopwatch, counting in tenths of seconds.
+    public String stopwatch() {
+        long nowTime = System.currentTimeMillis();
+        long cast = nowTime - startTime;
+        Date date = new Date(cast);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss.S");
+        return simpleDateFormat.format(date);
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -121,6 +170,8 @@ public class QuestFragment extends Fragment implements View.OnClickListener {
                 mRequestingLocationUpdates = true;
                 if (mRequestingLocationUpdates && checkPermissions()) {
                     System.out.println(mRequestingLocationUpdates + "clickedGo");
+                    stopWatchesOn = true;
+                    startTimer();
                     startLocationUpdates();
                     Log.i(TAG, "Vola se onClickedPlay.");
                     Toast.makeText(getContext(), "Start location updates", Toast.LENGTH_SHORT).show();
@@ -132,6 +183,7 @@ public class QuestFragment extends Fragment implements View.OnClickListener {
                 break;
             case R.id.btnStop:
                 Toast.makeText(getContext(), "Stop location updates", Toast.LENGTH_SHORT).show();
+                stopWatchesOn = false;
                 stopLocationUpdates();
             default:
         }
