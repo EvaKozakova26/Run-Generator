@@ -29,6 +29,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     LatLng myLocation;
 
+    double distance = 0;
+
+    QuestFragment questFragment;
+
     @SuppressLint("MissingPermission")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +43,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         questFragment1.setOnLocationUpdateInterface(this);
 
         if (findViewById(R.id.fragmentQuest) != null) {
-            QuestFragment questFragment = new QuestFragment();
+            questFragment = new QuestFragment();
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.fragmentQuest, questFragment) // kam to chci a co
                     .commit();
@@ -96,6 +100,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         new LatLng(prevLat, prevLng),
                         new LatLng(lat, lon)
                 ));
+
+                float[] distance2 = new float[2];
+                Location.distanceBetween(prevLat, prevLng, lat, lon, distance2);
+                double currentDistance = distance2[0];
+
+                distance = distance + currentDistance;
+                System.out.println("di v mape je" + distance);
+                questFragment.updateDistance(distance);
+                System.out.println("na druhem miste je" + distance2[1]);
+
             }
 
         }

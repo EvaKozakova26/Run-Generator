@@ -18,25 +18,22 @@
             android:paddingBottom="25dp">
 
             <EditText
+                android:id="@+id/textViewDistance"
                 android:layout_width="100dp"
                 android:layout_height="50dp"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="8dp"
                 android:ems="10"
                 android:focusable="false"
-                android:inputType="none"
-                android:text="00.00 km" />
+                android:inputType="none" />
 
-            <EditText
-                android:id="@+id/textViewTime"
+            <Chronometer
+                android:id="@+id/chronometer"
                 android:layout_width="100dp"
                 android:layout_height="50dp"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="8dp"
                 android:ems="10"
-                android:focusable="false"
-                android:inputType="none"
-
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
