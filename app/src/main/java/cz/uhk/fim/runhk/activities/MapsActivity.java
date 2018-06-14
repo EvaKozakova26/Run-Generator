@@ -45,7 +45,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if (findViewById(R.id.fragmentQuest) != null) {
             questFragment = new QuestFragment();
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.fragmentQuest, questFragment) // kam to chci a co
+                    .replace(R.id.fragmentQuest, questFragment) // kam to chci a co
                     .commit();
         }
 

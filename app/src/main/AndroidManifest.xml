@@ -21,7 +21,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities.PlayerProfileActivity">
+        <activity android:name=".activities.LogInActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -43,16 +43,10 @@
         <activity
             android:name=".activities.MapsActivity"
             android:label="@string/title_activity_maps" />
-        <activity
-            android:name=".activities.LoginActivity"
-            android:label="@string/title_activity_login" />
         <activity android:name=".activities.MainActivity" />
         <activity android:name=".activities.QuestsActivity" />
         <activity android:name=".activities.DetailSectionActivity" />
-        <activity
-            android:name=".activities.Main2Activity"
-            android:label="@string/title_activity_main2"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity android:name=".activities.PlayerProfileActivity"></activity>
     </application>
 
 </manifest>

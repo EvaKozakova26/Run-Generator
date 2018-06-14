@@ -98,8 +98,8 @@ public class QuestFragment extends Fragment implements View.OnClickListener {
         view.findViewById(R.id.btnPlay).setOnClickListener(this);
         view.findViewById(R.id.btnStop).setOnClickListener(this);
         chronometer = view.findViewById(R.id.chronometer);
-        chronometer.setFormat("Time Running - %s");
-        chronometer.setBase(SystemClock.elapsedRealtime());
+        chronometer.setFormat("%s");
+
         textViewDistance = view.findViewById(R.id.textViewDistance);
 
         listLaTLon = new ArrayList<>();
@@ -130,6 +130,7 @@ public class QuestFragment extends Fragment implements View.OnClickListener {
                 mRequestingLocationUpdates = true;
                 if (mRequestingLocationUpdates && checkPermissions()) {
                     System.out.println(mRequestingLocationUpdates + "clickedGo");
+                    chronometer.setBase(SystemClock.elapsedRealtime());
                     chronometer.start();
                     startLocationUpdates();
                     Toast.makeText(getContext(), "Start location updates", Toast.LENGTH_SHORT).show();

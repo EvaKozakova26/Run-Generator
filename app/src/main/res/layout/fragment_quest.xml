@@ -26,7 +26,6 @@
                 android:ems="10"
                 android:focusable="false"
                 android:inputType="none" />
-
             <Chronometer
                 android:id="@+id/chronometer"
                 android:layout_width="100dp"
