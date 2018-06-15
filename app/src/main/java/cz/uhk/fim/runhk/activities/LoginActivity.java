@@ -69,7 +69,6 @@ public class LogInActivity extends AppCompatActivity {
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         if (!dataSnapshot.exists()) {
                             firebaseDatabase = FirebaseDatabase.getInstance();
-                            System.out.println("vytvorim usera");
                             Player player = new Player("", currentUser.getEmail(), "", 1, 0);
                             databaseReference = firebaseDatabase.getReference("user");
                             databaseReference.child(currentUser.getUid()).setValue(player);
@@ -88,6 +87,7 @@ public class LogInActivity extends AppCompatActivity {
 
 
                 Intent intent = new Intent(this, PlayerProfileActivity.class);
+                finish();
                 startActivity(intent);
 
             } else {

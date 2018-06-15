@@ -1,9 +1,11 @@
 package cz.uhk.fim.runhk.model;
 
+import com.google.firebase.database.IgnoreExtraProperties;
+
 /**
  * Created by EvaKozakova on 02.04.2018.
  */
-
+@IgnoreExtraProperties
 public class Player {
 
     private String nickname;
@@ -19,6 +21,9 @@ public class Player {
         this.password = password;
         this.level = level;
         this.exps = exps;
+    }
+
+    public Player() {
     }
 
     public String getNickname() {
