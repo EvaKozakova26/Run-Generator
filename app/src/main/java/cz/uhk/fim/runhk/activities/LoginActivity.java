@@ -11,14 +11,23 @@ import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import cz.uhk.fim.runhk.R;
+import cz.uhk.fim.runhk.model.Player;
 
 public class LogInActivity extends AppCompatActivity {
 
     private static final int RC_SIGN_IN = 123;
 
-    FirebaseUser currentUser;
+    private FirebaseUser currentUser;
+
+    private FirebaseDatabase firebaseDatabase;
+    private DatabaseReference databaseReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,15 +54,42 @@ public class LogInActivity extends AppCompatActivity {
 
         if (requestCode == RC_SIGN_IN) {
             IdpResponse response = IdpResponse.fromResultIntent(data);
-            Intent intentS = new Intent(this, PlayerProfileActivity.class);
-            startActivity(intentS);
 
             if (resultCode == RESULT_OK) {
                 // Successfully signed in
-                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+
+                currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+
+                DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
+                DatabaseReference userNameRef = rootRef.child("user").child(currentUser.getUid());
+                ValueEventListener eventListener = new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (!dataSnapshot.exists()) {
+                            firebaseDatabase = FirebaseDatabase.getInstance();
+                            System.out.println("vytvorim usera");
+                            Player player = new Player("", currentUser.getEmail(), "", 1, 0);
+                            databaseReference = firebaseDatabase.getReference("user");
+                            databaseReference.child(currentUser.getUid()).setValue(player);
+
+                        } else {
+                            System.out.println("uz tu je tak cuus");
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                    }
+                };
+
+                userNameRef.addListenerForSingleValueEvent(eventListener);
+
+
                 Intent intent = new Intent(this, PlayerProfileActivity.class);
                 startActivity(intent);
-                // ...
+
             } else {
                 Toast.makeText(this, "Špatné jméno nebo heslo", Toast.LENGTH_SHORT).show();
 

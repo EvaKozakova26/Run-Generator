@@ -9,15 +9,17 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import cz.uhk.fim.runhk.R;
 import cz.uhk.fim.runhk.model.Player;
 
 public class PlayerProfileActivity extends AppCompatActivity {
 
-    double lat;
-    double lon;
 
-    @SuppressLint("MissingPermission")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,9 +28,10 @@ public class PlayerProfileActivity extends AppCompatActivity {
         ProgressBar progressBar = findViewById(R.id.progress_exps);
         progressBar.setIndeterminate(false);
 
+
         Player player = new Player("bezdyjoe", "kozakev26@gmail.com", "Voldemort26", 10, 78);
 
-        progressBar.setProgress(player.getExps());
+
         TextView textViewLevel = findViewById(R.id.textViewPlayerLevel);
         TextView textViewNick = findViewById(R.id.textViewPlayerNickname);
 
@@ -41,8 +44,6 @@ public class PlayerProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(PlayerProfileActivity.this, MapsActivity.class);
-                intent.putExtra("lat", (float) lat);
-                intent.putExtra("lon", (float) lon);
                 startActivity(intent);
             }
         });
