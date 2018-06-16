@@ -80,7 +80,7 @@ public class LogInActivity extends AppCompatActivity {
 
                             List<Quest> quests = new ArrayList<>();
 
-                            Player player = new Player("", currentUser.getEmail(), "", 1, 0, quests);
+                            Player player = new Player("", currentUser.getEmail(), "", 1, 10, quests);
                             player.setQuestToDo(quest);
                             databaseReference = firebaseDatabase.getReference("user");
                             databaseReference.child(currentUser.getUid()).setValue(player);

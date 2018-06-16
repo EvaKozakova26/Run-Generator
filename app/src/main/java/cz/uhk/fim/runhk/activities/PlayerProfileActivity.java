@@ -31,16 +31,51 @@ public class PlayerProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player_profile);
-
-        ProgressBar progressBar = findViewById(R.id.progress_exps);
-        progressBar.setIndeterminate(false);
-
-
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         firebaseDatabase = FirebaseDatabase.getInstance();
+
+        final ProgressBar progressBar = findViewById(R.id.progress_exps);
+        progressBar.setIndeterminate(false);
+
+        databaseReference = firebaseDatabase.getReference("user").child(currentUser.getUid());
+        ValueEventListener posListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Player player = dataSnapshot.getValue(Player.class);
+                progressBar.setProgress(player.getExps());
+
+                DatabaseReference databaseReferenceTemp = firebaseDatabase.getReference("level").child(String.valueOf(player.getLevel()));
+                ValueEventListener posListener = new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        int levelExps = dataSnapshot.getValue(Integer.class);
+                        progressBar.setMax(levelExps);
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                };
+                databaseReferenceTemp.addListenerForSingleValueEvent(posListener);
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+        databaseReference.addListenerForSingleValueEvent(posListener);
+
+
+
+
+
         databaseReference = firebaseDatabase.getReference("user").child(currentUser.getUid());
 
-        ValueEventListener posListener = new ValueEventListener() {
+        ValueEventListener postListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Player player = dataSnapshot.getValue(Player.class);
@@ -59,7 +94,7 @@ public class PlayerProfileActivity extends AppCompatActivity {
 
             }
         };
-        databaseReference.addListenerForSingleValueEvent(posListener);
+        databaseReference.addListenerForSingleValueEvent(postListener);
 
 
 
