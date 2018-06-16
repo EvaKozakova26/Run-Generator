@@ -8,6 +8,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.Random;
+
 import cz.uhk.fim.runhk.model.Quest;
 
 public class DatabaseHelper {
@@ -19,11 +21,13 @@ public class DatabaseHelper {
 
     boolean finished;
     boolean getVysledekDone;
+    double distanceToDo;
+    int exps;
 
     public void saveQuest(double distance) {
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        finished = false;
         getVysledek(distance);
-
     }
 
     public boolean getVysledek(final double distance) {
@@ -55,7 +59,7 @@ public class DatabaseHelper {
                         finished = true;
 
                         questReference.removeValue();
-
+                        createQuest();
 
                     } else {
                         // nic se nestancem quest zustane false a zavloa se jen hlaska, musíš to zkusit znovu :D
@@ -74,110 +78,104 @@ public class DatabaseHelper {
                 // ...
             }
         };
-        questReference.addValueEventListener(postListener);
+        questReference.addListenerForSingleValueEvent(postListener);
         return finished;
     }
 
-    public void createQuest() {
-        currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
-        Quest currentQuest = new Quest();
+    private void createQuest() {
+        currentUser = FirebaseAuth.getInstance().getCurrentUser();
         firebaseDatabase = FirebaseDatabase.getInstance();
-        databaseReference = firebaseDatabase.getReference().child("quest").child("current");
-        databaseReference.child(currentUser.getUid()).setValue(currentQuest);
+        databaseReference = firebaseDatabase.getReference().child("user").child(currentUser.getUid()).child("level");
+
+        ValueEventListener postListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // Get Post object and use the values to update the UI
+                int level = dataSnapshot.getValue(Integer.class);
+                Random random = new Random();
+
+                if (level >= 1 && level <= 5) {
+                    distanceToDo = random.nextInt(1000) + 500;
+                }
+                if (level >= 6 && level <= 10) {
+                    distanceToDo = random.nextInt(1500) + 1500;
+                }
+                if (level >= 11 && level <= 15) {
+                    distanceToDo = random.nextInt(3000) + 3000;
+                }
+                if (level >= 16 && level <= 20) {
+                    distanceToDo = random.nextInt(6000) + 6000;
+                }
+                /////////////////////////
+
+                exps = (int) (distanceToDo / 10);
+
+
+                Quest currentQuestToDo = new Quest();
+                currentQuestToDo.setDistanceToDo(distanceToDo);
+                currentQuestToDo.setExps(exps);
+
+                firebaseDatabase = FirebaseDatabase.getInstance();
+                databaseReference = firebaseDatabase.getReference().child("user").child(currentUser.getUid()).child("questToDo");
+                databaseReference.setValue(currentQuestToDo);
+
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+
+                // ...
+            }
+        };
+        databaseReference.addListenerForSingleValueEvent(postListener);
     }
 
     private void updatePlayer() {
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         firebaseDatabase = FirebaseDatabase.getInstance();
-        databaseReference = firebaseDatabase.getReference("user").child(currentUser.getUid());
-        databaseReference.child("exps").setValue(10);
+        databaseReference = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("finished");
+
+        ValueEventListener postListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Quest quest = dataSnapshot.getValue(Quest.class);
+
+                DatabaseReference databaseReferenceTemp = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("exps");
+                databaseReferenceTemp.setValue(quest.getExps());
+
+                ValueEventListener postListener = new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        int exps = dataSnapshot.getValue(Integer.class);
+                        if (exps >= 50) {
+                            DatabaseReference databaseReferenceTemp = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("level");
+                            databaseReferenceTemp.setValue(2);
+                        }
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                };
+                databaseReferenceTemp.addListenerForSingleValueEvent(postListener);
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+
+                // ...
+            }
+        };
+        databaseReference.addListenerForSingleValueEvent(postListener);
+
 
     }
 
-/*
-    private void setQuestFinished() {
-        currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        firebaseDatabase = FirebaseDatabase.getInstance();
-        questReference = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("questToDo");
-
-
-        ValueEventListener postListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // Get Post object and use the values to update the UI
-                Quest quest = dataSnapshot.getValue(Quest.class);
-                quest.setFinished(true);
-
-
-                // nasetuju tam finished
-                DatabaseReference databaseReferenceTemp = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("finished");
-                databaseReferenceTemp.setValue(quest);
-
-                questReference.removeValue(); //smaze quest to do
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Getting Post failed, log a message
-
-                // ...
-            }
-        };
-        questReference.addValueEventListener(postListener);
-    }
-*/
-
- /*   private double getDistanceToDo() {
-        currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        firebaseDatabase = FirebaseDatabase.getInstance();
-        questReference = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("questToDo");
-
-
-        ValueEventListener postListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // Get Post object and use the values to update the UI
-                Quest quest = dataSnapshot.getValue(Quest.class);
-                distanceToDo = quest.getDistance();
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Getting Post failed, log a message
-
-                // ...
-            }
-        };
-        questReference.addValueEventListener(postListener);
-        return distanceToDo;
-    }*/
-/*
-    private double getCurrentDistance() {
-        currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        firebaseDatabase = FirebaseDatabase.getInstance();
-        questReference = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("current");
-
-
-        ValueEventListener postListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // Get Post object and use the values to update the UI
-                Quest quest = dataSnapshot.getValue(Quest.class);
-                currentDistance = quest.getDistance();
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Getting Post failed, log a message
-
-                // ...
-            }
-        };
-        questReference.addValueEventListener(postListener);
-        return currentDistance;
-    }*/
 }
