@@ -29,7 +29,7 @@ public class PlayerProfileActivity extends AppCompatActivity {
         progressBar.setIndeterminate(false);
 
 
-        Player player = new Player("bezdyjoe", "kozakev26@gmail.com", "Voldemort26", 10, 78);
+        Player player = new Player("bezdyjoe", "kozakev26@gmail.com", "Voldemort26", 10, 78, null);
 
 
         TextView textViewLevel = findViewById(R.id.textViewPlayerLevel);

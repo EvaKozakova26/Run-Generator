@@ -2,6 +2,8 @@ package cz.uhk.fim.runhk.model;
 
 import com.google.firebase.database.IgnoreExtraProperties;
 
+import java.util.List;
+
 /**
  * Created by EvaKozakova on 02.04.2018.
  */
@@ -15,12 +17,16 @@ public class Player {
     private int level;
     private int exps;
 
-    public Player(String nickname, String email, String password, int level, int exps) {
+    private List<Quest> questList;
+    private Quest questToDo;
+
+    public Player(String nickname, String email, String password, int level, int exps, List<Quest> questList) {
         this.nickname = nickname;
         this.email = email;
         this.password = password;
         this.level = level;
         this.exps = exps;
+        this.questList = questList;
     }
 
     public Player() {
@@ -64,5 +70,21 @@ public class Player {
 
     public void setExps(int exps) {
         this.exps = exps;
+    }
+
+    public List<Quest> getQuestList() {
+        return questList;
+    }
+
+    public void setQuestList(List<Quest> questList) {
+        this.questList = questList;
+    }
+
+    public Quest getQuestToDo() {
+        return questToDo;
+    }
+
+    public void setQuestToDo(Quest questToDo) {
+        this.questToDo = questToDo;
     }
 }

@@ -11,14 +11,20 @@ public class Quest {
 
     private int level;
     private double distance;
+    private double distanceToDo;
     private int exps;
     private double time;
+    private boolean finished;
 
-    public Quest(int level, double distance, int exps, double time) {
+    public Quest(int level, double distance, int exps, double time, boolean finished) {
         this.level = level;
         this.distance = distance;
         this.exps = exps;
         this.time = time;
+        this.finished = finished;
+    }
+
+    public Quest() {
     }
 
     public int getLevel() {
@@ -51,5 +57,21 @@ public class Quest {
 
     public void setTime(double time) {
         this.time = time;
+    }
+
+    public double getDistanceToDo() {
+        return distanceToDo;
+    }
+
+    public void setDistanceToDo(double distanceToDo) {
+        this.distanceToDo = distanceToDo;
+    }
+
+    public boolean isFinished() {
+        return finished;
+    }
+
+    public void setFinished(boolean finished) {
+        this.finished = finished;
     }
 }

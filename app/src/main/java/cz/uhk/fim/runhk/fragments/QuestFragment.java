@@ -45,6 +45,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cz.uhk.fim.runhk.R;
+import cz.uhk.fim.runhk.database.DatabaseHelper;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -83,7 +84,10 @@ public class QuestFragment extends Fragment implements View.OnClickListener {
     double lat;
     double lon;
 
+    private DatabaseHelper databaseHelper;
     private List<Double> listLaTLon;
+
+    double distance;
 
     public QuestFragment() {
         // Required empty public constructor
@@ -101,7 +105,7 @@ public class QuestFragment extends Fragment implements View.OnClickListener {
         chronometer.setFormat("%s");
 
         textViewDistance = view.findViewById(R.id.textViewDistance);
-
+        databaseHelper = new DatabaseHelper();
         listLaTLon = new ArrayList<>();
         mRequestingLocationUpdates = false;
 
@@ -130,8 +134,6 @@ public class QuestFragment extends Fragment implements View.OnClickListener {
                 mRequestingLocationUpdates = true;
                 if (mRequestingLocationUpdates && checkPermissions()) {
                     System.out.println(mRequestingLocationUpdates + "clickedGo");
-                    chronometer.setBase(SystemClock.elapsedRealtime());
-                    chronometer.start();
                     startLocationUpdates();
                     Toast.makeText(getContext(), "Start location updates", Toast.LENGTH_SHORT).show();
                 } else if (!checkPermissions()) {
@@ -144,6 +146,7 @@ public class QuestFragment extends Fragment implements View.OnClickListener {
                 Toast.makeText(getContext(), "Stop location updates", Toast.LENGTH_SHORT).show();
                 chronometer.stop();
                 stopLocationUpdates();
+                saveQuest(distance);
             default:
         }
     }
@@ -298,6 +301,7 @@ public class QuestFragment extends Fragment implements View.OnClickListener {
     }
 
     public void updateDistance(double distance) {
+        this.distance = distance;
         textViewDistance.setText(" ");
         textViewDistance.setText(String.format("%.2f", distance));
     }
@@ -468,6 +472,11 @@ public class QuestFragment extends Fragment implements View.OnClickListener {
                         updateLocation();
                     }
                 });
+
+    }
+
+    private void saveQuest(double distance) {
+        databaseHelper.saveQuest(distance);
 
     }
 

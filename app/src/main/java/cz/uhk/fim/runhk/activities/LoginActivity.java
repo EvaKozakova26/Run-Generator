@@ -17,8 +17,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import cz.uhk.fim.runhk.R;
 import cz.uhk.fim.runhk.model.Player;
+import cz.uhk.fim.runhk.model.Quest;
 
 public class LogInActivity extends AppCompatActivity {
 
@@ -69,7 +73,19 @@ public class LogInActivity extends AppCompatActivity {
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         if (!dataSnapshot.exists()) {
                             firebaseDatabase = FirebaseDatabase.getInstance();
-                            Player player = new Player("", currentUser.getEmail(), "", 1, 0);
+                            // ulozi uzivatele do db
+
+                            // ulozi pvni quest do db
+                            Quest quest = new Quest();
+                            quest.setDistanceToDo(1000);
+                            quest.setExps(50);
+                            quest.setFinished(false);
+                            quest.setLevel(1);
+
+                            List<Quest> quests = new ArrayList<>();
+
+                            Player player = new Player("", currentUser.getEmail(), "", 1, 0, quests);
+                            player.setQuestToDo(quest);
                             databaseReference = firebaseDatabase.getReference("user");
                             databaseReference.child(currentUser.getUid()).setValue(player);
 
