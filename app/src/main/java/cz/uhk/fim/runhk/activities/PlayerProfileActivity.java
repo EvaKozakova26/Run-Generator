@@ -11,13 +11,20 @@ import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import cz.uhk.fim.runhk.R;
 import cz.uhk.fim.runhk.model.Player;
 
 public class PlayerProfileActivity extends AppCompatActivity {
+
+    FirebaseDatabase firebaseDatabase;
+    DatabaseReference databaseReference;
+    FirebaseUser currentUser;
 
 
     @Override
@@ -29,15 +36,33 @@ public class PlayerProfileActivity extends AppCompatActivity {
         progressBar.setIndeterminate(false);
 
 
-        Player player = new Player("bezdyjoe", "kozakev26@gmail.com", "Voldemort26", 10, 78, null);
+        currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        databaseReference = firebaseDatabase.getReference("user").child(currentUser.getUid());
+
+        ValueEventListener posListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Player player = dataSnapshot.getValue(Player.class);
+
+                TextView textViewLevel = findViewById(R.id.textViewPlayerLevel);
+                TextView textViewNick = findViewById(R.id.textViewPlayerNickname);
+                textViewNick.setTextSize(15);
+
+                textViewLevel.setText("Level " + player.getLevel());
+                textViewNick.setText(player.getNickname());
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+        databaseReference.addListenerForSingleValueEvent(posListener);
 
 
-        TextView textViewLevel = findViewById(R.id.textViewPlayerLevel);
-        TextView textViewNick = findViewById(R.id.textViewPlayerNickname);
 
-        textViewLevel.setText("Level " + player.getLevel());
-        textViewNick.setText(player.getNickname());
-        textViewNick.setTextSize(15);
 
         Button btnGo = findViewById(R.id.btnGo);
         btnGo.setOnClickListener(new View.OnClickListener() {

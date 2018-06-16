@@ -61,11 +61,7 @@ public class LogInActivity extends AppCompatActivity {
 
             if (resultCode == RESULT_OK) {
                 // Successfully signed in
-
-
                 currentUser = FirebaseAuth.getInstance().getCurrentUser();
-
-
                 DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
                 DatabaseReference userNameRef = rootRef.child("user").child(currentUser.getUid());
                 ValueEventListener eventListener = new ValueEventListener() {
@@ -89,7 +85,15 @@ public class LogInActivity extends AppCompatActivity {
                             databaseReference = firebaseDatabase.getReference("user");
                             databaseReference.child(currentUser.getUid()).setValue(player);
 
+                            Intent intent = new Intent(LogInActivity.this, PlayerEditInfoActivity.class);
+                            finish();
+                            startActivity(intent);
+
+
                         } else {
+                            Intent intent = new Intent(LogInActivity.this, PlayerProfileActivity.class);
+                            finish();
+                            startActivity(intent);
                             System.out.println("uz tu je tak cuus");
                         }
                     }
@@ -98,14 +102,7 @@ public class LogInActivity extends AppCompatActivity {
                     public void onCancelled(DatabaseError databaseError) {
                     }
                 };
-
                 userNameRef.addListenerForSingleValueEvent(eventListener);
-
-
-                Intent intent = new Intent(this, PlayerProfileActivity.class);
-                finish();
-                startActivity(intent);
-
             } else {
                 Toast.makeText(this, "Špatné jméno nebo heslo", Toast.LENGTH_SHORT).show();
 
