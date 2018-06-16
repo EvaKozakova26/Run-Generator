@@ -20,12 +20,12 @@ public class DatabaseHelper {
     private DatabaseReference questReference;
 
     boolean finished;
-    boolean getVysledekDone;
     double distanceToDo;
     int exps;
 
     public void saveQuest(double distance) {
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        firebaseDatabase = FirebaseDatabase.getInstance();
         finished = false;
         getVysledek(distance);
     }
@@ -40,7 +40,6 @@ public class DatabaseHelper {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // Get Post object and use the values to update the UI
                 Quest quest = dataSnapshot.getValue(Quest.class);
-
                 if (!finished) {
                     if (distance >= quest.getDistanceToDo()) {
 
@@ -54,8 +53,6 @@ public class DatabaseHelper {
                         // nstavit hodjnoty plejerovi
                         updatePlayer();
 
-                        // createQuest();
-                        System.out.println("vysledek je true");
                         finished = true;
 
                         questReference.removeValue();
@@ -63,7 +60,6 @@ public class DatabaseHelper {
 
                     } else {
                         // nic se nestancem quest zustane false a zavloa se jen hlaska, musíš to zkusit znovu :D
-                        System.out.println("vysledek je false");
                         finished = false;
                     }
 
@@ -107,10 +103,9 @@ public class DatabaseHelper {
                 if (level >= 16 && level <= 20) {
                     distanceToDo = random.nextInt(6000) + 6000;
                 }
-                /////////////////////////
+
 
                 exps = (int) (distanceToDo / 10);
-
 
                 Quest currentQuestToDo = new Quest();
                 currentQuestToDo.setDistanceToDo(distanceToDo);
@@ -134,15 +129,12 @@ public class DatabaseHelper {
     }
 
     private void updatePlayer() {
-        currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("finished");
 
         ValueEventListener postListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Quest quest = dataSnapshot.getValue(Quest.class);
-
                 DatabaseReference databaseReferenceTemp = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("exps");
                 databaseReferenceTemp.setValue(quest.getExps());
 
@@ -150,10 +142,7 @@ public class DatabaseHelper {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         int exps = dataSnapshot.getValue(Integer.class);
-                        if (exps >= 50) {
-                            DatabaseReference databaseReferenceTemp = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("level");
-                            databaseReferenceTemp.setValue(2);
-                        }
+                        setLevel(exps);
 
                     }
 
@@ -176,6 +165,42 @@ public class DatabaseHelper {
         databaseReference.addListenerForSingleValueEvent(postListener);
 
 
+    }
+
+    private void setLevel(final int exps) {
+        DatabaseReference databaseReferenceTemp = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("level");
+        ValueEventListener postListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                final int level = dataSnapshot.getValue(Integer.class);
+                DatabaseReference dbReference = firebaseDatabase.getReference("level").child(String.valueOf(level));
+                ValueEventListener postListener = new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        int levelExps = dataSnapshot.getValue(Integer.class);
+                        if (exps > levelExps) {
+                            DatabaseReference levelPlayerReference = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("level");
+                            levelPlayerReference.setValue(level + 1);
+                        }
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                };
+                dbReference.addListenerForSingleValueEvent(postListener);
+
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+        databaseReferenceTemp.addListenerForSingleValueEvent(postListener);
     }
 
 }
