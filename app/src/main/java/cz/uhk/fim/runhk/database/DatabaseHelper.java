@@ -48,7 +48,7 @@ public class DatabaseHelper {
                         quest.setFinished(true);
                         quest.setDistance(distance);
                         DatabaseReference databaseReferenceTemp = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("finished");
-                        databaseReferenceTemp.setValue(quest);
+                        databaseReferenceTemp.push().setValue(quest);
 
                         // nstavit hodjnoty plejerovi
                         updatePlayer();

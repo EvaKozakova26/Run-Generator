@@ -1,9 +1,9 @@
 package cz.uhk.fim.runhk.activities;
 
-import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -14,54 +14,69 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import cz.uhk.fim.runhk.fragments.DetailQuestFragment;
-import cz.uhk.fim.runhk.fragments.QuestListFragment;
-import cz.uhk.fim.runhk.R;
-import cz.uhk.fim.runhk.model.Player;
+import java.util.ArrayList;
+import java.util.List;
 
-public class QuestsActivity extends AppCompatActivity implements QuestListFragment.OnItemSelectedInterface {
+import cz.uhk.fim.runhk.adapters.OnItemClickedInterface;
+import cz.uhk.fim.runhk.adapters.QuestViewAdapter;
+import cz.uhk.fim.runhk.R;
+import cz.uhk.fim.runhk.model.Quest;
+
+public class QuestsActivity extends AppCompatActivity implements OnItemClickedInterface {
 
     private FirebaseDatabase firebaseDatabase;
-    private DatabaseReference playerReference;
+    private DatabaseReference databaseReference;
     private FirebaseUser currentUser;
+
+    private RecyclerView recyclerView;
+    private QuestViewAdapter adapter;
+
+    private RecyclerView.LayoutManager layoutManager;
+
+    private List<Quest> questList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quests);
-
-        QuestListFragment questListFragment = (QuestListFragment) getSupportFragmentManager().findFragmentById(R.id.fragmentList);
-        questListFragment.setOnItemSelectedInterface(this);
+        recyclerView = findViewById(R.id.recyclerView);
 
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         firebaseDatabase = FirebaseDatabase.getInstance();
-        playerReference = firebaseDatabase.getReference("user").child(currentUser.getUid());
+        databaseReference = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("finished");
 
+        layoutManager = new LinearLayoutManager(this); // kontext - odkaz na pozadovanoou tridu
+        recyclerView.setLayoutManager(layoutManager);
+
+        questList = new ArrayList<>();
 
         ValueEventListener postListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                // Get Post object and use the values to update the UI
-                Player player = dataSnapshot.getValue(Player.class);
-                Toast.makeText(QuestsActivity.this, player.getEmail(), Toast.LENGTH_SHORT).show();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Quest quest = snapshot.getValue(Quest.class);
+                    questList.add(quest);
+
+                    adapter = new QuestViewAdapter(questList);
+                    adapter.setOnItemClickedInterface(QuestsActivity.this);
+                    recyclerView.setAdapter(adapter);
+                }
+
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                // Getting Post failed, log a message
 
-                // ...
             }
         };
-        playerReference.addValueEventListener(postListener);
+        databaseReference.addValueEventListener(postListener);
+
 
     }
 
-
     @Override
-    public void onItemSelected(View view) {
-            Intent intent = new Intent(this, DetailSectionActivity.class);
-            intent.putExtra("section", view.getId());
-            startActivity(intent);
-        }
+    public void onItemClicked(int position) {
+        Toast.makeText(this, "clikc", Toast.LENGTH_SHORT).show();
+
+    }
 }
