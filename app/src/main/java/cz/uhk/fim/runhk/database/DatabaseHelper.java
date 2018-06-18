@@ -22,6 +22,7 @@ public class DatabaseHelper {
     boolean finished;
     double distanceToDo;
     int exps;
+    int currentQuestExps;
 
     public void saveQuest(double distance) {
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -40,6 +41,7 @@ public class DatabaseHelper {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // Get Post object and use the values to update the UI
                 Quest quest = dataSnapshot.getValue(Quest.class);
+                currentQuestExps = quest.getExps();
                 if (!finished) {
                     if (distance >= quest.getDistanceToDo()) {
 
@@ -70,8 +72,6 @@ public class DatabaseHelper {
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 // Getting Post failed, log a message
-
-                // ...
             }
         };
         questReference.addListenerForSingleValueEvent(postListener);
@@ -104,7 +104,6 @@ public class DatabaseHelper {
                     distanceToDo = random.nextInt(6000) + 6000;
                 }
 
-
                 exps = (int) (distanceToDo / 10);
 
                 Quest currentQuestToDo = new Quest();
@@ -129,43 +128,21 @@ public class DatabaseHelper {
     }
 
     private void updatePlayer() {
-        databaseReference = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("finished");
-
+        final DatabaseReference databaseReferenceTemp = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("exps");
         ValueEventListener postListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Quest quest = dataSnapshot.getValue(Quest.class);
-                DatabaseReference databaseReferenceTemp = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("exps");
-                databaseReferenceTemp.setValue(quest.getExps());
-
-                ValueEventListener postListener = new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        int exps = dataSnapshot.getValue(Integer.class);
-                        setLevel(exps);
-
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                };
-                databaseReferenceTemp.addListenerForSingleValueEvent(postListener);
-
+                databaseReferenceTemp.setValue(currentQuestExps + dataSnapshot.getValue(Integer.class));
+                setLevel((dataSnapshot.getValue(Integer.class)) + currentQuestExps);
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                // Getting Post failed, log a message
-
-                // ...
             }
         };
-        databaseReference.addListenerForSingleValueEvent(postListener);
+        databaseReferenceTemp.addListenerForSingleValueEvent(postListener);
 
-
-    }
+            }
 
     private void setLevel(final int exps) {
         DatabaseReference databaseReferenceTemp = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("level");
@@ -191,8 +168,6 @@ public class DatabaseHelper {
                     }
                 };
                 dbReference.addListenerForSingleValueEvent(postListener);
-
-
             }
 
             @Override
