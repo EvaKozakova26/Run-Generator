@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.SeekBar;
 import android.widget.TextView;
 
 import java.util.List;
@@ -19,6 +18,8 @@ public class QuestViewAdapter extends RecyclerView.Adapter<QuestViewAdapter.Fini
     private List<Quest> questList;
 
     private OnItemClickedInterface onItemClickedInterface;
+
+    int position;
 
     public QuestViewAdapter(List<Quest> questList) {
         this.questList = questList;
@@ -65,18 +66,21 @@ public class QuestViewAdapter extends RecyclerView.Adapter<QuestViewAdapter.Fini
             textViewTime = itemView.findViewById(R.id.textViewFinishedTime);
             btnDetail = itemView.findViewById(R.id.btnGoToDetail);
 
+
         }
 
         public void setQuest(final Quest quest) {
             textViewDistance.setText(String.valueOf(quest.getDistance()));
             textViewExps.setText(String.valueOf(quest.getExps()));
+            position = getAdapterPosition();
 
             btnDetail.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    onItemClickedInterface.onItemClicked(getAdapterPosition());
+                    onItemClickedInterface.onButtonClicked(getAdapterPosition());
                 }
             });
+
 
         }
 

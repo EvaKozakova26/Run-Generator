@@ -1,9 +1,11 @@
 package cz.uhk.fim.runhk.activities;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -20,6 +22,7 @@ import java.util.List;
 import cz.uhk.fim.runhk.adapters.OnItemClickedInterface;
 import cz.uhk.fim.runhk.adapters.QuestViewAdapter;
 import cz.uhk.fim.runhk.R;
+import cz.uhk.fim.runhk.fragments.DetailQuestFragment;
 import cz.uhk.fim.runhk.model.Quest;
 
 public class QuestsActivity extends AppCompatActivity implements OnItemClickedInterface {
@@ -35,6 +38,8 @@ public class QuestsActivity extends AppCompatActivity implements OnItemClickedIn
 
     private List<Quest> questList;
 
+    boolean isLandscape;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +54,10 @@ public class QuestsActivity extends AppCompatActivity implements OnItemClickedIn
         recyclerView.setLayoutManager(layoutManager);
 
         questList = new ArrayList<>();
+
+        if (findViewById(R.id.fragmentDetailContainer) != null) {
+            isLandscape = true;
+        }
 
         ValueEventListener postListener = new ValueEventListener() {
             @Override
@@ -72,11 +81,29 @@ public class QuestsActivity extends AppCompatActivity implements OnItemClickedIn
         databaseReference.addValueEventListener(postListener);
 
 
+
     }
 
     @Override
-    public void onItemClicked(int position) {
-        Toast.makeText(this, "clikc", Toast.LENGTH_SHORT).show();
+    public void onButtonClicked(int position) {
+        Quest quest = questList.get(position);
+        Toast.makeText(this, String.valueOf(quest.getDistance()), Toast.LENGTH_SHORT).show();
+
+        if (isLandscape) {
+            DetailQuestFragment detailQuestFragment = new DetailQuestFragment();
+            Bundle bundle = new Bundle();
+            bundle.putDouble("distance", quest.getDistance());
+            detailQuestFragment.setArguments(bundle);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragmentDetailContainer, detailQuestFragment) // kam to chci a co
+                    .commit();
+        } else {
+            Intent intent = new Intent(this, DetailSectionActivity.class);
+            intent.putExtra("distance", quest.getDistance());
+            startActivity(intent);
+        }
+
+
 
     }
 }

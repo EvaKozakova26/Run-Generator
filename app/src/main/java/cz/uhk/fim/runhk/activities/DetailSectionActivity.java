@@ -13,16 +13,16 @@ public class DetailSectionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_section);
 
-        int section = getIntent().getIntExtra("section", 0);
+        double distance = getIntent().getDoubleExtra("distance", 0);
 
-        switch (section) {
-            case R.id.txtRandom:
-                DetailQuestFragment detailQuestFragment = new DetailQuestFragment();
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragmentContainer, detailQuestFragment) // kam to chci a co
-                        .commit();
 
-                break;
-        }
+        Bundle bundle = new Bundle();
+        bundle.putDouble("distance", distance);
+        DetailQuestFragment detailQuestFragment = new DetailQuestFragment();
+        detailQuestFragment.setArguments(bundle);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragmentDetailContainer, detailQuestFragment) // kam to chci a co
+                .commit();
+
     }
 }
