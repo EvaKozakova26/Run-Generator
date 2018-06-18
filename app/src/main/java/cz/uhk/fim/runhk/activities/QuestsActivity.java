@@ -1,6 +1,7 @@
 package cz.uhk.fim.runhk.activities;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -69,6 +70,7 @@ public class QuestsActivity extends AppCompatActivity implements OnItemClickedIn
                     adapter = new QuestViewAdapter(questList);
                     adapter.setOnItemClickedInterface(QuestsActivity.this);
                     recyclerView.setAdapter(adapter);
+
                 }
 
             }
@@ -88,6 +90,8 @@ public class QuestsActivity extends AppCompatActivity implements OnItemClickedIn
     public void onButtonClicked(int position) {
         Quest quest = questList.get(position);
         Toast.makeText(this, String.valueOf(quest.getDistance()), Toast.LENGTH_SHORT).show();
+//        View itemSelected = layoutManager.findViewByPosition(position);
+//        itemSelected.setBackgroundColor(Color.RED);
 
         if (isLandscape) {
             DetailQuestFragment detailQuestFragment = new DetailQuestFragment();
