@@ -2,6 +2,7 @@ package cz.uhk.fim.runhk.model;
 
 import com.google.firebase.database.IgnoreExtraProperties;
 
+import java.net.URI;
 import java.util.List;
 
 /**
@@ -19,6 +20,8 @@ public class Player {
 
     private List<Quest> questList;
     private Quest questToDo;
+
+    private boolean isMale;
 
     public Player(String nickname, String email, String password, int level, int exps, List<Quest> questList) {
         this.nickname = nickname;
@@ -86,5 +89,13 @@ public class Player {
 
     public void setQuestToDo(Quest questToDo) {
         this.questToDo = questToDo;
+    }
+
+    public boolean isMale() {
+        return isMale;
+    }
+
+    public void setMale(boolean male) {
+        isMale = male;
     }
 }

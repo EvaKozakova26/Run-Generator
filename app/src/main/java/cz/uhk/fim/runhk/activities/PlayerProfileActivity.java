@@ -1,13 +1,18 @@
 package cz.uhk.fim.runhk.activities;
 
 import android.content.Intent;
+import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -15,6 +20,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
 import cz.uhk.fim.runhk.R;
 import cz.uhk.fim.runhk.model.Player;
@@ -25,6 +33,11 @@ public class PlayerProfileActivity extends AppCompatActivity {
     DatabaseReference databaseReference;
     FirebaseUser currentUser;
     ProgressBar progressBar;
+
+    ImageView imageViewProfile;
+
+    FirebaseStorage storage;
+    StorageReference imgReference;
 
 
 
@@ -38,7 +51,11 @@ public class PlayerProfileActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progress_exps);
         progressBar.setIndeterminate(false);
 
+        imageViewProfile = findViewById(R.id.imgProfile);
+        storage = FirebaseStorage.getInstance();
+
         setPlayerStatsAndInfo();
+
 
         Button btnGo = findViewById(R.id.btnGo);
         btnGo.setOnClickListener(new View.OnClickListener() {
@@ -90,7 +107,50 @@ public class PlayerProfileActivity extends AppCompatActivity {
                     }
                 };
                 databaseReferenceTemp.addListenerForSingleValueEvent(posListener);
+            }
 
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+
+        };
+        databaseReference.addListenerForSingleValueEvent(posListener);
+
+        final DatabaseReference databaseReferencetemp = databaseReference.child("isMale");
+        ValueEventListener listener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                boolean isMale = dataSnapshot.getValue(Boolean.class);
+
+                if (isMale) {
+                    imgReference = storage.getReference().child("images/male.png");
+                    imgReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            Picasso.get().load(uri).into(imageViewProfile);
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+
+                        }
+                    });
+
+                } else {
+                    imgReference = storage.getReference().child("images/female.png");
+                    imgReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            Picasso.get().load(uri).into(imageViewProfile);
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+
+                        }
+                    });
+                }
             }
 
             @Override
@@ -98,6 +158,7 @@ public class PlayerProfileActivity extends AppCompatActivity {
 
             }
         };
-        databaseReference.addListenerForSingleValueEvent(posListener);
+        databaseReferencetemp.addListenerForSingleValueEvent(listener);
+
     }
 }

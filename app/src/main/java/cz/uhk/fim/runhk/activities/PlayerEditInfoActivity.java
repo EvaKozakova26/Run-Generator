@@ -34,6 +34,8 @@ public class PlayerEditInfoActivity extends AppCompatActivity {
     StorageReference femaleRefImg;
     StorageReference maleRefImg;
 
+    private boolean isMale;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +50,20 @@ public class PlayerEditInfoActivity extends AppCompatActivity {
 
         createProfilePictures();
 
+        imgFemale.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                isMale = false;
+            }
+        });
+
+        imgMale.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                isMale = true;
+            }
+        });
+
         final EditText editTextNickname = findViewById(R.id.editTextNickname);
 
         Button btnDone = findViewById(R.id.btnEditingDone);
@@ -58,8 +74,10 @@ public class PlayerEditInfoActivity extends AppCompatActivity {
 
                 currentUser = FirebaseAuth.getInstance().getCurrentUser();
                 firebaseDatabase = FirebaseDatabase.getInstance();
-                databaseReference = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("nickname");
-                databaseReference.setValue(nickname);
+                databaseReference = firebaseDatabase.getReference("user").child(currentUser.getUid());
+                databaseReference.child("nickname").setValue(nickname);
+                databaseReference.child("isMale").setValue(isMale);
+
 
                 Intent intent = new Intent(PlayerEditInfoActivity.this, PlayerProfileActivity.class);
                 finish();
@@ -74,6 +92,7 @@ public class PlayerEditInfoActivity extends AppCompatActivity {
             @Override
             public void onSuccess(Uri uri) {
                 Picasso.get().load(uri).into(imgFemale);
+
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
