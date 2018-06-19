@@ -24,7 +24,7 @@ import cz.uhk.fim.runhk.R;
 import cz.uhk.fim.runhk.model.Player;
 import cz.uhk.fim.runhk.model.Quest;
 
-public class LogInActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity {
 
     private static final int RC_SIGN_IN = 123;
 
@@ -85,13 +85,13 @@ public class LogInActivity extends AppCompatActivity {
                             databaseReference = firebaseDatabase.getReference("user");
                             databaseReference.child(currentUser.getUid()).setValue(player);
 
-                            Intent intent = new Intent(LogInActivity.this, PlayerEditInfoActivity.class);
+                            Intent intent = new Intent(LoginActivity.this, PlayerEditInfoActivity.class);
                             finish();
                             startActivity(intent);
 
 
                         } else {
-                            Intent intent = new Intent(LogInActivity.this, PlayerProfileActivity.class);
+                            Intent intent = new Intent(LoginActivity.this, PlayerProfileActivity.class);
                             finish();
                             startActivity(intent);
                             System.out.println("uz tu je tak cuus");

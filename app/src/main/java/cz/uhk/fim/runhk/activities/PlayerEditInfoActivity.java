@@ -47,6 +47,8 @@ public class PlayerEditInfoActivity extends AppCompatActivity {
         maleRefImg = storage.getReference().child("images/male.png");
         imgFemale = findViewById(R.id.imgViewFemale);
         imgMale = findViewById(R.id.imgViewMale);
+        imgFemale.setAlpha(0.5f);
+        imgMale.setAlpha(0.5f);
 
         createProfilePictures();
 
@@ -54,6 +56,8 @@ public class PlayerEditInfoActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 isMale = false;
+                imgFemale.setAlpha(1.0f);
+                imgMale.setAlpha(0.5f);
             }
         });
 
@@ -61,6 +65,8 @@ public class PlayerEditInfoActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 isMale = true;
+                imgFemale.setAlpha(0.5f);
+                imgMale.setAlpha(1.0f);
             }
         });
 
