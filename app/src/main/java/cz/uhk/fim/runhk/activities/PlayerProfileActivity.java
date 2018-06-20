@@ -74,6 +74,15 @@ public class PlayerProfileActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        Button btnRankings = findViewById(R.id.btnPlayersList);
+        btnRankings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(PlayerProfileActivity.this, RankingActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private void setPlayerStatsAndInfo() {

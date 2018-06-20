@@ -53,6 +53,7 @@
         <activity
             android:name=".activities.PlayerEditInfoActivity"
             android:screenOrientation="portrait" />
+        <activity android:name=".activities.RankingActivity"></activity>
     </application>
 
 </manifest>

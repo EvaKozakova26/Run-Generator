@@ -44,7 +44,7 @@
         android:id="@+id/btnGo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="RUN FOR LIFE"
+        android:text="@string/newChallenge"
         android:background="@drawable/button_shape_profile"
         android:layout_marginBottom="10dp"
         android:layout_gravity="center" />
@@ -53,7 +53,7 @@
         android:id="@+id/btnQuestList"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="See my quests"
+        android:text="@string/seeChallenges"
         android:background="@drawable/button_shape_profile"
         android:layout_marginBottom="10dp"
         android:layout_gravity="center" />
