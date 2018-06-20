@@ -6,4 +6,6 @@
     <color name="btnRunColor">#2ad</color>
     <color name="imageBackground">#0fcc18</color>
     <color name="progressBarColor">#2ab330</color>
+    <color name="welcomeText">#303F9F</color>
+    <color name="mainBackground">#B5F8B5</color>
 </resources>

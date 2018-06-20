@@ -1,15 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.LoginActivity">
+    tools:context=".activities.LoginActivity"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_marginTop="40dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="center">
+
+        <TextView
+            android:id="@+id/textViewWelcome"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/welcome"
+            android:textSize="40dp"
+            android:layout_gravity="center"
+            android:textColor="@color/welcomeText" />
+
+        <TextView
+            android:id="@+id/textViewTo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textColor="@color/welcomeText"
+            android:text="TO"
+            android:textSize="20dp" />
+
+        <TextView
+
+            android:id="@+id/textViewRunChallenge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="RUN CHALLENGE"
+            android:textSize="40dp"
+            android:textColor="@color/welcomeText"
+            android:layout_gravity="center" />
+
+    </LinearLayout>
+
 
     <Button
         android:id="@+id/btnLogin"
-        android:layout_width="match_parent"
+        android:layout_marginTop="80dp"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/action_sign_in" />
+        android:text="@string/action_sign_in"
+        android:textColor="#292B2B"
+        android:textSize="20dp"
+        android:fontFamily="@string/fui_sign_in_with_google"
 
-</android.support.constraint.ConstraintLayout>
+        android:background="@drawable/buttonshape"
+        android:shadowColor="#A8A8A8"
+        android:shadowDx="0"
+        android:shadowDy="0" />
+
+</LinearLayout>
