@@ -20,11 +20,13 @@ public class ChallengeViewAdapter extends RecyclerView.Adapter<ChallengeViewAdap
     private OnItemClickedInterface onItemClickedInterface;
 
     private int selected_position = 0;
+    private boolean isLandscape;
 
     FinishedQuestsViewHolder viewHolder;
 
-    public ChallengeViewAdapter(List<Challenge> challengeList) {
+    public ChallengeViewAdapter(List<Challenge> challengeList, boolean isLandscape) {
         this.challengeList = challengeList;
+        this.isLandscape = isLandscape;
     }
 
     @NonNull
@@ -42,8 +44,9 @@ public class ChallengeViewAdapter extends RecyclerView.Adapter<ChallengeViewAdap
     public void onBindViewHolder(@NonNull FinishedQuestsViewHolder holder, int position) {
         Challenge challenge = challengeList.get(position);
         holder.setQuest(challenge);
-        holder.itemView.setBackgroundColor(selected_position == position ? Color.GREEN : Color.TRANSPARENT);
-
+        if (isLandscape) {
+            holder.itemView.setBackgroundColor(selected_position == position ? Color.rgb(123, 241, 163) : Color.TRANSPARENT);
+        }
     }
 
     @Override

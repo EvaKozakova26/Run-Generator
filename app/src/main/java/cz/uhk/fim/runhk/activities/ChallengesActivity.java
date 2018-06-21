@@ -68,7 +68,7 @@ public class ChallengesActivity extends AppCompatActivity implements OnItemClick
 
                 }
                 Collections.reverse(challengeList);
-                adapter = new ChallengeViewAdapter(challengeList);
+                adapter = new ChallengeViewAdapter(challengeList, isLandscape);
                 adapter.setOnItemClickedInterface(ChallengesActivity.this);
                 recyclerView.setAdapter(adapter);
 

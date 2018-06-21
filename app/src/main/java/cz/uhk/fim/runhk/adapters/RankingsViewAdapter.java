@@ -63,7 +63,7 @@ public class RankingsViewAdapter extends RecyclerView.Adapter<RankingsViewAdapte
         public void setPlayer(final Player player) {
             textViewNickname.setText(player.getNickname());
             textViewLevel.setText(String.valueOf(player.getLevel()));
-            textViewExps.setText(String.valueOf(player.getExps()));
+            textViewExps.setText(String.valueOf(player.getExps()) + " experience points");
 
         }
 
