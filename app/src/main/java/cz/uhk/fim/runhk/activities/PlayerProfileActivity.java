@@ -82,7 +82,7 @@ public class PlayerProfileActivity extends NavigationDrawerActivity {
         btnRankings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(PlayerProfileActivity.this, NavigationDrawerActivity.class);
+                Intent intent = new Intent(PlayerProfileActivity.this, RankingActivity.class);
                 startActivity(intent);
             }
         });

@@ -14,8 +14,11 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
@@ -36,12 +39,18 @@ public class PlayerEditInfoActivity extends AppCompatActivity {
 
     private boolean isMale;
 
+    EditText editTextNickname;
+    Button btnDone;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player_edit_info);
 
+        firebaseDatabase = FirebaseDatabase.getInstance();
         FirebaseStorage storage = FirebaseStorage.getInstance();
+        currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        databaseReference = firebaseDatabase.getReference("user").child(currentUser.getUid());
 
         femaleRefImg = storage.getReference().child("images/female.png");
         maleRefImg = storage.getReference().child("images/male.png");
@@ -50,7 +59,11 @@ public class PlayerEditInfoActivity extends AppCompatActivity {
         imgFemale.setAlpha(0.5f);
         imgMale.setAlpha(0.5f);
 
+        editTextNickname = findViewById(R.id.editTextNickname);
+        btnDone = findViewById(R.id.btnEditingDone);
+
         createProfilePictures();
+        getExistingValues();
 
         imgFemale.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,24 +83,10 @@ public class PlayerEditInfoActivity extends AppCompatActivity {
             }
         });
 
-        final EditText editTextNickname = findViewById(R.id.editTextNickname);
-
-        Button btnDone = findViewById(R.id.btnEditingDone);
         btnDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String nickname = String.valueOf(editTextNickname.getText());
-
-                currentUser = FirebaseAuth.getInstance().getCurrentUser();
-                firebaseDatabase = FirebaseDatabase.getInstance();
-                databaseReference = firebaseDatabase.getReference("user").child(currentUser.getUid());
-                databaseReference.child("nickname").setValue(nickname);
-                databaseReference.child("isMale").setValue(isMale);
-
-
-                Intent intent = new Intent(PlayerEditInfoActivity.this, PlayerProfileActivity.class);
-                finish();
-                startActivity(intent);
+                saveValues();
             }
         });
 
@@ -118,5 +117,32 @@ public class PlayerEditInfoActivity extends AppCompatActivity {
                 //
             }
         });
+    }
+
+    private void getExistingValues() {
+        DatabaseReference databaseReferenceTemp = databaseReference.child("nickname");
+        ValueEventListener valueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String existingNickname = dataSnapshot.getValue(String.class);
+                editTextNickname.setText(existingNickname);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+        databaseReferenceTemp.addListenerForSingleValueEvent(valueEventListener);
+    }
+
+    private void saveValues() {
+        String nickname = String.valueOf(editTextNickname.getText());
+        databaseReference.child("nickname").setValue(nickname);
+        databaseReference.child("isMale").setValue(isMale);
+
+        Intent intent = new Intent(PlayerEditInfoActivity.this, PlayerProfileActivity.class);
+        finish();
+        startActivity(intent);
     }
 }
