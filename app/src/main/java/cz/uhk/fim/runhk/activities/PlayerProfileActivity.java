@@ -27,7 +27,7 @@ import com.squareup.picasso.Picasso;
 import cz.uhk.fim.runhk.R;
 import cz.uhk.fim.runhk.model.Player;
 
-public class PlayerProfileActivity extends AppCompatActivity {
+public class PlayerProfileActivity extends NavigationDrawerActivity {
 
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
@@ -44,9 +44,12 @@ public class PlayerProfileActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_player_profile);
+
+
+        getLayoutInflater().inflate(R.layout.activity_player_profile, frameLayout);
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         firebaseDatabase = FirebaseDatabase.getInstance();
+
 
         progressBar = findViewById(R.id.progress_exps);
         progressBar.setIndeterminate(false);
@@ -79,7 +82,7 @@ public class PlayerProfileActivity extends AppCompatActivity {
         btnRankings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(PlayerProfileActivity.this, RankingActivity.class);
+                Intent intent = new Intent(PlayerProfileActivity.this, NavigationDrawerActivity.class);
                 startActivity(intent);
             }
         });

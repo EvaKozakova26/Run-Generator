@@ -47,13 +47,21 @@
         <activity android:name=".activities.MainActivity" />
         <activity android:name=".activities.ChallengesActivity" />
         <activity android:name=".activities.DetailSectionActivity" />
+
         <activity
             android:name=".activities.PlayerProfileActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activities.PlayerEditInfoActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".activities.RankingActivity"></activity>
+
+        <activity android:name=".activities.RankingActivity" />
+
+        <activity
+            android:name=".activities.NavigationDrawerActivity"
+            android:label="@string/title_activity_navigation_drawer"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

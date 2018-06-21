@@ -6,7 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="cz.uhk.fim.runhk.activities.PlayerProfileActivity"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:layout_marginTop="40dp">
 
     <ImageView
         android:id="@+id/imgProfile"

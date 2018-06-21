@@ -35,7 +35,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-database:15.0.0'
     implementation 'com.google.firebase:firebase-storage:15.0.0'
     implementation 'com.squareup.picasso:picasso:2.71828'
-    implementation  'com.firebaseui:firebase-ui-storage:0.6.0'
+    implementation 'com.firebaseui:firebase-ui-storage:0.6.0'
 
 }
 
