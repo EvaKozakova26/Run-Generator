@@ -46,6 +46,8 @@ public class LoginActivity extends AppCompatActivity {
                 startActivityForResult(
                         AuthUI.getInstance()
                                 .createSignInIntentBuilder()
+                                .setLogo(R.drawable.ic_person_black_24dp)      // Set logo drawable
+                                .setTheme(R.style.Theme_AppCompat_Light)
                                 .build(),
                         RC_SIGN_IN);
             }
@@ -94,7 +96,6 @@ public class LoginActivity extends AppCompatActivity {
                             Intent intent = new Intent(LoginActivity.this, PlayerProfileActivity.class);
                             finish();
                             startActivity(intent);
-                            System.out.println("uz tu je tak cuus");
                         }
                     }
 
