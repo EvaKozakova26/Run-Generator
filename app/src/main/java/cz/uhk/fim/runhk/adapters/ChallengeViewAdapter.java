@@ -19,8 +19,6 @@ public class ChallengeViewAdapter extends RecyclerView.Adapter<ChallengeViewAdap
 
     private OnItemClickedInterface onItemClickedInterface;
 
-    int position;
-
     private int selected_position = 0;
 
     FinishedQuestsViewHolder viewHolder;
@@ -59,22 +57,16 @@ public class ChallengeViewAdapter extends RecyclerView.Adapter<ChallengeViewAdap
 
 
     public class FinishedQuestsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        private TextView textViewDistance;
-        private TextView textViewExps;
-
+        private TextView textViewDate;
 
         public FinishedQuestsViewHolder(View itemView) {
             super(itemView);
-            textViewDistance = itemView.findViewById(R.id.textViewFinishedDistance);
-            textViewExps = itemView.findViewById(R.id.textViewFinishedExps);
+            textViewDate = itemView.findViewById(R.id.textViewDate);
             itemView.setOnClickListener(this);
-
         }
 
         public void setQuest(final Challenge challenge) {
-         /*   textViewDistance.setText(String.valueOf(challenge.getDistance()));
-            textViewExps.setText(String.valueOf(challenge.getExps()));*/
-
+            textViewDate.setText(challenge.getDate());
         }
 
 

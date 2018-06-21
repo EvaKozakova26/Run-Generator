@@ -8,6 +8,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Random;
 
 import cz.uhk.fim.runhk.model.Challenge;
@@ -34,7 +37,7 @@ public class DatabaseHelper {
     public boolean getVysledek(final double distance) {
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         firebaseDatabase = FirebaseDatabase.getInstance();
-        questReference = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("questToDo");
+        questReference = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("challengeToDo");
 
         ValueEventListener postListener = new ValueEventListener() {
             @Override
@@ -45,12 +48,18 @@ public class DatabaseHelper {
                 if (!finished) {
                     if (distance >= challenge.getDistanceToDo()) {
 
+                        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+                        Date date = new Date();
+                        System.out.println(dateFormat.format(date));
+
                         //...
                         // najit v dbquest, dát na true a uložit ho pod child("FINISHED");
+                        challenge.setDate(dateFormat.format(date));
                         challenge.setFinished(true);
                         challenge.setDistance(distance);
                         DatabaseReference databaseReferenceTemp = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("finished");
                         databaseReferenceTemp.push().setValue(challenge);
+
 
                         // nstavit hodjnoty plejerovi
                         updatePlayer();
@@ -111,7 +120,7 @@ public class DatabaseHelper {
                 currentChallengeToDo.setExps(exps);
 
                 firebaseDatabase = FirebaseDatabase.getInstance();
-                databaseReference = firebaseDatabase.getReference().child("user").child(currentUser.getUid()).child("questToDo");
+                databaseReference = firebaseDatabase.getReference().child("user").child(currentUser.getUid()).child("challengeToDo");
                 databaseReference.setValue(currentChallengeToDo);
 
 

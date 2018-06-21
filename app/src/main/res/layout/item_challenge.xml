@@ -10,15 +10,15 @@
         android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/textViewFinishedDistance"
+            android:id="@+id/textViewChallenge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Challenge"
+            android:text="@string/challenge"
             android:textSize="25dp"
             android:layout_marginRight="10dp" />
 
         <TextView
-            android:id="@+id/textViewFinishedExps"
+            android:id="@+id/textViewDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="25dp"

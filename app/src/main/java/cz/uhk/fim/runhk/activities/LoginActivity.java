@@ -18,6 +18,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import cz.uhk.fim.runhk.R;
@@ -79,9 +80,11 @@ public class LoginActivity extends AppCompatActivity {
                             challenge.setExps(50);
                             challenge.setFinished(false);
                             challenge.setLevel(1);
+                            challenge.setDate(" s");
 
                             List<Challenge> challenges = new ArrayList<>();
 
+                            // ulozi hrace
                             Player player = new Player("", currentUser.getEmail(), "", 1, 10, challenges);
                             player.setChallengeToDo(challenge);
                             databaseReference = firebaseDatabase.getReference("user");
@@ -105,7 +108,7 @@ public class LoginActivity extends AppCompatActivity {
                 };
                 userNameRef.addListenerForSingleValueEvent(eventListener);
             } else {
-                Toast.makeText(this, "Špatné jméno nebo heslo", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Try again", Toast.LENGTH_SHORT).show();
 
             }
         }

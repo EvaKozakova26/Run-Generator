@@ -15,6 +15,7 @@ public class Challenge {
     private int exps;
     private double time;
     private boolean finished;
+    private String date;
 
     public Challenge(int level, double distance, int exps, double time, boolean finished) {
         this.level = level;
@@ -73,5 +74,13 @@ public class Challenge {
 
     public void setFinished(boolean finished) {
         this.finished = finished;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 }
