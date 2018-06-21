@@ -12,7 +12,6 @@ import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Looper;
-import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -50,9 +49,9 @@ import cz.uhk.fim.runhk.database.DatabaseHelper;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class QuestFragment extends Fragment implements View.OnClickListener {
+public class ChallengeLocationFragment extends Fragment implements View.OnClickListener {
 
-    private static final String TAG = QuestFragment.class.getSimpleName();
+    private static final String TAG = ChallengeLocationFragment.class.getSimpleName();
 
     protected static final int REQUEST_CHECK_SETTINGS = 0x1;
 
@@ -89,7 +88,7 @@ public class QuestFragment extends Fragment implements View.OnClickListener {
 
     double distance;
 
-    public QuestFragment() {
+    public ChallengeLocationFragment() {
         // Required empty public constructor
     }
 
@@ -97,7 +96,7 @@ public class QuestFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_quest, container, false);
+        View view = inflater.inflate(R.layout.fragment_challenge, container, false);
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getContext());
         view.findViewById(R.id.btnPlay).setOnClickListener(this);
         view.findViewById(R.id.btnStop).setOnClickListener(this);
@@ -155,7 +154,7 @@ public class QuestFragment extends Fragment implements View.OnClickListener {
         void onLocationUpdate(Location currentLocation);
     }
 
-    public void setOnLocationUpdateInterface(QuestFragment.onLocationUpdateInterface onLocationUpdateInterface) {
+    public void setOnLocationUpdateInterface(ChallengeLocationFragment.onLocationUpdateInterface onLocationUpdateInterface) {
         this.onLocationUpdateInterface = onLocationUpdateInterface;
         Log.i(TAG, "vola setOnLocationUpdateInterface");
     }

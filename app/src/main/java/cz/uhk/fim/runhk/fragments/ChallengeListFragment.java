@@ -13,12 +13,12 @@ import cz.uhk.fim.runhk.R;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class QuestListFragment extends Fragment implements View.OnClickListener {
+public class ChallengeListFragment extends Fragment implements View.OnClickListener {
 
     private OnItemSelectedInterface onItemSelectedInterface;
 
 
-    public QuestListFragment() {
+    public ChallengeListFragment() {
         // Required empty public constructor
     }
 
@@ -27,7 +27,7 @@ public class QuestListFragment extends Fragment implements View.OnClickListener 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_quest_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_challenge_list, container, false);
 
         view.findViewById(R.id.txtRandom).setOnClickListener(this);
 

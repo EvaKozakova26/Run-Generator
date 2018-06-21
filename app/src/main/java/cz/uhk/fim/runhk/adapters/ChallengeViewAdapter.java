@@ -6,17 +6,14 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.List;
 
 import cz.uhk.fim.runhk.R;
-import cz.uhk.fim.runhk.activities.QuestsActivity;
 import cz.uhk.fim.runhk.model.Quest;
 
-public class QuestViewAdapter extends RecyclerView.Adapter<QuestViewAdapter.FinishedQuestsViewHolder> {
+public class ChallengeViewAdapter extends RecyclerView.Adapter<ChallengeViewAdapter.FinishedQuestsViewHolder> {
 
     private List<Quest> questList;
 
@@ -28,7 +25,7 @@ public class QuestViewAdapter extends RecyclerView.Adapter<QuestViewAdapter.Fini
 
     FinishedQuestsViewHolder viewHolder;
 
-    public QuestViewAdapter(List<Quest> questList) {
+    public ChallengeViewAdapter(List<Quest> questList) {
         this.questList = questList;
     }
 
@@ -37,7 +34,7 @@ public class QuestViewAdapter extends RecyclerView.Adapter<QuestViewAdapter.Fini
     public FinishedQuestsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        View view = layoutInflater.inflate(R.layout.item_quest, null);
+        View view = layoutInflater.inflate(R.layout.item_challenge, null);
 
         viewHolder = new FinishedQuestsViewHolder(view);
         return viewHolder;

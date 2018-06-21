@@ -3,7 +3,7 @@ package cz.uhk.fim.runhk.activities;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-import cz.uhk.fim.runhk.fragments.DetailQuestFragment;
+import cz.uhk.fim.runhk.fragments.DetailChallengeFragment;
 import cz.uhk.fim.runhk.R;
 
 public class DetailSectionActivity extends AppCompatActivity {
@@ -18,10 +18,10 @@ public class DetailSectionActivity extends AppCompatActivity {
 
         Bundle bundle = new Bundle();
         bundle.putDouble("distance", distance);
-        DetailQuestFragment detailQuestFragment = new DetailQuestFragment();
-        detailQuestFragment.setArguments(bundle);
+        DetailChallengeFragment detailChallengeFragment = new DetailChallengeFragment();
+        detailChallengeFragment.setArguments(bundle);
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragmentDetailContainer, detailQuestFragment) // kam to chci a co
+                .replace(R.id.fragmentDetailContainer, detailChallengeFragment) // kam to chci a co
                 .commit();
 
     }

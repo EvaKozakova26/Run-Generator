@@ -17,7 +17,7 @@
 
     <fragment
         android:id="@+id/fragmentQuest"
-        android:name="cz.uhk.fim.runhk.fragments.QuestFragment"
+        android:name="cz.uhk.fim.runhk.fragments.ChallengeLocationFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"></fragment>
 

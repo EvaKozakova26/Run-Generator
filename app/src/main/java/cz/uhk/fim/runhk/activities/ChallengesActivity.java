@@ -1,12 +1,10 @@
 package cz.uhk.fim.runhk.activities;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.View;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -21,19 +19,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cz.uhk.fim.runhk.adapters.OnItemClickedInterface;
-import cz.uhk.fim.runhk.adapters.QuestViewAdapter;
+import cz.uhk.fim.runhk.adapters.ChallengeViewAdapter;
 import cz.uhk.fim.runhk.R;
-import cz.uhk.fim.runhk.fragments.DetailQuestFragment;
+import cz.uhk.fim.runhk.fragments.DetailChallengeFragment;
 import cz.uhk.fim.runhk.model.Quest;
 
-public class QuestsActivity extends AppCompatActivity implements OnItemClickedInterface {
+public class ChallengesActivity extends AppCompatActivity implements OnItemClickedInterface {
 
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
     private FirebaseUser currentUser;
 
     private RecyclerView recyclerView;
-    private QuestViewAdapter adapter;
+    private ChallengeViewAdapter adapter;
 
     private RecyclerView.LayoutManager layoutManager;
 
@@ -44,7 +42,7 @@ public class QuestsActivity extends AppCompatActivity implements OnItemClickedIn
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_quests);
+        setContentView(R.layout.activity_challenges);
         recyclerView = findViewById(R.id.recyclerView);
 
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -67,8 +65,8 @@ public class QuestsActivity extends AppCompatActivity implements OnItemClickedIn
                     Quest quest = snapshot.getValue(Quest.class);
                     questList.add(quest);
 
-                    adapter = new QuestViewAdapter(questList);
-                    adapter.setOnItemClickedInterface(QuestsActivity.this);
+                    adapter = new ChallengeViewAdapter(questList);
+                    adapter.setOnItemClickedInterface(ChallengesActivity.this);
                     recyclerView.setAdapter(adapter);
 
                 }
@@ -83,7 +81,6 @@ public class QuestsActivity extends AppCompatActivity implements OnItemClickedIn
         databaseReference.addValueEventListener(postListener);
 
 
-
     }
 
     @Override
@@ -94,19 +91,18 @@ public class QuestsActivity extends AppCompatActivity implements OnItemClickedIn
 //        itemSelected.setBackgroundColor(Color.RED);
 
         if (isLandscape) {
-            DetailQuestFragment detailQuestFragment = new DetailQuestFragment();
+            DetailChallengeFragment detailChallengeFragment = new DetailChallengeFragment();
             Bundle bundle = new Bundle();
             bundle.putDouble("distance", quest.getDistance());
-            detailQuestFragment.setArguments(bundle);
+            detailChallengeFragment.setArguments(bundle);
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragmentDetailContainer, detailQuestFragment) // kam to chci a co
+                    .replace(R.id.fragmentDetailContainer, detailChallengeFragment) // kam to chci a co
                     .commit();
         } else {
             Intent intent = new Intent(this, DetailSectionActivity.class);
             intent.putExtra("distance", quest.getDistance());
             startActivity(intent);
         }
-
 
 
     }

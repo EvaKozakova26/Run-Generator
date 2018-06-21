@@ -14,9 +14,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import cz.uhk.fim.runhk.R;
-import cz.uhk.fim.runhk.fragments.QuestFragment;
+import cz.uhk.fim.runhk.fragments.ChallengeLocationFragment;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, QuestFragment.onLocationUpdateInterface {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, ChallengeLocationFragment.onLocationUpdateInterface {
 
     private GoogleMap mMap;
     SupportMapFragment mapFragment;
@@ -31,7 +31,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     double distance = 0;
 
-    QuestFragment questFragment;
+    ChallengeLocationFragment challengeLocationFragment;
 
     @SuppressLint("MissingPermission")
     @Override
@@ -39,13 +39,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
-        QuestFragment questFragment1 = (QuestFragment) getSupportFragmentManager().findFragmentById(R.id.fragmentQuest);
-        questFragment1.setOnLocationUpdateInterface(this);
+        ChallengeLocationFragment challengeLocationFragment1 = (ChallengeLocationFragment) getSupportFragmentManager().findFragmentById(R.id.fragmentQuest);
+        challengeLocationFragment1.setOnLocationUpdateInterface(this);
 
         if (findViewById(R.id.fragmentQuest) != null) {
-            questFragment = new QuestFragment();
+            challengeLocationFragment = new ChallengeLocationFragment();
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragmentQuest, questFragment) // kam to chci a co
+                    .replace(R.id.fragmentQuest, challengeLocationFragment) // kam to chci a co
                     .commit();
         }
 
@@ -107,7 +107,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 distance = distance + currentDistance;
                 System.out.println("di v mape je" + distance);
-                questFragment.updateDistance(distance);
+                challengeLocationFragment.updateDistance(distance);
                 System.out.println("na druhem miste je" + distance2[1]);
 
             }

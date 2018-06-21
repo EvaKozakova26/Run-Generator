@@ -8,18 +8,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import cz.uhk.fim.runhk.R;
-import cz.uhk.fim.runhk.model.Quest;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class DetailQuestFragment extends Fragment {
+public class DetailChallengeFragment extends Fragment {
 
-    public DetailQuestFragment() {
+    public DetailChallengeFragment() {
         // Required empty public constructor
     }
 
@@ -27,7 +23,7 @@ public class DetailQuestFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_detail_quest, container, false);
+        View view = inflater.inflate(R.layout.fragment_detail_challenge, container, false);
 
         double distance = getArguments().getDouble("distance", 0);
 
