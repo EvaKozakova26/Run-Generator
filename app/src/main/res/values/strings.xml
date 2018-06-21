@@ -26,4 +26,5 @@
     <string name="done">DONE</string>
     <string name="seeChallenges">MY CHALLENGES</string>
     <string name="newChallenge">NEW CHALLENGE</string>
+    <string name="save">SAVE</string>
 </resources>

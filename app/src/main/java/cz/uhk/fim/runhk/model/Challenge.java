@@ -7,7 +7,7 @@ import java.util.Date;
  * Created by EvaKozakova on 02.04.2018.
  */
 
-public class Quest {
+public class Challenge {
 
     private int level;
     private double distance;
@@ -16,7 +16,7 @@ public class Quest {
     private double time;
     private boolean finished;
 
-    public Quest(int level, double distance, int exps, double time, boolean finished) {
+    public Challenge(int level, double distance, int exps, double time, boolean finished) {
         this.level = level;
         this.distance = distance;
         this.exps = exps;
@@ -24,7 +24,7 @@ public class Quest {
         this.finished = finished;
     }
 
-    public Quest() {
+    public Challenge() {
     }
 
     public int getLevel() {

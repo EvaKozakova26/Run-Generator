@@ -16,13 +16,14 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import cz.uhk.fim.runhk.adapters.OnItemClickedInterface;
 import cz.uhk.fim.runhk.adapters.ChallengeViewAdapter;
 import cz.uhk.fim.runhk.R;
 import cz.uhk.fim.runhk.fragments.DetailChallengeFragment;
-import cz.uhk.fim.runhk.model.Quest;
+import cz.uhk.fim.runhk.model.Challenge;
 
 public class ChallengesActivity extends AppCompatActivity implements OnItemClickedInterface {
 
@@ -35,7 +36,7 @@ public class ChallengesActivity extends AppCompatActivity implements OnItemClick
 
     private RecyclerView.LayoutManager layoutManager;
 
-    private List<Quest> questList;
+    private List<Challenge> challengeList;
 
     boolean isLandscape;
 
@@ -52,7 +53,7 @@ public class ChallengesActivity extends AppCompatActivity implements OnItemClick
         layoutManager = new LinearLayoutManager(this); // kontext - odkaz na pozadovanoou tridu
         recyclerView.setLayoutManager(layoutManager);
 
-        questList = new ArrayList<>();
+        challengeList = new ArrayList<>();
 
         if (findViewById(R.id.fragmentDetailContainer) != null) {
             isLandscape = true;
@@ -62,14 +63,14 @@ public class ChallengesActivity extends AppCompatActivity implements OnItemClick
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    Quest quest = snapshot.getValue(Quest.class);
-                    questList.add(quest);
-
-                    adapter = new ChallengeViewAdapter(questList);
-                    adapter.setOnItemClickedInterface(ChallengesActivity.this);
-                    recyclerView.setAdapter(adapter);
+                    Challenge challenge = snapshot.getValue(Challenge.class);
+                    challengeList.add(challenge);
 
                 }
+                Collections.reverse(challengeList);
+                adapter = new ChallengeViewAdapter(challengeList);
+                adapter.setOnItemClickedInterface(ChallengesActivity.this);
+                recyclerView.setAdapter(adapter);
 
             }
 
@@ -85,22 +86,22 @@ public class ChallengesActivity extends AppCompatActivity implements OnItemClick
 
     @Override
     public void onButtonClicked(int position) {
-        Quest quest = questList.get(position);
-        Toast.makeText(this, String.valueOf(quest.getDistance()), Toast.LENGTH_SHORT).show();
+        Challenge challenge = challengeList.get(position);
+        Toast.makeText(this, String.valueOf(challenge.getDistance()), Toast.LENGTH_SHORT).show();
 //        View itemSelected = layoutManager.findViewByPosition(position);
 //        itemSelected.setBackgroundColor(Color.RED);
 
         if (isLandscape) {
             DetailChallengeFragment detailChallengeFragment = new DetailChallengeFragment();
             Bundle bundle = new Bundle();
-            bundle.putDouble("distance", quest.getDistance());
+            bundle.putDouble("distance", challenge.getDistance());
             detailChallengeFragment.setArguments(bundle);
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragmentDetailContainer, detailChallengeFragment) // kam to chci a co
                     .commit();
         } else {
             Intent intent = new Intent(this, DetailSectionActivity.class);
-            intent.putExtra("distance", quest.getDistance());
+            intent.putExtra("distance", challenge.getDistance());
             startActivity(intent);
         }
 

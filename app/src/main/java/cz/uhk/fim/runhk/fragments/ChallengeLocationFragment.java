@@ -100,6 +100,7 @@ public class ChallengeLocationFragment extends Fragment implements View.OnClickL
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getContext());
         view.findViewById(R.id.btnPlay).setOnClickListener(this);
         view.findViewById(R.id.btnStop).setOnClickListener(this);
+        view.findViewById(R.id.btnSave).setOnClickListener(this);
         chronometer = view.findViewById(R.id.chronometer);
         chronometer.setFormat("%s");
 
@@ -145,6 +146,8 @@ public class ChallengeLocationFragment extends Fragment implements View.OnClickL
                 Toast.makeText(getContext(), "Stop location updates", Toast.LENGTH_SHORT).show();
                 chronometer.stop();
                 stopLocationUpdates();
+                break;
+            case R.id.btnSave:
                 saveQuest(distance);
             default:
         }

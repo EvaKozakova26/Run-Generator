@@ -22,7 +22,7 @@ import java.util.List;
 
 import cz.uhk.fim.runhk.R;
 import cz.uhk.fim.runhk.model.Player;
-import cz.uhk.fim.runhk.model.Quest;
+import cz.uhk.fim.runhk.model.Challenge;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -71,17 +71,17 @@ public class LoginActivity extends AppCompatActivity {
                             firebaseDatabase = FirebaseDatabase.getInstance();
                             // ulozi uzivatele do db
 
-                            // ulozi pvni quest do db
-                            Quest quest = new Quest();
-                            quest.setDistanceToDo(1000);
-                            quest.setExps(50);
-                            quest.setFinished(false);
-                            quest.setLevel(1);
+                            // ulozi pvni challenge do db
+                            Challenge challenge = new Challenge();
+                            challenge.setDistanceToDo(1000);
+                            challenge.setExps(50);
+                            challenge.setFinished(false);
+                            challenge.setLevel(1);
 
-                            List<Quest> quests = new ArrayList<>();
+                            List<Challenge> challenges = new ArrayList<>();
 
-                            Player player = new Player("", currentUser.getEmail(), "", 1, 10, quests);
-                            player.setQuestToDo(quest);
+                            Player player = new Player("", currentUser.getEmail(), "", 1, 10, challenges);
+                            player.setChallengeToDo(challenge);
                             databaseReference = firebaseDatabase.getReference("user");
                             databaseReference.child(currentUser.getUid()).setValue(player);
 

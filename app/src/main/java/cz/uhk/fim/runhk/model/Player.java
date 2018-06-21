@@ -2,7 +2,6 @@ package cz.uhk.fim.runhk.model;
 
 import com.google.firebase.database.IgnoreExtraProperties;
 
-import java.net.URI;
 import java.util.List;
 
 /**
@@ -18,18 +17,18 @@ public class Player {
     private int level;
     private int exps;
 
-    private List<Quest> questList;
-    private Quest questToDo;
+    private List<Challenge> challengeList;
+    private Challenge challengeToDo;
 
     private boolean isMale;
 
-    public Player(String nickname, String email, String password, int level, int exps, List<Quest> questList) {
+    public Player(String nickname, String email, String password, int level, int exps, List<Challenge> challengeList) {
         this.nickname = nickname;
         this.email = email;
         this.password = password;
         this.level = level;
         this.exps = exps;
-        this.questList = questList;
+        this.challengeList = challengeList;
     }
 
     public Player() {
@@ -75,20 +74,20 @@ public class Player {
         this.exps = exps;
     }
 
-    public List<Quest> getQuestList() {
-        return questList;
+    public List<Challenge> getChallengeList() {
+        return challengeList;
     }
 
-    public void setQuestList(List<Quest> questList) {
-        this.questList = questList;
+    public void setChallengeList(List<Challenge> challengeList) {
+        this.challengeList = challengeList;
     }
 
-    public Quest getQuestToDo() {
-        return questToDo;
+    public Challenge getChallengeToDo() {
+        return challengeToDo;
     }
 
-    public void setQuestToDo(Quest questToDo) {
-        this.questToDo = questToDo;
+    public void setChallengeToDo(Challenge challengeToDo) {
+        this.challengeToDo = challengeToDo;
     }
 
     public boolean isMale() {

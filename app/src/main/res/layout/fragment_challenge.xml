@@ -15,7 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingBottom="25dp">
+            android:paddingBottom="15dp">
 
             <EditText
                 android:id="@+id/textViewDistance"
@@ -68,6 +68,19 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="STOP" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center">
+
+            <Button
+                android:id="@+id/btnSave"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/save" />
 
         </LinearLayout>
 

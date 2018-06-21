@@ -10,7 +10,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.Random;
 
-import cz.uhk.fim.runhk.model.Quest;
+import cz.uhk.fim.runhk.model.Challenge;
 
 public class DatabaseHelper {
 
@@ -40,17 +40,17 @@ public class DatabaseHelper {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // Get Post object and use the values to update the UI
-                Quest quest = dataSnapshot.getValue(Quest.class);
-                currentQuestExps = quest.getExps();
+                Challenge challenge = dataSnapshot.getValue(Challenge.class);
+                currentQuestExps = challenge.getExps();
                 if (!finished) {
-                    if (distance >= quest.getDistanceToDo()) {
+                    if (distance >= challenge.getDistanceToDo()) {
 
                         //...
                         // najit v dbquest, dát na true a uložit ho pod child("FINISHED");
-                        quest.setFinished(true);
-                        quest.setDistance(distance);
+                        challenge.setFinished(true);
+                        challenge.setDistance(distance);
                         DatabaseReference databaseReferenceTemp = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("finished");
-                        databaseReferenceTemp.push().setValue(quest);
+                        databaseReferenceTemp.push().setValue(challenge);
 
                         // nstavit hodjnoty plejerovi
                         updatePlayer();
@@ -61,7 +61,7 @@ public class DatabaseHelper {
                         createQuest();
 
                     } else {
-                        // nic se nestancem quest zustane false a zavloa se jen hlaska, musíš to zkusit znovu :D
+                        // nic se nestancem challenge zustane false a zavloa se jen hlaska, musíš to zkusit znovu :D
                         finished = false;
                     }
 
@@ -106,13 +106,13 @@ public class DatabaseHelper {
 
                 exps = (int) (distanceToDo / 10);
 
-                Quest currentQuestToDo = new Quest();
-                currentQuestToDo.setDistanceToDo(distanceToDo);
-                currentQuestToDo.setExps(exps);
+                Challenge currentChallengeToDo = new Challenge();
+                currentChallengeToDo.setDistanceToDo(distanceToDo);
+                currentChallengeToDo.setExps(exps);
 
                 firebaseDatabase = FirebaseDatabase.getInstance();
                 databaseReference = firebaseDatabase.getReference().child("user").child(currentUser.getUid()).child("questToDo");
-                databaseReference.setValue(currentQuestToDo);
+                databaseReference.setValue(currentChallengeToDo);
 
 
             }

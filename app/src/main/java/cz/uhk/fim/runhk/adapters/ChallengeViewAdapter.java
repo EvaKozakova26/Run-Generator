@@ -11,11 +11,11 @@ import android.widget.TextView;
 import java.util.List;
 
 import cz.uhk.fim.runhk.R;
-import cz.uhk.fim.runhk.model.Quest;
+import cz.uhk.fim.runhk.model.Challenge;
 
 public class ChallengeViewAdapter extends RecyclerView.Adapter<ChallengeViewAdapter.FinishedQuestsViewHolder> {
 
-    private List<Quest> questList;
+    private List<Challenge> challengeList;
 
     private OnItemClickedInterface onItemClickedInterface;
 
@@ -25,8 +25,8 @@ public class ChallengeViewAdapter extends RecyclerView.Adapter<ChallengeViewAdap
 
     FinishedQuestsViewHolder viewHolder;
 
-    public ChallengeViewAdapter(List<Quest> questList) {
-        this.questList = questList;
+    public ChallengeViewAdapter(List<Challenge> challengeList) {
+        this.challengeList = challengeList;
     }
 
     @NonNull
@@ -42,15 +42,15 @@ public class ChallengeViewAdapter extends RecyclerView.Adapter<ChallengeViewAdap
 
     @Override
     public void onBindViewHolder(@NonNull FinishedQuestsViewHolder holder, int position) {
-        Quest quest = questList.get(position);
-        holder.setQuest(quest);
+        Challenge challenge = challengeList.get(position);
+        holder.setQuest(challenge);
         holder.itemView.setBackgroundColor(selected_position == position ? Color.GREEN : Color.TRANSPARENT);
 
     }
 
     @Override
     public int getItemCount() {
-        return questList.size();
+        return challengeList.size();
     }
 
     public void setOnItemClickedInterface(OnItemClickedInterface onItemClickedInterface) {
@@ -71,9 +71,9 @@ public class ChallengeViewAdapter extends RecyclerView.Adapter<ChallengeViewAdap
 
         }
 
-        public void setQuest(final Quest quest) {
-         /*   textViewDistance.setText(String.valueOf(quest.getDistance()));
-            textViewExps.setText(String.valueOf(quest.getExps()));*/
+        public void setQuest(final Challenge challenge) {
+         /*   textViewDistance.setText(String.valueOf(challenge.getDistance()));
+            textViewExps.setText(String.valueOf(challenge.getExps()));*/
 
         }
 
