@@ -8,4 +8,5 @@
     <color name="progressBarColor">#2ab330</color>
     <color name="welcomeText">#303F9F</color>
     <color name="mainBackground">#B5F8B5</color>
+    <color name="borderColor">#44BA6C</color>
 </resources>
