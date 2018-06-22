@@ -38,6 +38,8 @@ public class PlayerProfileActivity extends NavigationDrawerActivity {
     FirebaseStorage storage;
     StorageReference imgReference;
 
+    private double distanceToDo;
+
 
 
     @Override
@@ -63,7 +65,7 @@ public class PlayerProfileActivity extends NavigationDrawerActivity {
         btnGo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(PlayerProfileActivity.this, MapsActivity.class);
+                Intent intent = new Intent(PlayerProfileActivity.this, NewChallengeDetailActivity.class);
                 startActivity(intent);
             }
         });

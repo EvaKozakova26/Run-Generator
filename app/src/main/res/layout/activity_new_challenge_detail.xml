@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="cz.uhk.fim.runhk.activities.NewChallengeDetailActivity"
+    android:orientation="vertical"
+    android:layout_marginTop="50dp">
+
+    <TextView
+        android:id="@+id/textViewNewChallenge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="30dp"
+        android:text="@string/ÿourNewChallenge" />
+
+    <LinearLayout
+        android:layout_marginTop="30dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center">
+
+        <TextView
+            android:id="@+id/textViewRun"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/run"
+            android:textSize="20dp"
+            android:layout_marginRight="8dp" />
+
+        <TextView
+            android:id="@+id/textViewDistanceToDo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="20dp" />
+
+    </LinearLayout>
+
+
+    <Button
+        android:layout_marginTop="70dp"
+        android:id="@+id/btnStartChallenge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/startChallenge"
+        android:background="@drawable/button_shape_profile"
+        android:layout_gravity="center" />
+
+</LinearLayout>

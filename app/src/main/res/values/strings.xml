@@ -35,4 +35,7 @@
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
     <string name="challenge">Challenge</string>
+    <string name="ÿourNewChallenge">YOUR NEW CHALLENGE</string>
+    <string name="run">RUN</string>
+    <string name="startChallenge">START</string>
 </resources>
