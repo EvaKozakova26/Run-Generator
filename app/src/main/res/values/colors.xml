@@ -3,10 +3,11 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#ff4081</color>
-    <color name="btnRunColor">#2ad</color>
+    <color name="btnRunColor">#69D63B</color>
     <color name="imageBackground">#0fcc18</color>
     <color name="progressBarColor">#2ab330</color>
     <color name="welcomeText">#303F9F</color>
     <color name="mainBackground">#B5F8B5</color>
     <color name="borderColor">#44BA6C</color>
+    <color name="btnStopColor">#FF5047</color>
 </resources>

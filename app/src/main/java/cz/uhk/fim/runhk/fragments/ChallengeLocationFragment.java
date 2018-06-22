@@ -12,6 +12,7 @@ import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Looper;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -21,7 +22,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Chronometer;
-import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.ApiException;
@@ -78,7 +79,7 @@ public class ChallengeLocationFragment extends Fragment implements View.OnClickL
     private LocationSettingsRequest mLocationSettingsRequest;
 
     Chronometer chronometer;
-    EditText textViewDistance;
+    TextView textViewDistance;
 
     double lat;
     double lon;
@@ -102,8 +103,6 @@ public class ChallengeLocationFragment extends Fragment implements View.OnClickL
         view.findViewById(R.id.btnStop).setOnClickListener(this);
         view.findViewById(R.id.btnSave).setOnClickListener(this);
         chronometer = view.findViewById(R.id.chronometer);
-        chronometer.setFormat("%s");
-
         textViewDistance = view.findViewById(R.id.textViewDistance);
         databaseHelper = new DatabaseHelper();
         listLaTLon = new ArrayList<>();
@@ -139,6 +138,8 @@ public class ChallengeLocationFragment extends Fragment implements View.OnClickL
                 } else if (!checkPermissions()) {
                     requestPermissions();
                 }
+                chronometer.setBase(SystemClock.elapsedRealtime());
+                chronometer.start();
 
                 updateLocation();
                 break;
