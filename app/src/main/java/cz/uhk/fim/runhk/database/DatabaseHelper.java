@@ -60,9 +60,10 @@ public class DatabaseHelper {
                         DatabaseReference databaseReferenceTemp = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("finished");
                         databaseReferenceTemp.push().setValue(challenge);
 
-
+                        double distanceBonus = distance - challenge.getDistanceToDo();
+                        int bonusExps = (int) (distanceBonus * 0.1);
                         // nstavit hodjnoty plejerovi
-                        updatePlayer();
+                        updatePlayer(bonusExps);
 
                         finished = true;
 
@@ -136,13 +137,14 @@ public class DatabaseHelper {
         databaseReference.addListenerForSingleValueEvent(postListener);
     }
 
-    private void updatePlayer() {
+    private void updatePlayer(final int bonusExps) {
         final DatabaseReference databaseReferenceTemp = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("exps");
         ValueEventListener postListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                databaseReferenceTemp.setValue(currentQuestExps + dataSnapshot.getValue(Integer.class));
-                setLevel((dataSnapshot.getValue(Integer.class)) + currentQuestExps);
+                int finalExps = currentQuestExps + dataSnapshot.getValue(Integer.class) + bonusExps;
+                databaseReferenceTemp.setValue(finalExps);
+                setLevel(finalExps);
             }
 
             @Override

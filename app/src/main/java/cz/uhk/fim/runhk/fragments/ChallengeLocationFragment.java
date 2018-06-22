@@ -45,6 +45,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cz.uhk.fim.runhk.R;
+import cz.uhk.fim.runhk.activities.DetailSectionActivity;
 import cz.uhk.fim.runhk.database.DatabaseHelper;
 
 /**
@@ -149,7 +150,7 @@ public class ChallengeLocationFragment extends Fragment implements View.OnClickL
                 stopLocationUpdates();
                 break;
             case R.id.btnSave:
-                saveQuest(distance);
+                saveChallenge(distance);
             default:
         }
     }
@@ -478,9 +479,12 @@ public class ChallengeLocationFragment extends Fragment implements View.OnClickL
 
     }
 
-    private void saveQuest(double distance) {
+    private void saveChallenge(double distance) {
         databaseHelper.saveQuest(distance);
-
+        Intent intent = new Intent(getActivity(), DetailSectionActivity.class);
+        intent.putExtra("distance", distance);
+        getActivity().finish();
+        startActivity(intent);
     }
 
     //TODO nastavit lastKnownLocation při startu aktivity (mapa)
