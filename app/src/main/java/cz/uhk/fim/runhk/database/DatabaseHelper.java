@@ -24,10 +24,12 @@ public class DatabaseHelper {
     private DatabaseReference databaseReference;
     private DatabaseReference questReference;
 
-    boolean finished;
-    double distanceToDo;
-    int exps;
-    int currentQuestExps;
+    ChallengeResultInterface challengeResultInterface;
+
+    private boolean finished;
+    private double distanceToDo;
+    private int exps;
+    private int currentQuestExps;
 
     public void saveQuest(double distance, ArrayList<LocationModel> distancePointsList) {
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -49,7 +51,7 @@ public class DatabaseHelper {
                 currentQuestExps = challenge.getExps();
                 if (!finished) {
                     if (distance >= challenge.getDistanceToDo()) {
-
+                        finished = true;
                         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
                         Date date = new Date();
                         System.out.println(dateFormat.format(date));
@@ -63,19 +65,16 @@ public class DatabaseHelper {
                         DatabaseReference databaseReferenceTemp = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("finished");
                         databaseReferenceTemp.push().setValue(challenge);
 
+
                         double distanceBonus = distance - challenge.getDistanceToDo();
                         int bonusExps = (int) (distanceBonus * 0.1);
                         // nstavit hodjnoty plejerovi
                         updatePlayer(bonusExps);
-
-                        finished = true;
-
                         questReference.removeValue();
                         createQuest();
-
                     } else {
-                        // nic se nestancem challenge zustane false a zavloa se jen hlaska, musíš to zkusit znovu :D
                         finished = false;
+                        challengeResultInterface.onChallengeResultCalled(finished);
                     }
 
                 }
@@ -126,8 +125,6 @@ public class DatabaseHelper {
                 firebaseDatabase = FirebaseDatabase.getInstance();
                 databaseReference = firebaseDatabase.getReference().child("user").child(currentUser.getUid()).child("challengeToDo");
                 databaseReference.setValue(currentChallengeToDo);
-
-
             }
 
             @Override
@@ -172,6 +169,7 @@ public class DatabaseHelper {
                         if (exps > levelExps) {
                             DatabaseReference levelPlayerReference = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("level");
                             levelPlayerReference.setValue(level + 1);
+                            challengeResultInterface.onChallengeResultCalled(finished);
                         }
 
                     }
@@ -190,6 +188,14 @@ public class DatabaseHelper {
             }
         };
         databaseReferenceTemp.addListenerForSingleValueEvent(postListener);
+    }
+
+    public void setChallengeResultInterface(ChallengeResultInterface challengeResultInterface) {
+        this.challengeResultInterface = challengeResultInterface;
+    }
+
+    public interface ChallengeResultInterface {
+        void onChallengeResultCalled(boolean finished);
     }
 
 }

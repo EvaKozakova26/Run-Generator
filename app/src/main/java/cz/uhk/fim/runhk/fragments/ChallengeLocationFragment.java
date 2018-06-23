@@ -45,14 +45,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cz.uhk.fim.runhk.R;
-import cz.uhk.fim.runhk.activities.DetailSectionActivity;
+import cz.uhk.fim.runhk.activities.PlayerProfileActivity;
 import cz.uhk.fim.runhk.database.DatabaseHelper;
 import cz.uhk.fim.runhk.model.LocationModel;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ChallengeLocationFragment extends Fragment implements View.OnClickListener {
+public class ChallengeLocationFragment extends Fragment implements View.OnClickListener, DatabaseHelper.ChallengeResultInterface {
 
     private static final String TAG = ChallengeLocationFragment.class.getSimpleName();
 
@@ -113,6 +113,8 @@ public class ChallengeLocationFragment extends Fragment implements View.OnClickL
         mRequestingLocationUpdates = false;
         distancePointsList = new ArrayList<>();
 
+        databaseHelper.setChallengeResultInterface(this);
+
         getLastKnownLocation();
 
         mLocationRequestHighAccuracy = new LocationRequest();
@@ -157,6 +159,23 @@ public class ChallengeLocationFragment extends Fragment implements View.OnClickL
                 saveChallenge(distance);
             default:
         }
+    }
+
+    @Override
+    public void onChallengeResultCalled(boolean finished) {
+        String message;
+        if (finished) {
+            message = "Congratulations, you have accomplished this challenge";
+            Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+        } else {
+            message = "You have not run a requested distance";
+            Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+
+        }
+        Intent intent = new Intent(getActivity(), PlayerProfileActivity.class);
+        intent.putExtra("distance", distance);
+        getActivity().finish();
+        startActivity(intent);
     }
 
     public interface onLocationUpdateInterface {
@@ -487,10 +506,6 @@ public class ChallengeLocationFragment extends Fragment implements View.OnClickL
 
     private void saveChallenge(double distance) {
         databaseHelper.saveQuest(distance, distancePointsList);
-        Intent intent = new Intent(getActivity(), DetailSectionActivity.class);
-        intent.putExtra("distance", distance);
-        getActivity().finish();
-        startActivity(intent);
     }
 
     //TODO nastavit lastKnownLocation při startu aktivity (mapa)

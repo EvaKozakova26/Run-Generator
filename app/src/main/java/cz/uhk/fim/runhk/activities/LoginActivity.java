@@ -104,7 +104,6 @@ public class LoginActivity extends AppCompatActivity {
                             finish();
                             startActivity(intent);
 
-
                         } else {
                             Intent intent = new Intent(LoginActivity.this, PlayerProfileActivity.class);
                             finish();
