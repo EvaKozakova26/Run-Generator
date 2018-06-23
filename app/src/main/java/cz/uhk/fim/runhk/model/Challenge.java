@@ -1,7 +1,6 @@
 package cz.uhk.fim.runhk.model;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.List;
 
 /**
  * Created by EvaKozakova on 02.04.2018.
@@ -16,6 +15,7 @@ public class Challenge {
     private double time;
     private boolean finished;
     private String date;
+    private List<LocationModel> distancePoints;
 
     public Challenge(int level, double distance, int exps, double time, boolean finished) {
         this.level = level;
@@ -82,5 +82,13 @@ public class Challenge {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public List<LocationModel> getDistancePoints() {
+        return distancePoints;
+    }
+
+    public void setDistancePoints(List<LocationModel> distancePoints) {
+        this.distancePoints = distancePoints;
     }
 }

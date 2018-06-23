@@ -22,6 +22,7 @@ import java.util.List;
 
 import cz.uhk.fim.runhk.R;
 import cz.uhk.fim.runhk.model.Challenge;
+import cz.uhk.fim.runhk.model.LocationModel;
 import cz.uhk.fim.runhk.model.Player;
 
 public class LoginActivity extends AppCompatActivity {
@@ -78,6 +79,10 @@ public class LoginActivity extends AppCompatActivity {
                             firebaseDatabase = FirebaseDatabase.getInstance();
                             // ulozi uzivatele do db
 
+                            List<LocationModel> distancePointsList = new ArrayList<>();
+                            LocationModel locationModel = new LocationModel(0, 0);
+                            distancePointsList.add(locationModel);
+
                             // ulozi pvni challenge do db
                             Challenge challenge = new Challenge();
                             challenge.setDistanceToDo(1000);
@@ -85,6 +90,7 @@ public class LoginActivity extends AppCompatActivity {
                             challenge.setFinished(false);
                             challenge.setLevel(1);
                             challenge.setDate(" s");
+                            challenge.setDistancePoints(distancePointsList);
 
                             List<Challenge> challenges = new ArrayList<>();
 

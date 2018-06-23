@@ -11,9 +11,11 @@ import com.google.firebase.database.ValueEventListener;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
 
 import cz.uhk.fim.runhk.model.Challenge;
+import cz.uhk.fim.runhk.model.LocationModel;
 
 public class DatabaseHelper {
 
@@ -27,14 +29,14 @@ public class DatabaseHelper {
     int exps;
     int currentQuestExps;
 
-    public void saveQuest(double distance) {
+    public void saveQuest(double distance, List<LocationModel> distancePointsList) {
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         firebaseDatabase = FirebaseDatabase.getInstance();
         finished = false;
-        getVysledek(distance);
+        getVysledek(distance, distancePointsList);
     }
 
-    public boolean getVysledek(final double distance) {
+    public boolean getVysledek(final double distance, final List<LocationModel> distancePointsLocation) {
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         firebaseDatabase = FirebaseDatabase.getInstance();
         questReference = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("challengeToDo");
@@ -57,6 +59,7 @@ public class DatabaseHelper {
                         challenge.setDate(dateFormat.format(date));
                         challenge.setFinished(true);
                         challenge.setDistance(distance);
+                        challenge.setDistancePoints(distancePointsLocation);
                         DatabaseReference databaseReferenceTemp = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("finished");
                         databaseReferenceTemp.push().setValue(challenge);
 

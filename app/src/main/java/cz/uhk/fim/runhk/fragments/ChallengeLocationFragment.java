@@ -47,6 +47,7 @@ import java.util.List;
 import cz.uhk.fim.runhk.R;
 import cz.uhk.fim.runhk.activities.DetailSectionActivity;
 import cz.uhk.fim.runhk.database.DatabaseHelper;
+import cz.uhk.fim.runhk.model.LocationModel;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -87,6 +88,8 @@ public class ChallengeLocationFragment extends Fragment implements View.OnClickL
 
     private DatabaseHelper databaseHelper;
     private List<Double> listLaTLon;
+    private LocationModel locationModel;
+    private List<LocationModel> distancePointsList;
 
     double distance;
 
@@ -108,6 +111,7 @@ public class ChallengeLocationFragment extends Fragment implements View.OnClickL
         databaseHelper = new DatabaseHelper();
         listLaTLon = new ArrayList<>();
         mRequestingLocationUpdates = false;
+        distancePointsList = new ArrayList<>();
 
         getLastKnownLocation();
 
@@ -295,7 +299,9 @@ public class ChallengeLocationFragment extends Fragment implements View.OnClickL
         Log.i(TAG, "mCurrentLocatio je" + mCurrentLocation);
         Log.i(TAG, "interface je " + onLocationUpdateInterface);
         if (mCurrentLocation != null && onLocationUpdateInterface != null) {
+            locationModel = new LocationModel(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
 
+            distancePointsList.add(locationModel);
 
             onLocationUpdateInterface.onLocationUpdate(mCurrentLocation);
             System.out.println(mRequestingLocationUpdates + "je na jaké hodnotě?");
@@ -480,7 +486,7 @@ public class ChallengeLocationFragment extends Fragment implements View.OnClickL
     }
 
     private void saveChallenge(double distance) {
-        databaseHelper.saveQuest(distance);
+        databaseHelper.saveQuest(distance, distancePointsList);
         Intent intent = new Intent(getActivity(), DetailSectionActivity.class);
         intent.putExtra("distance", distance);
         getActivity().finish();
