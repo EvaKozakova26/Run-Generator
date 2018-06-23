@@ -89,7 +89,7 @@ public class ChallengeLocationFragment extends Fragment implements View.OnClickL
     private DatabaseHelper databaseHelper;
     private List<Double> listLaTLon;
     private LocationModel locationModel;
-    private List<LocationModel> distancePointsList;
+    private ArrayList<LocationModel> distancePointsList;
 
     double distance;
 

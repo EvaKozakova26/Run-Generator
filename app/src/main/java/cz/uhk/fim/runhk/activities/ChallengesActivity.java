@@ -1,8 +1,8 @@
 package cz.uhk.fim.runhk.activities;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.Toast;
@@ -19,9 +19,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import cz.uhk.fim.runhk.adapters.OnItemClickedInterface;
-import cz.uhk.fim.runhk.adapters.ChallengeViewAdapter;
 import cz.uhk.fim.runhk.R;
+import cz.uhk.fim.runhk.adapters.ChallengeViewAdapter;
+import cz.uhk.fim.runhk.adapters.OnItemClickedInterface;
 import cz.uhk.fim.runhk.fragments.DetailChallengeFragment;
 import cz.uhk.fim.runhk.model.Challenge;
 
@@ -95,6 +95,7 @@ public class ChallengesActivity extends AppCompatActivity implements OnItemClick
             DetailChallengeFragment detailChallengeFragment = new DetailChallengeFragment();
             Bundle bundle = new Bundle();
             bundle.putDouble("distance", challenge.getDistance());
+            bundle.putParcelableArrayList("points", challenge.getDistancePoints());
             detailChallengeFragment.setArguments(bundle);
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragmentDetailContainer, detailChallengeFragment) // kam to chci a co
@@ -102,9 +103,9 @@ public class ChallengesActivity extends AppCompatActivity implements OnItemClick
         } else {
             Intent intent = new Intent(this, DetailSectionActivity.class);
             intent.putExtra("distance", challenge.getDistance());
+            intent.putExtra("points", challenge.getDistancePoints());
             startActivity(intent);
         }
-
 
     }
 }

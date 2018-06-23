@@ -10,7 +10,7 @@
         android:id="@+id/mapDetail"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
-        android:layout_height="350dp"
+        android:layout_height="200dp"
         tools:context="cz.uhk.fim.runhk.activities.MapsActivity" />
 
 

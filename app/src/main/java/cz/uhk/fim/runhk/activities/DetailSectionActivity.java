@@ -1,10 +1,13 @@
 package cz.uhk.fim.runhk.activities;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 
-import cz.uhk.fim.runhk.fragments.DetailChallengeFragment;
+import java.util.ArrayList;
+
 import cz.uhk.fim.runhk.R;
+import cz.uhk.fim.runhk.fragments.DetailChallengeFragment;
+import cz.uhk.fim.runhk.model.LocationModel;
 
 public class DetailSectionActivity extends AppCompatActivity {
 
@@ -14,10 +17,12 @@ public class DetailSectionActivity extends AppCompatActivity {
         setContentView(R.layout.activity_detail_section);
 
         double distance = getIntent().getDoubleExtra("distance", 0);
+        ArrayList<LocationModel> pointsList = getIntent().getParcelableArrayListExtra("points");
 
 
         Bundle bundle = new Bundle();
         bundle.putDouble("distance", distance);
+        bundle.putParcelableArrayList("points", pointsList);
         DetailChallengeFragment detailChallengeFragment = new DetailChallengeFragment();
         detailChallengeFragment.setArguments(bundle);
         getSupportFragmentManager().beginTransaction()

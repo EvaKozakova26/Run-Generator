@@ -79,7 +79,7 @@ public class LoginActivity extends AppCompatActivity {
                             firebaseDatabase = FirebaseDatabase.getInstance();
                             // ulozi uzivatele do db
 
-                            List<LocationModel> distancePointsList = new ArrayList<>();
+                            ArrayList<LocationModel> distancePointsList = new ArrayList<>();
                             LocationModel locationModel = new LocationModel(0, 0);
                             distancePointsList.add(locationModel);
 

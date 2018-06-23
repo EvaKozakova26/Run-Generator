@@ -1,6 +1,6 @@
 package cz.uhk.fim.runhk.model;
 
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Created by EvaKozakova on 02.04.2018.
@@ -15,7 +15,7 @@ public class Challenge {
     private double time;
     private boolean finished;
     private String date;
-    private List<LocationModel> distancePoints;
+    private ArrayList<LocationModel> distancePoints;
 
     public Challenge(int level, double distance, int exps, double time, boolean finished) {
         this.level = level;
@@ -84,11 +84,11 @@ public class Challenge {
         this.date = date;
     }
 
-    public List<LocationModel> getDistancePoints() {
+    public ArrayList<LocationModel> getDistancePoints() {
         return distancePoints;
     }
 
-    public void setDistancePoints(List<LocationModel> distancePoints) {
+    public void setDistancePoints(ArrayList<LocationModel> distancePoints) {
         this.distancePoints = distancePoints;
     }
 }
