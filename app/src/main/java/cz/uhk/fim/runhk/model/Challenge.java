@@ -12,12 +12,12 @@ public class Challenge {
     private double distance;
     private double distanceToDo;
     private int exps;
-    private double time;
+    private String time;
     private boolean finished;
     private String date;
     private ArrayList<LocationModel> distancePoints;
 
-    public Challenge(int level, double distance, int exps, double time, boolean finished) {
+    public Challenge(int level, double distance, int exps, String time, boolean finished) {
         this.level = level;
         this.distance = distance;
         this.exps = exps;
@@ -52,11 +52,11 @@ public class Challenge {
         this.exps = exps;
     }
 
-    public double getTime() {
+    public String getTime() {
         return time;
     }
 
-    public void setTime(double time) {
+    public void setTime(String time) {
         this.time = time;
     }
 

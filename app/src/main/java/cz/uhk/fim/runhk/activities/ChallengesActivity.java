@@ -88,14 +88,14 @@ public class ChallengesActivity extends AppCompatActivity implements OnItemClick
     public void onButtonClicked(int position) {
         Challenge challenge = challengeList.get(position);
         Toast.makeText(this, String.valueOf(challenge.getDistance()), Toast.LENGTH_SHORT).show();
-//        View itemSelected = layoutManager.findViewByPosition(position);
-//        itemSelected.setBackgroundColor(Color.RED);
 
         if (isLandscape) {
             DetailChallengeFragment detailChallengeFragment = new DetailChallengeFragment();
             Bundle bundle = new Bundle();
             bundle.putDouble("distance", challenge.getDistance());
             bundle.putParcelableArrayList("points", challenge.getDistancePoints());
+            bundle.putInt("exps", challenge.getExps());
+            bundle.putString("time", challenge.getTime());
             detailChallengeFragment.setArguments(bundle);
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragmentDetailContainer, detailChallengeFragment) // kam to chci a co
@@ -104,6 +104,8 @@ public class ChallengesActivity extends AppCompatActivity implements OnItemClick
             Intent intent = new Intent(this, DetailSectionActivity.class);
             intent.putExtra("distance", challenge.getDistance());
             intent.putExtra("points", challenge.getDistancePoints());
+            intent.putExtra("exps", challenge.getExps());
+            intent.putExtra("time", challenge.getTime());
             startActivity(intent);
         }
 

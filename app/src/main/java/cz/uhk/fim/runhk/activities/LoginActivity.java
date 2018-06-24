@@ -89,7 +89,8 @@ public class LoginActivity extends AppCompatActivity {
                             challenge.setExps(50);
                             challenge.setFinished(false);
                             challenge.setLevel(1);
-                            challenge.setDate(" s");
+                            challenge.setDate("");
+                            challenge.setTime("");
                             challenge.setDistancePoints(distancePointsList);
 
                             List<Challenge> challenges = new ArrayList<>();

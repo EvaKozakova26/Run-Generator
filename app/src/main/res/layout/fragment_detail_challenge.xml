@@ -10,26 +10,42 @@
         android:id="@+id/mapDetail"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
-        android:layout_height="350dp"
+        android:layout_height="400dp"
         tools:context="cz.uhk.fim.runhk.activities.MapsActivity" />
 
-
-    <TextView
-        android:id="@+id/textViewDetailDistance"
-        android:layout_width="match_parent"
+    <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="DISTANCE" />
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp">
+
+        <TextView
+            android:id="@+id/textViewDetailTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="TIME"
+            android:layout_marginRight="10dp"
+            android:textSize="20dp" />
+
+        <TextView
+            android:layout_marginLeft="10dp"
+            android:id="@+id/textViewDetailDistance"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="DISTANCE"
+            android:textSize="20dp" />
+
+
+    </LinearLayout>
 
     <TextView
+        android:layout_marginTop="10dp"
         android:id="@+id/textViewDetailExps"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="EXPS" />
-
-    <TextView
-        android:id="@+id/textViewDetailTime"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="TIME" />
+        android:text="EXPS"
+        android:layout_gravity="center"
+        android:textSize="20dp" />
 
 </LinearLayout>

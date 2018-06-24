@@ -41,16 +41,20 @@ public class DetailChallengeFragment extends Fragment implements OnMapReadyCallb
 
         double distance = getArguments().getDouble("distance", 0);
         pointsList = getArguments().getParcelableArrayList("points");
+        int exps = getArguments().getInt("exps");
 
         mapFragment = (SupportMapFragment) getChildFragmentManager()
                 .findFragmentById(R.id.mapDetail);
         mapFragment.getMapAsync(this);
 
         TextView textViewDistance = view.findViewById(R.id.textViewDetailDistance);
-        textViewDistance.setText(String.valueOf(distance));
-        // Inflate the layout for this fragment
+        textViewDistance.setText(String.format("%.2f", distance) + " meters");
 
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        TextView textViewExps = view.findViewById(R.id.textViewDetailExps);
+        textViewExps.setText(String.valueOf(exps) + " points");
+
+        TextView textViewTime = view.findViewById(R.id.textViewDetailTime);
+        textViewTime.setText("");
 
         return view;
     }
@@ -58,8 +62,6 @@ public class DetailChallengeFragment extends Fragment implements OnMapReadyCallb
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        // Add a marker to your position and move the camera
-
 
         double currentLat;
         double currentLng;
@@ -81,6 +83,5 @@ public class DetailChallengeFragment extends Fragment implements OnMapReadyCallb
             prevLng = currentLng;
 
         }
-
     }
 }

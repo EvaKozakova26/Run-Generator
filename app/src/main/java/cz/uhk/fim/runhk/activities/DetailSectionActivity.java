@@ -18,11 +18,13 @@ public class DetailSectionActivity extends AppCompatActivity {
 
         double distance = getIntent().getDoubleExtra("distance", 0);
         ArrayList<LocationModel> pointsList = getIntent().getParcelableArrayListExtra("points");
+        int exps = getIntent().getIntExtra("exps", 0);
 
 
         Bundle bundle = new Bundle();
         bundle.putDouble("distance", distance);
         bundle.putParcelableArrayList("points", pointsList);
+        bundle.putInt("exps", exps);
         DetailChallengeFragment detailChallengeFragment = new DetailChallengeFragment();
         detailChallengeFragment.setArguments(bundle);
         getSupportFragmentManager().beginTransaction()
