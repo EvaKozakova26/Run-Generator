@@ -21,7 +21,6 @@
                 android:id="@+id/textViewDistance"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:text="0.00 m"
                 android:textSize="17dp"
                 android:gravity="start" />
 

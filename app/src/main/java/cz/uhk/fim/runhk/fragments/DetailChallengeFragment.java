@@ -42,6 +42,7 @@ public class DetailChallengeFragment extends Fragment implements OnMapReadyCallb
         double distance = getArguments().getDouble("distance", 0);
         pointsList = getArguments().getParcelableArrayList("points");
         int exps = getArguments().getInt("exps");
+        String time = getArguments().getString("time");
 
         mapFragment = (SupportMapFragment) getChildFragmentManager()
                 .findFragmentById(R.id.mapDetail);
@@ -54,7 +55,7 @@ public class DetailChallengeFragment extends Fragment implements OnMapReadyCallb
         textViewExps.setText(String.valueOf(exps) + " points");
 
         TextView textViewTime = view.findViewById(R.id.textViewDetailTime);
-        textViewTime.setText("");
+        textViewTime.setText(time);
 
         return view;
     }

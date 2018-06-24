@@ -107,6 +107,7 @@ public class ChallengeLocationFragment extends Fragment implements View.OnClickL
         view.findViewById(R.id.btnStop).setOnClickListener(this);
         view.findViewById(R.id.btnSave).setOnClickListener(this);
         chronometer = view.findViewById(R.id.chronometer);
+        chronometer.setText("");
         textViewDistance = view.findViewById(R.id.textViewDistance);
         databaseHelper = new DatabaseHelper();
         listLaTLon = new ArrayList<>();
@@ -147,7 +148,6 @@ public class ChallengeLocationFragment extends Fragment implements View.OnClickL
                 }
                 chronometer.setBase(SystemClock.elapsedRealtime());
                 chronometer.start();
-
                 updateLocation();
                 break;
             case R.id.btnStop:
@@ -156,7 +156,8 @@ public class ChallengeLocationFragment extends Fragment implements View.OnClickL
                 stopLocationUpdates();
                 break;
             case R.id.btnSave:
-                saveChallenge(distance);
+                String time = (String) chronometer.getText();
+                saveChallenge(distance, time);
             default:
         }
     }
@@ -331,7 +332,7 @@ public class ChallengeLocationFragment extends Fragment implements View.OnClickL
 
     public void updateDistance(double distance) {
         this.distance = distance;
-        textViewDistance.setText(" ");
+        textViewDistance.setText("");
         textViewDistance.setText(String.format("%.2f", distance));
     }
 
@@ -504,8 +505,8 @@ public class ChallengeLocationFragment extends Fragment implements View.OnClickL
 
     }
 
-    private void saveChallenge(double distance) {
-        databaseHelper.saveQuest(distance, distancePointsList);
+    private void saveChallenge(double distance, String time) {
+        databaseHelper.saveQuest(distance, distancePointsList, time);
     }
 
     //TODO nastavit lastKnownLocation při startu aktivity (mapa)
