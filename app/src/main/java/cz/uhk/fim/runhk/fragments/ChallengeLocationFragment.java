@@ -116,21 +116,17 @@ public class ChallengeLocationFragment extends Fragment implements View.OnClickL
 
         databaseHelper.setChallengeResultInterface(this);
 
-        getLastKnownLocation();
-
         mLocationRequestHighAccuracy = new LocationRequest();
         mLocationRequestHighAccuracy.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         mLocationRequestHighAccuracy.setInterval(4000);
 
-        // Update values using data stored in the Bundle. - //TODO to check if needed
+        // Update values using data stored in the Bundle.
         updateValuesFromBundle(savedInstanceState);
 
         client = LocationServices.getSettingsClient(getContext());
 
         createLocationCallback();
         buildLocationSettingsRequest();
-        Log.i(TAG, "Vola se onCreateView");
-
         return view;
     }
 
@@ -140,9 +136,7 @@ public class ChallengeLocationFragment extends Fragment implements View.OnClickL
             case R.id.btnPlay:
                 mRequestingLocationUpdates = true;
                 if (mRequestingLocationUpdates && checkPermissions()) {
-                    System.out.println(mRequestingLocationUpdates + "clickedGo");
                     startLocationUpdates();
-                    Toast.makeText(getContext(), "Start location updates", Toast.LENGTH_SHORT).show();
                 } else if (!checkPermissions()) {
                     requestPermissions();
                 }
@@ -151,7 +145,6 @@ public class ChallengeLocationFragment extends Fragment implements View.OnClickL
                 updateLocation();
                 break;
             case R.id.btnStop:
-                Toast.makeText(getContext(), "Stop location updates", Toast.LENGTH_SHORT).show();
                 chronometer.stop();
                 stopLocationUpdates();
                 break;
@@ -185,7 +178,6 @@ public class ChallengeLocationFragment extends Fragment implements View.OnClickL
 
     public void setOnLocationUpdateInterface(ChallengeLocationFragment.onLocationUpdateInterface onLocationUpdateInterface) {
         this.onLocationUpdateInterface = onLocationUpdateInterface;
-        Log.i(TAG, "vola setOnLocationUpdateInterface");
     }
 
     //overeni, ze se interface nasetoval
@@ -195,7 +187,6 @@ public class ChallengeLocationFragment extends Fragment implements View.OnClickL
 
         try {
             onLocationUpdateInterface = (onLocationUpdateInterface) context;
-            Log.i(TAG, "vola se onAttach");
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
                     + " must implement OnLocationUpdateInterface");
@@ -213,25 +204,20 @@ public class ChallengeLocationFragment extends Fragment implements View.OnClickL
         } else if (!checkPermissions()) {
             requestPermissions();
         }
-        Log.i(TAG, "Vola se onResume");
-        Log.i(TAG, "jak je v onResume interface" + onLocationUpdateInterface);
         updateLocation();
 
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.i(TAG, "vola se onActiviyResult");
         switch (requestCode) {
             // Check for the integer request code originally supplied to startResolutionForResult().
             case REQUEST_CHECK_SETTINGS:
                 switch (resultCode) {
                     case Activity.RESULT_OK:
-                        Log.i(TAG, "User agreed to make required location settings changes.");
                         // Nothing to do. startLocationupdates() gets called in onResume again.
                         break;
                     case Activity.RESULT_CANCELED:
-                        Log.i(TAG, "User chose not to make required location settings changes.");
                         mRequestingLocationUpdates = false;
                         updateLocation();
                         break;
@@ -245,7 +231,6 @@ public class ChallengeLocationFragment extends Fragment implements View.OnClickL
      */
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
-        Log.i(TAG, "vola se onSaveInstanceState");
         savedInstanceState.putBoolean(KEY_REQUESTING_LOCATION_UPDATES, mRequestingLocationUpdates);
         savedInstanceState.putParcelable(KEY_LOCATION, mCurrentLocation);
         super.onSaveInstanceState(savedInstanceState);
@@ -257,7 +242,6 @@ public class ChallengeLocationFragment extends Fragment implements View.OnClickL
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
-        Log.i(TAG, "vola se onRequestPermissionResult");
         if (requestCode == REQUEST_PERMISSIONS_REQUEST_CODE) {
             if (grantResults.length <= 0) {
                 // If user interaction was interrupted, the permission request is cancelled and you
@@ -280,7 +264,6 @@ public class ChallengeLocationFragment extends Fragment implements View.OnClickL
                 // again" prompts). Therefore, a user interface affordance is typically implemented
                 // when permissions are denied. Otherwise, your app could appear unresponsive to
                 // touches or interactions which have required permissions.
-                //TODO zjistit, o co kráčí
              /*   showSnackbar(R.string.permission_denied_explanation,
                         R.string.settings, new View.OnClickListener() {
                             @Override
@@ -306,25 +289,17 @@ public class ChallengeLocationFragment extends Fragment implements View.OnClickL
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 super.onLocationResult(locationResult);
-
                 mCurrentLocation = locationResult.getLastLocation();
-
                 updateLocation();
             }
         };
     }
 
-    private void updateLocation() { //TODO - proc je nekdy interface Null ???
-        Log.i(TAG, "vola se updateLocation");
-        Log.i(TAG, "mCurrentLocatio je" + mCurrentLocation);
-        Log.i(TAG, "interface je " + onLocationUpdateInterface);
+    private void updateLocation() {
         if (mCurrentLocation != null && onLocationUpdateInterface != null) {
             locationModel = new LocationModel(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
-
             distancePointsList.add(locationModel);
-
             onLocationUpdateInterface.onLocationUpdate(mCurrentLocation);
-            System.out.println(mRequestingLocationUpdates + "je na jaké hodnotě?");
         } else {
             return;
         }
@@ -340,14 +315,12 @@ public class ChallengeLocationFragment extends Fragment implements View.OnClickL
      * Return the current state of the permissions needed.
      */
     private boolean checkPermissions() {
-        Log.i(TAG, "vola se checkPermission");
         int permissionState = ActivityCompat.checkSelfPermission(getContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION);
         return permissionState == PackageManager.PERMISSION_GRANTED;
     }
 
     private void requestPermissions() {
-        Log.i(TAG, "vola se requestPermission");
         boolean shouldProvideRationale =
                 ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
                         Manifest.permission.ACCESS_FINE_LOCATION);
@@ -382,12 +355,10 @@ public class ChallengeLocationFragment extends Fragment implements View.OnClickL
      * Removes location updates from the FusedLocationApi.
      */
     private void stopLocationUpdates() {
-        Log.i(TAG, "vola se stopLocationUpdates");
         if (!mRequestingLocationUpdates) {
             Log.d(TAG, "stopLocationUpdates: updates never requested, no-op.");
             return;
         }
-
         // It is a good practice to remove location requests when the activity is in a paused or
         // stopped state. Doing so helps battery performance and is especially
         // recommended in applications that request frequent location updates.
@@ -396,7 +367,6 @@ public class ChallengeLocationFragment extends Fragment implements View.OnClickL
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         mRequestingLocationUpdates = false;
-                        System.out.println(mRequestingLocationUpdates + "mel by byt false?");
                     }
                 });
     }
@@ -419,14 +389,12 @@ public class ChallengeLocationFragment extends Fragment implements View.OnClickL
     }
 
     private void buildLocationSettingsRequest() {
-        Log.i(TAG, "Vola se buildLocatioRequestSettings");
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
         builder.addLocationRequest(mLocationRequestHighAccuracy);
         mLocationSettingsRequest = builder.build();
     }
 
     private void updateValuesFromBundle(Bundle savedInstanceState) {
-        Log.i(TAG, "vola se updateValuesFromBundle");
         if (savedInstanceState != null) {
             //TODO create buttons enabled/disabled
             // Update the value of mRequestingLocationUpdates from the Bundle, and make sure that
@@ -434,7 +402,6 @@ public class ChallengeLocationFragment extends Fragment implements View.OnClickL
             if (savedInstanceState.keySet().contains(KEY_REQUESTING_LOCATION_UPDATES)) {
                 mRequestingLocationUpdates = savedInstanceState.getBoolean(
                         KEY_REQUESTING_LOCATION_UPDATES);
-                System.out.println("tady se to nahodou nenastavuej" + mRequestingLocationUpdates);
             }
 
             // Update the value of mCurrentLocation from the Bundle and update the UI to show the
@@ -455,7 +422,6 @@ public class ChallengeLocationFragment extends Fragment implements View.OnClickL
 
 
     private void startLocationUpdates() {
-        Log.i(TAG, "vola se startLocationUpdates");
         // Begin by checking if the device has the necessary location settings.
         client.checkLocationSettings(mLocationSettingsRequest)
                 .addOnSuccessListener(getActivity(), new OnSuccessListener<LocationSettingsResponse>() {
@@ -498,7 +464,6 @@ public class ChallengeLocationFragment extends Fragment implements View.OnClickL
                                 Toast.makeText(getContext(), errorMessage, Toast.LENGTH_LONG).show();
                                 mRequestingLocationUpdates = false;
                         }
-
                         updateLocation();
                     }
                 });

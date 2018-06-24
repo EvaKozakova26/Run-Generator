@@ -30,7 +30,6 @@ public class LoginActivity extends AppCompatActivity {
     private static final int RC_SIGN_IN = 123;
 
     private FirebaseUser currentUser;
-
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
 

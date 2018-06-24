@@ -63,7 +63,10 @@ public class DetailChallengeFragment extends Fragment implements OnMapReadyCallb
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        getRoute();
+    }
 
+    private void getRoute() {
         double currentLat;
         double currentLng;
         double prevLat = pointsList.get(0).getLatitude();
@@ -85,4 +88,5 @@ public class DetailChallengeFragment extends Fragment implements OnMapReadyCallb
 
         }
     }
+
 }

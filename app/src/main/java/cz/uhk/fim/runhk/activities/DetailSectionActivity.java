@@ -21,7 +21,6 @@ public class DetailSectionActivity extends AppCompatActivity {
         int exps = getIntent().getIntExtra("exps", 0);
         String time = getIntent().getStringExtra("time");
 
-
         Bundle bundle = new Bundle();
         bundle.putDouble("distance", distance);
         bundle.putParcelableArrayList("points", pointsList);
@@ -32,6 +31,5 @@ public class DetailSectionActivity extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragmentDetailContainer, detailChallengeFragment) // kam to chci a co
                 .commit();
-
     }
 }

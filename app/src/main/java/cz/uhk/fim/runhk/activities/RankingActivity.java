@@ -1,15 +1,12 @@
 package cz.uhk.fim.runhk.activities;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
@@ -40,7 +37,6 @@ public class RankingActivity extends AppCompatActivity {
         setContentView(R.layout.activity_ranking);
 
         recyclerView = findViewById(R.id.recyclerViewRank);
-
         firebaseDatabase = FirebaseDatabase.getInstance();
 
         Query query = firebaseDatabase.getReference("user").orderByChild("exps");
@@ -56,15 +52,11 @@ public class RankingActivity extends AppCompatActivity {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Player player = snapshot.getValue(Player.class);
                     playerList.add(player);
-
-
                 }
-
                 List<Player> playerListReverse = playerList;
                 Collections.reverse(playerListReverse);
                 adapter = new RankingsViewAdapter(playerListReverse);
                 recyclerView.setAdapter(adapter);
-
             }
 
             @Override

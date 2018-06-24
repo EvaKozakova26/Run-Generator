@@ -25,12 +25,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     double lat = 0;
     double lon = 0;
-
     double prevLat;
     double prevLng;
 
     LatLng myLocation;
-
     double distance = 0;
 
     ChallengeLocationFragment challengeLocationFragment;
@@ -94,7 +92,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             lat = currentLocation.getLatitude();
             lon = currentLocation.getLongitude();
             myLocation = new LatLng(lat, lon);
-            ///  mMap.addMarker(new MarkerOptions().position(myLocation).title("You are here"));
+
             mMap.moveCamera(CameraUpdateFactory.newLatLng(myLocation));
 
             if (prevLat != 0) {
@@ -108,14 +106,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 double currentDistance = distance2[0];
 
                 distance = distance + currentDistance;
-                System.out.println("di v mape je" + distance);
                 challengeLocationFragment.updateDistance(distance);
-                System.out.println("na druhem miste je" + distance2[1]);
-
             }
-
         }
-
     }
 
     @Override

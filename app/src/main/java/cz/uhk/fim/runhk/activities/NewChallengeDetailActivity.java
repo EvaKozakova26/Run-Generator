@@ -35,7 +35,6 @@ public class NewChallengeDetailActivity extends AppCompatActivity {
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         txtViewDisToDo = findViewById(R.id.textViewDistanceToDo);
 
-
         databaseReference = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("challengeToDo").child("distanceToDo");
         ValueEventListener postListener = new ValueEventListener() {
             @Override
@@ -60,7 +59,5 @@ public class NewChallengeDetailActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
     }
-
 }
