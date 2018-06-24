@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">RunHK</string>
+    <string name="app_name">RunChallenge</string>
     <string name="title_activity_maps">Map</string>
     <string name="run_for_life">RUN FOR LIFE</string>
     <string name="title_activity_login">Sign in</string>
