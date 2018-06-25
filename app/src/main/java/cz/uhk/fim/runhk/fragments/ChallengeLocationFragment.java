@@ -83,6 +83,7 @@ public class ChallengeLocationFragment extends Fragment implements View.OnClickL
     Chronometer chronometer;
     TextView textViewDistance;
 
+    String time = "";
     double lat;
     double lon;
 
@@ -149,7 +150,7 @@ public class ChallengeLocationFragment extends Fragment implements View.OnClickL
                 stopLocationUpdates();
                 break;
             case R.id.btnSave:
-                String time = (String) chronometer.getText();
+                time = (String) chronometer.getText();
                 saveChallenge(distance, time);
             default:
         }
@@ -166,10 +167,6 @@ public class ChallengeLocationFragment extends Fragment implements View.OnClickL
             Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
 
         }
-        Intent intent = new Intent(getActivity(), PlayerProfileActivity.class);
-        intent.putExtra("distance", distance);
-        getActivity().finish();
-        startActivity(intent);
     }
 
     public interface onLocationUpdateInterface {
@@ -472,6 +469,10 @@ public class ChallengeLocationFragment extends Fragment implements View.OnClickL
 
     private void saveChallenge(double distance, String time) {
         databaseHelper.saveQuest(distance, distancePointsList, time);
+        Intent intent = new Intent(getActivity(), PlayerProfileActivity.class);
+        intent.putExtra("distance", distance);
+        getActivity().finish();
+        startActivity(intent);
     }
 
     //TODO nastavit lastKnownLocation při startu aktivity (mapa)

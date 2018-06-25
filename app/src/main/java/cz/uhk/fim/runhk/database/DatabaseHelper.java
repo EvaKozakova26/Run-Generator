@@ -12,10 +12,13 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Objects;
 import java.util.Random;
 
 import cz.uhk.fim.runhk.model.Challenge;
 import cz.uhk.fim.runhk.model.LocationModel;
+import cz.uhk.fim.runhk.model.Player;
 
 public class DatabaseHelper {
 
@@ -25,6 +28,7 @@ public class DatabaseHelper {
     private DatabaseReference questReference;
 
     ChallengeResultInterface challengeResultInterface;
+    LevelService levelService;
 
     private boolean finished;
     private double distanceToDo;
@@ -75,7 +79,6 @@ public class DatabaseHelper {
                         createQuest();
                     } else {
                         finished = false;
-                        challengeResultInterface.onChallengeResultCalled(finished);
                     }
 
                 }
@@ -139,13 +142,44 @@ public class DatabaseHelper {
     }
 
     private void updatePlayer(final int bonusExps) {
-        final DatabaseReference databaseReferenceTemp = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("exps");
+        final DatabaseReference databaseReferenceTemp = firebaseDatabase.getReference("user").child(currentUser.getUid());
         ValueEventListener postListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                int finalExps = currentQuestExps + dataSnapshot.getValue(Integer.class) + bonusExps;
-                databaseReferenceTemp.setValue(finalExps);
-                setLevel(finalExps);
+                Player player = dataSnapshot.getValue(Player.class);
+                int finalExps = currentQuestExps + player.getExps() + bonusExps;
+                databaseReferenceTemp.child("exps").setValue(finalExps);
+
+                int playerLevel = player.getLevel();
+                levelService = new LevelService();
+                HashMap<Integer, Integer> levelMap = levelService.getLevelMap();
+
+                try {
+                    if (finalExps > levelMap.get(playerLevel)) {
+                        databaseReferenceTemp.child("level").setValue(playerLevel + 1);
+                    }
+                    if (finalExps > levelMap.get(playerLevel + 1)) {
+                        databaseReferenceTemp.child("level").setValue(playerLevel + 2);
+                    }
+                    if (finalExps > levelMap.get(playerLevel + 2)) {
+                        databaseReferenceTemp.child("level").setValue(playerLevel + 3);
+                    }
+                    if (finalExps > levelMap.get(playerLevel + 3)) {
+                        databaseReferenceTemp.child("level").setValue(playerLevel + 4);
+                    }
+                    if (finalExps > levelMap.get(playerLevel + 5)) {
+                        databaseReferenceTemp.child("level").setValue(playerLevel + 6);
+                    }
+                    if (finalExps > levelMap.get(playerLevel + 7)) {
+                        databaseReferenceTemp.child("level").setValue(playerLevel + 8);
+                    }
+                    if (finalExps > levelMap.get(playerLevel + 9)) {
+                        databaseReferenceTemp.child("level").setValue(playerLevel + 9);
+                    }
+                } catch (RuntimeException e) {
+                    e.printStackTrace();
+                }
+
             }
 
             @Override
@@ -157,30 +191,21 @@ public class DatabaseHelper {
             }
 
     private void setLevel(final int exps) {
-        DatabaseReference databaseReferenceTemp = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("level");
+        final DatabaseReference databaseReferenceTemp = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("level");
         ValueEventListener postListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                final int level = dataSnapshot.getValue(Integer.class);
-                DatabaseReference dbReference = firebaseDatabase.getReference("level").child(String.valueOf(level));
-                ValueEventListener postListener = new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        int levelExps = dataSnapshot.getValue(Integer.class);
-                        if (exps > levelExps) {
-                            DatabaseReference levelPlayerReference = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("level");
-                            levelPlayerReference.setValue(level + 1);
-                            challengeResultInterface.onChallengeResultCalled(finished);
-                        }
+                int playerLevel = dataSnapshot.getValue(Integer.class);
 
-                    }
+                levelService = new LevelService();
+                HashMap<Integer, Integer> levelMap = levelService.getLevelMap();
+                String maxLevelExps = levelMap.get(playerLevel).toString();
+                int levelExps = Integer.parseInt(maxLevelExps);
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
+                if (exps > levelExps) {
+                    databaseReferenceTemp.setValue(playerLevel + 1);
+                }
 
-                    }
-                };
-                dbReference.addListenerForSingleValueEvent(postListener);
             }
 
             @Override

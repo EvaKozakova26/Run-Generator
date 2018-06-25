@@ -23,7 +23,10 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
+import java.util.HashMap;
+
 import cz.uhk.fim.runhk.R;
+import cz.uhk.fim.runhk.database.LevelService;
 import cz.uhk.fim.runhk.model.Player;
 
 public class PlayerProfileActivity extends NavigationDrawerActivity {
@@ -40,6 +43,8 @@ public class PlayerProfileActivity extends NavigationDrawerActivity {
 
     private double distanceToDo;
 
+    LevelService levelService;
+
 
 
     @Override
@@ -50,6 +55,7 @@ public class PlayerProfileActivity extends NavigationDrawerActivity {
         getLayoutInflater().inflate(R.layout.activity_player_profile, frameLayout);
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         firebaseDatabase = FirebaseDatabase.getInstance();
+        levelService = new LevelService();
 
 
         progressBar = findViewById(R.id.progress_exps);
@@ -59,7 +65,6 @@ public class PlayerProfileActivity extends NavigationDrawerActivity {
         storage = FirebaseStorage.getInstance();
 
         setPlayerStatsAndInfo();
-
 
         Button btnGo = findViewById(R.id.btnGo);
         btnGo.setOnClickListener(new View.OnClickListener() {
@@ -100,31 +105,18 @@ public class PlayerProfileActivity extends NavigationDrawerActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Player player = dataSnapshot.getValue(Player.class);
-                progressBar.setProgress(player.getExps());
 
+                HashMap<Integer, Integer> levelMap = levelService.getLevelMap();
+                int maxLevelExps =  levelMap.get(player.getLevel());
+                progressBar.setMax(maxLevelExps);
+
+                progressBar.setProgress(player.getExps());
                 TextView textViewLevel = findViewById(R.id.textViewPlayerLevel);
                 TextView textViewNick = findViewById(R.id.textViewPlayerNickname);
                 textViewNick.setTextSize(15);
 
                 textViewLevel.setText("Level " + player.getLevel());
                 textViewNick.setText(player.getNickname());
-
-
-                DatabaseReference databaseReferenceTemp = firebaseDatabase.getReference("level").child(String.valueOf(player.getLevel()));
-                ValueEventListener posListener = new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        int levelExps = dataSnapshot.getValue(Integer.class);
-                        progressBar.setMax(levelExps);
-
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                };
-                databaseReferenceTemp.addListenerForSingleValueEvent(posListener);
             }
 
             @Override
@@ -133,7 +125,7 @@ public class PlayerProfileActivity extends NavigationDrawerActivity {
             }
 
         };
-        databaseReference.addListenerForSingleValueEvent(posListener);
+        databaseReference.addValueEventListener(posListener);
 
         final DatabaseReference databaseReferencetemp = databaseReference.child("isMale");
         ValueEventListener listener = new ValueEventListener() {
