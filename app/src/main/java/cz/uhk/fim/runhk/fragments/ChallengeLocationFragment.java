@@ -304,8 +304,7 @@ public class ChallengeLocationFragment extends Fragment implements View.OnClickL
 
     public void updateDistance(double distance) {
         this.distance = distance;
-        textViewDistance.setText("");
-        textViewDistance.setText(String.format("%.2f", distance));
+        textViewDistance.setText(String.format("%.2f", distance) + " m");
     }
 
     /**

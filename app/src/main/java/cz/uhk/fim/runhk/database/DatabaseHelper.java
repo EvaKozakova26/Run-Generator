@@ -60,7 +60,6 @@ public class DatabaseHelper {
                         Date date = new Date();
                         System.out.println(dateFormat.format(date));
 
-                        //...
                         // najit v dbquest, dát na true a uložit ho pod child("FINISHED");
                         challenge.setDate(dateFormat.format(date));
                         challenge.setFinished(true);
