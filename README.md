@@ -1,2 +1,2 @@
 # RunChallenge
-UMTE FIM UHK 2018
+first android app
