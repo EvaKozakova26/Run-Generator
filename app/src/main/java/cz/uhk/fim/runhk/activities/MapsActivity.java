@@ -2,6 +2,8 @@ package cz.uhk.fim.runhk.activities;
 
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -11,9 +13,11 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.JointType;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.maps.model.RoundCap;
 
 import cz.uhk.fim.runhk.R;
 import cz.uhk.fim.runhk.fragments.ChallengeLocationFragment;
@@ -96,10 +100,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mMap.moveCamera(CameraUpdateFactory.newLatLng(myLocation));
 
             if (prevLat != 0) {
-                mMap.addPolyline(new PolylineOptions().clickable(false).add(
+                mMap.addPolyline(new PolylineOptions()
+                        .clickable(false)
+                        .jointType(JointType.ROUND)
+                        .color(Color.BLUE)
+                        .startCap(new RoundCap())
+                        .endCap(new RoundCap())
+                        .add(
                         new LatLng(prevLat, prevLng),
                         new LatLng(lat, lon)
                 ));
+
 
                 float[] distance2 = new float[2];
                 Location.distanceBetween(prevLat, prevLng, lat, lon, distance2);

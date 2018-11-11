@@ -119,7 +119,7 @@ public class ChallengeLocationFragment extends Fragment implements View.OnClickL
 
         mLocationRequestHighAccuracy = new LocationRequest();
         mLocationRequestHighAccuracy.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        mLocationRequestHighAccuracy.setInterval(4000);
+        mLocationRequestHighAccuracy.setInterval(5000);
 
         // Update values using data stored in the Bundle.
         updateValuesFromBundle(savedInstanceState);
