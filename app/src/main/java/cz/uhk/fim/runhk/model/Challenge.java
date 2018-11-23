@@ -13,6 +13,7 @@ public class Challenge {
     private double distanceToDo;
     private int exps;
     private String time;
+    private int elaspedTime;
     private boolean finished;
     private String date;
     private ArrayList<LocationModel> distancePoints;
@@ -90,5 +91,13 @@ public class Challenge {
 
     public void setDistancePoints(ArrayList<LocationModel> distancePoints) {
         this.distancePoints = distancePoints;
+    }
+
+    public int getElaspedTime() {
+        return elaspedTime;
+    }
+
+    public void setElaspedTime(int elaspedTime) {
+        this.elaspedTime = elaspedTime;
     }
 }

@@ -35,14 +35,14 @@ public class DatabaseHelper {
     private int exps;
     private int currentQuestExps;
 
-    public void saveQuest(double distance, ArrayList<LocationModel> distancePointsList, String time) {
+    public void saveQuest(double distance, ArrayList<LocationModel> distancePointsList, String time, int elapsedTime) {
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         firebaseDatabase = FirebaseDatabase.getInstance();
         finished = false;
-        getVysledek(distance, distancePointsList, time);
+        getVysledek(distance, distancePointsList, time, elapsedTime);
     }
 
-    public boolean getVysledek(final double distance, final ArrayList<LocationModel> distancePointsLocation, final String time) {
+    public boolean getVysledek(final double distance, final ArrayList<LocationModel> distancePointsLocation, final String time, final int elapsedTime) {
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         firebaseDatabase = FirebaseDatabase.getInstance();
         questReference = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("challengeToDo");
@@ -66,6 +66,7 @@ public class DatabaseHelper {
                         challenge.setDistance(distance);
                         challenge.setDistancePoints(distancePointsLocation);
                         challenge.setTime(time);
+                        challenge.setElaspedTime(elapsedTime);
                         DatabaseReference databaseReferenceTemp = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("finished");
                         databaseReferenceTemp.push().setValue(challenge);
 

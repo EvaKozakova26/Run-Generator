@@ -83,7 +83,8 @@ public class ChallengeLocationFragment extends Fragment implements View.OnClickL
     Chronometer chronometer;
     TextView textViewDistance;
 
-    String time = "";
+    private String time = "";
+    private int elapsedTime = 0;
     double lat;
     double lon;
 
@@ -151,7 +152,7 @@ public class ChallengeLocationFragment extends Fragment implements View.OnClickL
                 break;
             case R.id.btnSave:
                 time = (String) chronometer.getText();
-                saveChallenge(distance, time);
+                saveChallenge(distance, time, elapsedTime);
             default:
         }
     }
@@ -466,8 +467,8 @@ public class ChallengeLocationFragment extends Fragment implements View.OnClickL
 
     }
 
-    private void saveChallenge(double distance, String time) {
-        databaseHelper.saveQuest(distance, distancePointsList, time);
+    private void saveChallenge(double distance, String time, int elapsedTime) {
+        databaseHelper.saveQuest(distance, distancePointsList, time, elapsedTime);
         Intent intent = new Intent(getActivity(), PlayerProfileActivity.class);
         intent.putExtra("distance", distance);
         getActivity().finish();

@@ -48,6 +48,7 @@ public class ChallengesActivity extends AppCompatActivity implements OnItemClick
 
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         firebaseDatabase = FirebaseDatabase.getInstance();
+        //TODO refactor - used more times
         databaseReference = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("finished");
 
         layoutManager = new LinearLayoutManager(this); // kontext - odkaz na pozadovanoou tridu
