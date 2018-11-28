@@ -1,6 +1,6 @@
 # Adaptivní generátor běžeckých tras
 
-Ve fitness světe jsou poslední dobou velice rozšířené zařízení a aplikace na sledování sportovních aktivit. Díky záznamům o sportovních aktivitách jsou lidé více motivovaní a odhodlaní překonávat sami sebe. Nejčastější sledovanou aktivitou je běh, Obvykle se sleduje uběhnutá vzdálenost, čas a spálené kalorie. Co ovšem těmto aplikacím chybí, je jakási "nápověda" pro sportovce, jakou trasou by se měli vydat, aby běh byl co nejefektivnější.
+Ve fitness světe jsou poslední dobou velice rozšířené zařízení a aplikace na sledování sportovních aktivit. Díky záznamům o sportovních aktivitách jsou lidé více motivovaní a odhodlaní překonávat sami sebe. Nejčastější sledovanou aktivitou je běh. Obvykle se sleduje uběhnutá vzdálenost, čas a spálené kalorie. Co ovšem těmto aplikacím chybí, je jakási "nápověda" pro sportovce, jakou trasou by se měli vydat, aby běh byl co nejefektivnější.
 
 # Návrh řešení
 
