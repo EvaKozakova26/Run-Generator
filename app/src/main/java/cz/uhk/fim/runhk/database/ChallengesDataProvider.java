@@ -23,12 +23,12 @@ public class ChallengesDataProvider {
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
     private List<Challenge> challengeList;
+    public RunData runData = new RunData();
 
     public ChallengesDataProvider() {
-        getAllChallenges();
     }
 
-    private void getAllChallenges() {
+    public void getAllChallenges() {
         challengeList = new ArrayList<>();
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         firebaseDatabase = FirebaseDatabase.getInstance();
@@ -42,6 +42,7 @@ public class ChallengesDataProvider {
                     challengeList.add(challenge);
 
                 }
+                processData();
 
             }
 
@@ -53,7 +54,7 @@ public class ChallengesDataProvider {
         databaseReference.addValueEventListener(postListener);
     }
 
-    public RunData processData(List<Challenge> challengeList) {
+    private RunData processData() {
         List<Integer> elapsedTimeList = new ArrayList<>();
         List<Double> distances = new ArrayList<>();
         for (Challenge challenge : challengeList) {
@@ -62,18 +63,17 @@ public class ChallengesDataProvider {
         }
 
         int sumTime = 0;
-        for (int i = 0; i <= elapsedTimeList.size(); i++) {
+        for (int i = 0; i < elapsedTimeList.size(); i++) {
             sumTime = sumTime + elapsedTimeList.get(i);
         }
         int avgElapsedTime = sumTime / elapsedTimeList.size();
 
         double sumDistance = 0;
-        for (int i = 0; i <= distances.size(); i++) {
+        for (int i = 0; i < distances.size(); i++) {
             sumDistance = sumDistance + distances.get(i);
         }
         double avgDistance = sumDistance / distances.size();
 
-        RunData runData = new RunData();
         runData.setDistance(avgDistance);
         runData.setTime(avgElapsedTime);
 

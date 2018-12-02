@@ -26,11 +26,14 @@ import com.squareup.picasso.Picasso;
 import java.util.HashMap;
 
 import cz.uhk.fim.runhk.R;
+import cz.uhk.fim.runhk.database.ChallengesDataProvider;
 import cz.uhk.fim.runhk.database.LevelService;
 import cz.uhk.fim.runhk.model.Player;
+import cz.uhk.fim.runhk.model.RunData;
 
 public class PlayerProfileActivity extends NavigationDrawerActivity {
 
+    //TODO - private
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
     FirebaseUser currentUser;
@@ -44,7 +47,7 @@ public class PlayerProfileActivity extends NavigationDrawerActivity {
     private double distanceToDo;
 
     LevelService levelService;
-
+    private ChallengesDataProvider challengesDataProvider;
 
 
     @Override
@@ -92,6 +95,26 @@ public class PlayerProfileActivity extends NavigationDrawerActivity {
                 startActivity(intent);
             }
         });
+
+        Button btnGenerate = findViewById(R.id.btnGenerateChallenge);
+        btnGenerate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                challengesDataProvider = new ChallengesDataProvider();
+                challengesDataProvider.getAllChallenges();
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                RunData runData = challengesDataProvider.runData;
+                Intent intent = new Intent(PlayerProfileActivity.this, GeneratedMapActivity.class);
+                intent.putExtra("distance", runData.getDistance());
+                intent.putExtra("time", runData.getTime());
+                startActivity(intent);
+            }
+        });
+
     }
 
     @Override

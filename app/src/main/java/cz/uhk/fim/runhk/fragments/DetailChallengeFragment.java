@@ -1,8 +1,11 @@
 package cz.uhk.fim.runhk.fragments;
 
 
+import android.content.Context;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +18,17 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.ArrayList;
+
+import javax.net.ssl.HttpsURLConnection;
 
 import cz.uhk.fim.runhk.R;
 import cz.uhk.fim.runhk.model.LocationModel;
@@ -71,6 +84,7 @@ public class DetailChallengeFragment extends Fragment implements OnMapReadyCallb
         double currentLng;
         double prevLat = pointsList.get(0).getLatitude();
         double prevLng = pointsList.get(0).getLongitude();
+
 
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(prevLat, prevLng), 12.5f));
 

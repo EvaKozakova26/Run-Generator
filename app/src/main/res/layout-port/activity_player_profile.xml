@@ -34,7 +34,7 @@
 
     <TextView
         android:id="@+id/textViewPlayerLevel"
-        android:layout_marginBottom="50dp"
+        android:layout_marginBottom="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/level"
@@ -45,27 +45,36 @@
         android:id="@+id/btnGo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/newChallenge"
-        android:background="@drawable/button_shape_profile"
+        android:layout_gravity="center"
         android:layout_marginBottom="10dp"
-        android:layout_gravity="center" />
+        android:background="@drawable/button_shape_profile"
+        android:text="@string/newChallenge" />
 
     <Button
         android:id="@+id/btnQuestList"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/seeChallenges"
-        android:background="@drawable/button_shape_profile"
+        android:layout_gravity="center"
         android:layout_marginBottom="10dp"
-        android:layout_gravity="center" />
+        android:background="@drawable/button_shape_profile"
+        android:text="@string/seeChallenges" />
 
     <Button
         android:id="@+id/btnPlayersList"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/playersList"
+        android:layout_marginBottom="10dp"
         android:background="@drawable/button_shape_profile"
         android:layout_gravity="center" />
+
+    <Button
+        android:id="@+id/btnGenerateChallenge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/button_shape_profile"
+        android:text="@string/generateRun" />
 
 
 </LinearLayout>
