@@ -58,12 +58,16 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
 
     private String address;
     private String address3;
+    private String address4;
+    private String address5;
 
     private LatLng myLocation;
 
     private ChallengeLocationFragment challengeLocationFragment;
 
-    private DirectionsResult directionsResult;
+    private DirectionsResult directionsResult1;
+    private DirectionsResult directionsResult2;
+    private DirectionsResult directionsResult3;
 
     @SuppressLint("MissingPermission")
     @Override
@@ -114,7 +118,11 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 12.5f));
         mMap.addMarker(new MarkerOptions().position(myLocation).title("You are here"));
 
-        getAddressFromLocation();
+        try {
+            getAddressFromLocation();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         getRoute();
         // ziska routu
 
@@ -158,11 +166,13 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
         }
     }
 
-    private void getAddressFromLocation() {
+    private void getAddressFromLocation() throws IOException {
         // ziskani adresy
         Geocoder geocoder;
         List<Address> addresses = new ArrayList<>();
         List<Address> addresses3 = new ArrayList<>();
+        List<Address> addresses4 = new ArrayList<>();
+        List<Address> addresses5 = new ArrayList<>();
         geocoder = new Geocoder(this, Locale.getDefault());
 
         try {
@@ -175,46 +185,30 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
 
         Random r = new Random();
         int randomHeading = r.nextInt(360);
+        int randomHeading2 = r.nextInt(360);
+        int randomHeading3 = r.nextInt(360);
         LatLng waypoint = SphericalUtil.computeOffset(myLocation, avgDistance / 2, randomHeading);
+        LatLng waypoint2 = SphericalUtil.computeOffset(myLocation, avgDistance / 2, randomHeading2);
+        LatLng waypoint3 = SphericalUtil.computeOffset(myLocation, avgDistance / 2, randomHeading3);
 
+        addresses3 = geocoder.getFromLocation(waypoint.latitude, waypoint.longitude, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+        addresses4 = geocoder.getFromLocation(waypoint2.latitude, waypoint2.longitude, 1);
+        addresses5 = geocoder.getFromLocation(waypoint3.latitude, waypoint3.longitude, 1);
 
-        try {
-            addresses3 = geocoder.getFromLocation(waypoint.latitude, waypoint.longitude, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         address3 = addresses3.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+        address4 = addresses4.get(0).getAddressLine(0);
+        address5 = addresses5.get(0).getAddressLine(0);
     }
 
     private void getRoute() {
-        try {
-            directionsResult = DirectionsApi.newRequest(getGeoContext())
-                    .mode(TravelMode.WALKING)
-                    .origin(address)
-                    .destination(address)
-                    .alternatives(true)
-                    .waypoints(address3)
-                    .await();
-        } catch (ApiException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        directionsResult1 = createDirectionResult(address, address3);
+        directionsResult2 = createDirectionResult(address, address4);
+        directionsResult3 = createDirectionResult(address, address5);
 
-        // TODO - projet alternativy
-        if (directionsResult != null) {
-            addMarkers(directionsResult, mMap);
-            addPolyline(directionsResult, mMap);
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(directionsResult.routes[0].legs[0].startLocation.lat,
-                    directionsResult.routes[0].legs[0].startLocation.lng
-            ), 12.5f));
-        }
+        createRoute(directionsResult1, Color.BLUE);
+        createRoute(directionsResult2, Color.GREEN);
+        createRoute(directionsResult3, Color.YELLOW);
 
-        for (int i = 0; i < directionsResult.routes[0].legs.length; i++) {
-
-        }
     }
 
     private GeoApiContext getGeoContext() {
@@ -233,11 +227,41 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
                 .title(directionsResult.routes[0].legs[0].startAddress));
     }
 
-    private void addPolyline(DirectionsResult results, GoogleMap mMap) {
+    private void addPolyline(DirectionsResult results, GoogleMap mMap, int color) {
         List<LatLng> decodedPath = PolyUtil.decode(results.routes[0].overviewPolyline.getEncodedPath());
         //TODO projet decoded Path a zjistit body a z nich prevyseni :)
-        mMap.addPolyline(new PolylineOptions().addAll(decodedPath));
+        mMap.addPolyline(new PolylineOptions().color(color).addAll(decodedPath));
 
+    }
+
+    private DirectionsResult createDirectionResult(String startAddress, String waypoint) {
+        DirectionsResult directionsResult = new DirectionsResult();
+        try {
+            directionsResult = DirectionsApi.newRequest(getGeoContext())
+                    .mode(TravelMode.WALKING)
+                    .origin(startAddress)
+                    .destination(startAddress)
+                    .alternatives(true)
+                    .waypoints(waypoint)
+                    .await();
+        } catch (ApiException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return directionsResult;
+    }
+
+    private void createRoute(DirectionsResult directionsResult, int color) {
+        if (directionsResult != null) {
+            addMarkers(directionsResult, mMap);
+            addPolyline(directionsResult, mMap, color);
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(directionsResult.routes[0].legs[0].startLocation.lat,
+                    directionsResult.routes[0].legs[0].startLocation.lng
+            ), 12.5f));
+        }
     }
 
     private void updateLocation() {
