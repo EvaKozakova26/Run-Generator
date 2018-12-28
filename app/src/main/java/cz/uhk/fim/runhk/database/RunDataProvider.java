@@ -31,14 +31,11 @@ public class RunDataProvider implements AsyncResponse {
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
     private DatabaseReference databaseReferenceRunData;
-
     private ElevationService elevationService;
-    private DifficultyActivity difficultyActivity; //TODO moyna pres interface>?
 
     private List<Challenge> challengeList;
     private List<LatLng> distancePoints;
     private List<Double> elevations;
-    private int counter = 0;
 
     public RunData runData = new RunData();
 
@@ -56,8 +53,6 @@ public class RunDataProvider implements AsyncResponse {
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("finished");
-
-        difficultyActivity = new DifficultyActivity();
 
 
         ValueEventListener postListener = new ValueEventListener() {
@@ -115,7 +110,6 @@ public class RunDataProvider implements AsyncResponse {
 
     private void getElevationGain(List<LatLng> distancePoints) {
         for (LatLng point : distancePoints) {
-            counter++;
             //spusti async task
             elevationService.getElevation(point.latitude, point.longitude);
         }

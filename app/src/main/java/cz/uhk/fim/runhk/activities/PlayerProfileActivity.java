@@ -103,19 +103,31 @@ public class PlayerProfileActivity extends NavigationDrawerActivity {
         btnGenerate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                runDataProvider = new RunDataProvider();
-                runDataProvider.processAndSaveRunData();
                 try {
                     Thread.sleep(2000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                RunData runData = runDataProvider.runData;
-                System.out.println("intents");
-                Intent intent = new Intent(PlayerProfileActivity.this, DifficultyActivity.class);
-                intent.putExtra("distance", runData.getDistance());
-                intent.putExtra("time", runData.getTime());
-                startActivity(intent);
+
+                databaseReference = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("runData");
+                ValueEventListener eventListener = new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        RunData runData = dataSnapshot.getValue(RunData.class);
+                        System.out.println("intents");
+                        Intent intent = new Intent(PlayerProfileActivity.this, DifficultyActivity.class);
+                        intent.putExtra("distance", runData.getDistance());
+                        intent.putExtra("time", runData.getTime());
+                        intent.putExtra("elevation", runData.getElevation());
+                        startActivity(intent);
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                    }
+                };
+                databaseReference.addValueEventListener(eventListener);
             }
         });
 

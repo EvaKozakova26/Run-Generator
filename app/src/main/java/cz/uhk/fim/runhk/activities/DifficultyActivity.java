@@ -10,12 +10,17 @@ import cz.uhk.fim.runhk.R;
 
 public class DifficultyActivity extends AppCompatActivity {
     private double avgDistance;
-    private int avgTime;
+    private long avgTime;
+    private double avgElevation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_difficulty);
+
+        avgDistance = getIntent().getDoubleExtra("distance", 0);
+        avgTime = getIntent().getLongExtra("time", 0);
+        avgElevation = getIntent().getDoubleExtra("elevation", 0);
 
         Button btnEasy = findViewById(R.id.btnEasyRun);
         btnEasy.setOnClickListener(new View.OnClickListener() {
@@ -26,6 +31,7 @@ public class DifficultyActivity extends AppCompatActivity {
                 Intent intent = new Intent(DifficultyActivity.this, GeneratedMapActivity.class);
                 intent.putExtra("distance", avgDistance);
                 intent.putExtra("time", avgTime);
+                intent.putExtra("elevation", avgElevation);
                 startActivity(intent);
             }
         });

@@ -52,7 +52,8 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
     double prevLng;
     private double distance;
     private double avgDistance;
-    private int time;
+    private long avgTime;
+    private double avgElevation;
 
 
     private String address;
@@ -74,8 +75,9 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
         challengeLocationFragment1.setOnLocationUpdateInterface(this);
 
         Intent intent = getIntent();
-        distance = intent.getDoubleExtra("distance", 0);
-        time = intent.getIntExtra("time", 0);
+        avgDistance = intent.getDoubleExtra("distance", 0);
+        avgTime = intent.getLongExtra("time", 0);
+        avgElevation = intent.getDoubleExtra("elevation", 0);
 
         if (findViewById(R.id.fragmentQuest) != null) {
             challengeLocationFragment = new ChallengeLocationFragment();
@@ -173,7 +175,7 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
 
         Random r = new Random();
         int randomHeading = r.nextInt(360);
-        LatLng waypoint = SphericalUtil.computeOffset(myLocation, avgDistance, randomHeading);
+        LatLng waypoint = SphericalUtil.computeOffset(myLocation, avgDistance / 2, randomHeading);
 
 
         try {
