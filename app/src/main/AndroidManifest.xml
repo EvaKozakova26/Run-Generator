@@ -59,7 +59,8 @@
             android:label="@string/title_activity_navigation_drawer"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".activities.NewChallengeDetailActivity" />
-        <activity android:name=".activities.GeneratedMapActivity"></activity>
+        <activity android:name=".activities.GeneratedMapActivity" />
+        <activity android:name=".activities.DifficultyActivity"></activity>
     </application>
 
 </manifest>

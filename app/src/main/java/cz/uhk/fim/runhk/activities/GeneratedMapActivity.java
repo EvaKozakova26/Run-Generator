@@ -1,6 +1,7 @@
 package cz.uhk.fim.runhk.activities;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -50,6 +51,7 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
     double prevLat;
     double prevLng;
     private double distance;
+    private double avgDistance;
     private int time;
 
 
@@ -71,8 +73,7 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
         ChallengeLocationFragment challengeLocationFragment1 = (ChallengeLocationFragment) getSupportFragmentManager().findFragmentById(R.id.fragmentQuest);
         challengeLocationFragment1.setOnLocationUpdateInterface(this);
 
-        Intent intent = new Intent();
-
+        Intent intent = getIntent();
         distance = intent.getDoubleExtra("distance", 0);
         time = intent.getIntExtra("time", 0);
 
@@ -87,7 +88,6 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
         mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
 
     }
 
@@ -112,11 +112,9 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 12.5f));
         mMap.addMarker(new MarkerOptions().position(myLocation).title("You are here"));
 
-        //ziska string z Lat Lng (funguje mi jen adresa..)
         getAddressFromLocation();
-
-        // ziska routu
         getRoute();
+        // ziska routu
 
     }
 
@@ -175,7 +173,7 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
 
         Random r = new Random();
         int randomHeading = r.nextInt(360);
-        LatLng waypoint = SphericalUtil.computeOffset(myLocation, 2000, randomHeading);
+        LatLng waypoint = SphericalUtil.computeOffset(myLocation, avgDistance, randomHeading);
 
 
         try {

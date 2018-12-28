@@ -1,11 +1,11 @@
-package cz.uhk.fim.runhk.database;
+package cz.uhk.fim.runhk.service;
 
 import java.util.HashMap;
 
 public class LevelService {
 
     public HashMap<Integer, Integer> getLevelMap() {
-        HashMap<Integer, Integer> levelMap = new HashMap();
+        HashMap<Integer, Integer> levelMap = new HashMap<>();
         levelMap.put(1, 100);
         levelMap.put(2, 200);
         levelMap.put(3, 400);

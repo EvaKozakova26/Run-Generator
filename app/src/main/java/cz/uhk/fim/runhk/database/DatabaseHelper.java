@@ -13,12 +13,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Objects;
 import java.util.Random;
 
 import cz.uhk.fim.runhk.model.Challenge;
 import cz.uhk.fim.runhk.model.LocationModel;
 import cz.uhk.fim.runhk.model.Player;
+import cz.uhk.fim.runhk.service.LevelService;
 
 public class DatabaseHelper {
 
@@ -29,20 +29,21 @@ public class DatabaseHelper {
 
     ChallengeResultInterface challengeResultInterface;
     LevelService levelService;
+    private RunDataProvider runDataProvider = new RunDataProvider();
 
     private boolean finished;
     private double distanceToDo;
     private int exps;
     private int currentQuestExps;
 
-    public void saveQuest(double distance, ArrayList<LocationModel> distancePointsList, String time, int elapsedTime) {
+    public void saveQuest(double distance, ArrayList<LocationModel> distancePointsList, String time, long elapsedTime) {
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         firebaseDatabase = FirebaseDatabase.getInstance();
         finished = false;
         getVysledek(distance, distancePointsList, time, elapsedTime);
     }
 
-    public boolean getVysledek(final double distance, final ArrayList<LocationModel> distancePointsLocation, final String time, final int elapsedTime) {
+    public boolean getVysledek(final double distance, final ArrayList<LocationModel> distancePointsLocation, final String time, final long elapsedTime) {
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         firebaseDatabase = FirebaseDatabase.getInstance();
         questReference = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("challengeToDo");
@@ -77,6 +78,7 @@ public class DatabaseHelper {
                         updatePlayer(bonusExps);
                         questReference.removeValue();
                         createQuest();
+                        runDataProvider.processAndSaveRunData();
                     } else {
                         finished = false;
                     }

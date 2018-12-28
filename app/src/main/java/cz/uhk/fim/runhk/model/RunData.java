@@ -2,14 +2,15 @@ package cz.uhk.fim.runhk.model;
 
 public class RunData {
 
-    private int time;
+    private long time;
     private double distance;
+    private double elevation;
 
-    public int getTime() {
+    public long getTime() {
         return time;
     }
 
-    public void setTime(int time) {
+    public void setTime(long time) {
         this.time = time;
     }
 
@@ -19,5 +20,13 @@ public class RunData {
 
     public void setDistance(double distance) {
         this.distance = distance;
+    }
+
+    public double getElevation() {
+        return elevation;
+    }
+
+    public void setElevation(double elevation) {
+        this.elevation = elevation;
     }
 }

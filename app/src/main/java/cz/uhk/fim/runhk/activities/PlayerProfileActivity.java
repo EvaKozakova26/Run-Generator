@@ -1,5 +1,6 @@
 package cz.uhk.fim.runhk.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -26,8 +27,8 @@ import com.squareup.picasso.Picasso;
 import java.util.HashMap;
 
 import cz.uhk.fim.runhk.R;
-import cz.uhk.fim.runhk.database.ChallengesDataProvider;
-import cz.uhk.fim.runhk.database.LevelService;
+import cz.uhk.fim.runhk.database.RunDataProvider;
+import cz.uhk.fim.runhk.service.LevelService;
 import cz.uhk.fim.runhk.model.Player;
 import cz.uhk.fim.runhk.model.RunData;
 
@@ -45,9 +46,10 @@ public class PlayerProfileActivity extends NavigationDrawerActivity {
     StorageReference imgReference;
 
     private double distanceToDo;
+    private Context context;
 
     LevelService levelService;
-    private ChallengesDataProvider challengesDataProvider;
+    private RunDataProvider runDataProvider;
 
 
     @Override
@@ -67,16 +69,17 @@ public class PlayerProfileActivity extends NavigationDrawerActivity {
         imageViewProfile = findViewById(R.id.imgProfile);
         storage = FirebaseStorage.getInstance();
 
+        context = this;
         setPlayerStatsAndInfo();
 
-    /*    Button btnGo = findViewById(R.id.btnGo);
+        Button btnGo = findViewById(R.id.btnGo);
         btnGo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(PlayerProfileActivity.this, NewChallengeDetailActivity.class);
                 startActivity(intent);
             }
-        });*/
+        });
 
         Button btnQuests = findViewById(R.id.btnQuestList);
         btnQuests.setOnClickListener(new View.OnClickListener() {
@@ -100,15 +103,16 @@ public class PlayerProfileActivity extends NavigationDrawerActivity {
         btnGenerate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                challengesDataProvider = new ChallengesDataProvider();
-                challengesDataProvider.getAllChallenges();
+                runDataProvider = new RunDataProvider();
+                runDataProvider.processAndSaveRunData();
                 try {
                     Thread.sleep(2000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                RunData runData = challengesDataProvider.runData;
-                Intent intent = new Intent(PlayerProfileActivity.this, GeneratedMapActivity.class);
+                RunData runData = runDataProvider.runData;
+                System.out.println("intents");
+                Intent intent = new Intent(PlayerProfileActivity.this, DifficultyActivity.class);
                 intent.putExtra("distance", runData.getDistance());
                 intent.putExtra("time", runData.getTime());
                 startActivity(intent);

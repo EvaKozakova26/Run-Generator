@@ -3,6 +3,8 @@ package cz.uhk.fim.runhk.fragments;
 
 import android.content.Context;
 import android.location.Location;
+import android.annotation.SuppressLint;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -26,22 +28,42 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.net.ssl.HttpsURLConnection;
 
 import cz.uhk.fim.runhk.R;
 import cz.uhk.fim.runhk.model.LocationModel;
+import cz.uhk.fim.runhk.service.AsyncResponse;
+import cz.uhk.fim.runhk.service.ElevationService;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class DetailChallengeFragment extends Fragment implements OnMapReadyCallback {
+public class DetailChallengeFragment extends Fragment implements OnMapReadyCallback, AsyncResponse {
 
     private GoogleMap mMap;
     SupportMapFragment mapFragment;
+    private ElevationService elevationService;
 
-    ArrayList<LocationModel> pointsList;
+    private ArrayList<LocationModel> pointsList;
+
+    private double latitude;
+    private double longitude;
+
+    private List<Double> elevationList;
 
     public DetailChallengeFragment() {
         // Required empty public constructor
@@ -52,10 +74,16 @@ public class DetailChallengeFragment extends Fragment implements OnMapReadyCallb
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_detail_challenge, container, false);
 
+        elevationService = new ElevationService();
+        elevationList = new ArrayList<>();
+
         double distance = getArguments().getDouble("distance", 0);
         pointsList = getArguments().getParcelableArrayList("points");
         int exps = getArguments().getInt("exps");
         String time = getArguments().getString("time");
+
+        latitude = pointsList.get(0).latitude;
+        longitude = pointsList.get(0).longitude;
 
         mapFragment = (SupportMapFragment) getChildFragmentManager()
                 .findFragmentById(R.id.mapDetail);
@@ -103,4 +131,8 @@ public class DetailChallengeFragment extends Fragment implements OnMapReadyCallb
         }
     }
 
+    @Override
+    public void processFinish(Double output) {
+        elevationList.add(output);
+    }
 }
