@@ -1,17 +1,23 @@
 package cz.uhk.fim.runhk.activities;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -20,11 +26,11 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.JointType;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.RoundCap;
 import com.google.maps.DirectionsApi;
 import com.google.maps.GeoApiContext;
-import com.google.maps.PendingResult;
 import com.google.maps.android.PolyUtil;
 import com.google.maps.android.SphericalUtil;
 import com.google.maps.errors.ApiException;
@@ -32,7 +38,6 @@ import com.google.maps.model.DirectionsResult;
 import com.google.maps.model.TravelMode;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
@@ -40,6 +45,7 @@ import java.util.concurrent.TimeUnit;
 
 import cz.uhk.fim.runhk.R;
 import cz.uhk.fim.runhk.fragments.ChallengeLocationFragment;
+import cz.uhk.fim.runhk.model.PolyLineData;
 
 public class GeneratedMapActivity extends FragmentActivity implements OnMapReadyCallback, ChallengeLocationFragment.onLocationUpdateInterface {
 
@@ -118,15 +124,64 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 12.5f));
         mMap.addMarker(new MarkerOptions().position(myLocation).title("You are here"));
 
+        mMap.setOnPolylineClickListener(new GoogleMap.OnPolylineClickListener() {
+            @Override
+            public void onPolylineClick(Polyline polyline) {
+                Snackbar snackbar = Snackbar.make(mapFragment.getView(), "Run this route?", Snackbar.LENGTH_INDEFINITE);
+                snackbar.setAction("RUN", onRunClickListener);
+                snackbar.show();
+                onButtonShowPopupWindowClick((PolyLineData) polyline.getTag());
+
+            }
+        });
+
         try {
             getAddressFromLocation();
         } catch (IOException e) {
             e.printStackTrace();
         }
         getRoute();
-        // ziska routu
 
     }
+
+    View.OnClickListener onRunClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            // Do something here
+        }
+    };
+
+    private void onButtonShowPopupWindowClick(PolyLineData polyLineData) {
+        LayoutInflater inflater = (LayoutInflater)
+                getSystemService(LAYOUT_INFLATER_SERVICE);
+        View popupView = inflater.inflate(R.layout.popup_layout, null);
+        popupView.setAlpha(0.6f);
+
+        // create the popup window
+        int width = LinearLayout.LayoutParams.WRAP_CONTENT;
+        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+        boolean focusable = true; // lets taps outside the popup also dismiss it
+        final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
+
+        TextView popupText = popupView.findViewById(R.id.popupText);
+        popupText.setText(polyLineData.getDistance() + " metres" + "\n"
+                + polyLineData.getTime() + " minutes" + "\n"
+                + polyLineData.getCalories() + " calories");
+
+        // show the popup window
+        // which view you pass in doesn't matter, it is only used for the window tolken
+        popupWindow.showAtLocation(mapFragment.getView(), Gravity.CENTER, 0, 0);
+
+        // dismiss the popup window when touched
+        popupView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                popupWindow.dismiss();
+                return true;
+            }
+        });
+    }
+
 
     @Override
     public void onLocationUpdate(Location currentLocation) {
@@ -169,19 +224,14 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
     private void getAddressFromLocation() throws IOException {
         // ziskani adresy
         Geocoder geocoder;
-        List<Address> addresses = new ArrayList<>();
-        List<Address> addresses3 = new ArrayList<>();
-        List<Address> addresses4 = new ArrayList<>();
-        List<Address> addresses5 = new ArrayList<>();
+        List<Address> addresses;
+        List<Address> addresses3;
+        List<Address> addresses4;
+        List<Address> addresses5;
         geocoder = new Geocoder(this, Locale.getDefault());
 
-        try {
-            addresses = geocoder.getFromLocation(myLocation.latitude, myLocation.longitude, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        addresses = geocoder.getFromLocation(myLocation.latitude, myLocation.longitude, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
         address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
-
 
         Random r = new Random();
         int randomHeading = r.nextInt(360);
@@ -205,9 +255,9 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
         directionsResult2 = createDirectionResult(address, address4);
         directionsResult3 = createDirectionResult(address, address5);
 
-        createRoute(directionsResult1, Color.BLUE);
-        createRoute(directionsResult2, Color.GREEN);
-        createRoute(directionsResult3, Color.YELLOW);
+        createRoute(directionsResult1, Color.BLUE, "blue route");
+        createRoute(directionsResult2, Color.GREEN, "green route");
+        createRoute(directionsResult3, Color.YELLOW, "yellow route");
 
     }
 
@@ -227,10 +277,14 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
                 .title(directionsResult.routes[0].legs[0].startAddress));
     }
 
-    private void addPolyline(DirectionsResult results, GoogleMap mMap, int color) {
+    private void addPolyline(DirectionsResult results, GoogleMap mMap, int color, String tag) {
         List<LatLng> decodedPath = PolyUtil.decode(results.routes[0].overviewPolyline.getEncodedPath());
+        PolyLineData polyLineData = new PolyLineData();
+        polyLineData.setDistance(results.routes[0].legs[0].distance.inMeters);
+        polyLineData.setTime(0);
+        polyLineData.setCalories(0);
         //TODO projet decoded Path a zjistit body a z nich prevyseni :)
-        mMap.addPolyline(new PolylineOptions().color(color).addAll(decodedPath));
+        mMap.addPolyline(new PolylineOptions().color(color).clickable(true).addAll(decodedPath)).setTag(polyLineData);
 
     }
 
@@ -254,10 +308,10 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
         return directionsResult;
     }
 
-    private void createRoute(DirectionsResult directionsResult, int color) {
+    private void createRoute(DirectionsResult directionsResult, int color, String tag) {
         if (directionsResult != null) {
             addMarkers(directionsResult, mMap);
-            addPolyline(directionsResult, mMap, color);
+            addPolyline(directionsResult, mMap, color, tag);
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(directionsResult.routes[0].legs[0].startLocation.lat,
                     directionsResult.routes[0].legs[0].startLocation.lng
             ), 12.5f));
