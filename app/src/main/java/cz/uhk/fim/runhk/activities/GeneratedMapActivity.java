@@ -1,14 +1,19 @@
 package cz.uhk.fim.runhk.activities;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
 import android.view.Gravity;
@@ -19,6 +24,8 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -29,6 +36,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.RoundCap;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.maps.DirectionsApi;
 import com.google.maps.GeoApiContext;
 import com.google.maps.android.PolyUtil;
@@ -66,6 +76,8 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
     private List<Double> elevations;
     private List<LatLng> distancePoints;
     private PolyLineData currentPolylineData;
+    private List<Double> listLaTLon;
+
 
     private double elevationGain;
     private int polyLineIndex;
@@ -89,6 +101,9 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
     private PolyLineData currentPolyLineData2;
     private PolyLineData currentPolyLineData3;
 
+    private FusedLocationProviderClient fusedLocationProviderClient;
+
+
     @SuppressLint("MissingPermission")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,10 +118,15 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
         avgTime = intent.getLongExtra("time", 0);
         avgElevation = intent.getDoubleExtra("elevation", 0);
 
+        listLaTLon = new ArrayList<>();
+
         elevations = new ArrayList<>();
         elevationService = new ElevationService();
         distancePoints = new ArrayList<>();
         elevationService.delegate = this;
+
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        getLastKnownLocation();
 
         if (findViewById(R.id.fragmentQuest) != null) {
             challengeLocationFragment = new ChallengeLocationFragment();
@@ -137,11 +157,9 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
-        updateLocation();
         // Add a marker to your position and move the camera
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 12.5f));
-        mMap.addMarker(new MarkerOptions().position(myLocation).title("You are here"));
+        //     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 12.5f));
+        //     mMap.addMarker(new MarkerOptions().position(myLocation).title("You are here"));
 
         mMap.setOnPolylineClickListener(new GoogleMap.OnPolylineClickListener() {
             @Override
@@ -179,12 +197,7 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
             }
         });
 
-        try {
-            getAddressFromLocation();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        getRoute();
+
 
     }
 
@@ -367,7 +380,7 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
     }
 
     private void updateLocation() {
-        myLocation = new LatLng(lat, lon);
+        myLocation = new LatLng(listLaTLon.get(0), listLaTLon.get(1));
 
     }
 
@@ -422,5 +435,27 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
             }
 
         }
+    }
+
+    @SuppressLint({"StaticFieldLeak", "MissingPermission"})
+    private void getLastKnownLocation() {
+        fusedLocationProviderClient.getLastLocation()
+                .addOnCompleteListener(GeneratedMapActivity.this, new OnCompleteListener<Location>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Location> task) {
+                        if (task.isSuccessful() && task.getResult() != null) {
+                            myLocation = new LatLng(task.getResult().getLatitude(), task.getResult().getLongitude());
+                            try {
+                                getAddressFromLocation();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            getRoute();
+                        } else {
+                            System.out.println("ouh");
+                        }
+                    }
+
+                });
     }
 }
