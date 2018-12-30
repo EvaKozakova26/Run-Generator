@@ -24,6 +24,7 @@ import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
 import cz.uhk.fim.runhk.R;
+import cz.uhk.fim.runhk.model.Player;
 
 public class PlayerEditInfoActivity extends AppCompatActivity {
 
@@ -40,6 +41,8 @@ public class PlayerEditInfoActivity extends AppCompatActivity {
     private boolean isMale;
 
     EditText editTextNickname;
+    EditText editTextAge;
+    EditText editTextWeight;
     Button btnDone;
 
     @Override
@@ -60,6 +63,8 @@ public class PlayerEditInfoActivity extends AppCompatActivity {
         imgMale.setAlpha(0.5f);
 
         editTextNickname = findViewById(R.id.editTextNickname);
+        editTextAge = findViewById(R.id.editTextAge);
+        editTextWeight = findViewById(R.id.editTextWeight);
         btnDone = findViewById(R.id.btnEditingDone);
 
         createProfilePictures();
@@ -120,12 +125,13 @@ public class PlayerEditInfoActivity extends AppCompatActivity {
     }
 
     private void getExistingValues() {
-        DatabaseReference databaseReferenceTemp = databaseReference.child("nickname");
         ValueEventListener valueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                String existingNickname = dataSnapshot.getValue(String.class);
-                editTextNickname.setText(existingNickname);
+                Player player = dataSnapshot.getValue(Player.class);
+                editTextNickname.setText(player.getNickname());
+                editTextAge.setText(String.valueOf(player.getAge()));
+                editTextWeight.setText(String.valueOf(player.getWeight()));
             }
 
             @Override
@@ -133,13 +139,17 @@ public class PlayerEditInfoActivity extends AppCompatActivity {
 
             }
         };
-        databaseReferenceTemp.addListenerForSingleValueEvent(valueEventListener);
+        databaseReference.addListenerForSingleValueEvent(valueEventListener);
     }
 
     private void saveValues() {
         String nickname = String.valueOf(editTextNickname.getText());
+        int age = Integer.valueOf(String.valueOf(editTextAge.getText()));
+        int weight = Integer.valueOf(String.valueOf(editTextWeight.getText()));
         databaseReference.child("nickname").setValue(nickname);
         databaseReference.child("isMale").setValue(isMale);
+        databaseReference.child("age").setValue(age);
+        databaseReference.child("weight").setValue(weight);
 
         Intent intent = new Intent(PlayerEditInfoActivity.this, PlayerProfileActivity.class);
         finish();

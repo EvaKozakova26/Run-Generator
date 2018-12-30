@@ -97,6 +97,8 @@ public class LoginActivity extends AppCompatActivity {
                             // ulozi hrace
                             Player player = new Player("", currentUser.getEmail(), "", 1, 10, challenges);
                             player.setChallengeToDo(challenge);
+                            player.setAge(0);
+                            player.setWeight(0);
                             databaseReference = firebaseDatabase.getReference("user");
                             databaseReference.child(currentUser.getUid()).setValue(player);
 

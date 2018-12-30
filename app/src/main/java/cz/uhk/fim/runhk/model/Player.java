@@ -17,6 +17,9 @@ public class Player {
     private int level;
     private int exps;
 
+    private int age;
+    private int weight;
+
     private List<Challenge> challengeList;
     private Challenge challengeToDo;
 
@@ -32,6 +35,22 @@ public class Player {
     }
 
     public Player() {
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public int getWeight() {
+        return weight;
+    }
+
+    public void setWeight(int weight) {
+        this.weight = weight;
     }
 
     public String getNickname() {

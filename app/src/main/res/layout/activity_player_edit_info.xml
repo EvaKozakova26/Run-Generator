@@ -13,6 +13,20 @@
         android:layout_height="wrap_content"
         android:hint="your nickname" />
 
+    <EditText
+        android:id="@+id/editTextAge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:hint="your age" />
+
+    <EditText
+        android:id="@+id/editTextWeight"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:hint="your weight in kg" />
+
     <LinearLayout
         android:layout_marginTop="80dp"
         android:layout_width="wrap_content"
