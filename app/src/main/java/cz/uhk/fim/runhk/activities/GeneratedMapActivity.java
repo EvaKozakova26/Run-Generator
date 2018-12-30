@@ -38,6 +38,7 @@ import com.google.maps.model.DirectionsResult;
 import com.google.maps.model.TravelMode;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
@@ -46,8 +47,10 @@ import java.util.concurrent.TimeUnit;
 import cz.uhk.fim.runhk.R;
 import cz.uhk.fim.runhk.fragments.ChallengeLocationFragment;
 import cz.uhk.fim.runhk.model.PolyLineData;
+import cz.uhk.fim.runhk.service.AsyncResponse;
+import cz.uhk.fim.runhk.service.ElevationService;
 
-public class GeneratedMapActivity extends FragmentActivity implements OnMapReadyCallback, ChallengeLocationFragment.onLocationUpdateInterface {
+public class GeneratedMapActivity extends FragmentActivity implements OnMapReadyCallback, ChallengeLocationFragment.onLocationUpdateInterface, AsyncResponse {
 
     private GoogleMap mMap;
     private SupportMapFragment mapFragment;
@@ -60,6 +63,12 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
     private double avgDistance;
     private long avgTime;
     private double avgElevation;
+    private List<Double> elevations;
+    private List<LatLng> distancePoints;
+    private PolyLineData currentPolylineData;
+
+    private double elevationGain;
+    private int polyLineIndex;
 
 
     private String address;
@@ -70,10 +79,15 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
     private LatLng myLocation;
 
     private ChallengeLocationFragment challengeLocationFragment;
+    private ElevationService elevationService;
 
     private DirectionsResult directionsResult1;
     private DirectionsResult directionsResult2;
     private DirectionsResult directionsResult3;
+
+    private PolyLineData currentPolyLineData1;
+    private PolyLineData currentPolyLineData2;
+    private PolyLineData currentPolyLineData3;
 
     @SuppressLint("MissingPermission")
     @Override
@@ -88,6 +102,11 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
         avgDistance = intent.getDoubleExtra("distance", 0);
         avgTime = intent.getLongExtra("time", 0);
         avgElevation = intent.getDoubleExtra("elevation", 0);
+
+        elevations = new ArrayList<>();
+        elevationService = new ElevationService();
+        distancePoints = new ArrayList<>();
+        elevationService.delegate = this;
 
         if (findViewById(R.id.fragmentQuest) != null) {
             challengeLocationFragment = new ChallengeLocationFragment();
@@ -130,8 +149,33 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
                 Snackbar snackbar = Snackbar.make(mapFragment.getView(), "Run this route?", Snackbar.LENGTH_INDEFINITE);
                 snackbar.setAction("RUN", onRunClickListener);
                 snackbar.show();
-                onButtonShowPopupWindowClick((PolyLineData) polyline.getTag());
+                currentPolylineData = (PolyLineData) polyline.getTag();
+                polyLineIndex = currentPolylineData.getIndex();
+                System.out.println("current index " + polyLineIndex);
+                elevations.clear();
 
+                if (currentPolyLineData1 == null && currentPolylineData.getIndex() == 1) {
+                    currentPolyLineData1 = currentPolylineData;
+                    getElevationFromRoute(currentPolylineData.getPolyLinePoints(), 1);
+                } else if (currentPolyLineData2 == null && currentPolylineData.getIndex() == 2) {
+                    currentPolyLineData2 = currentPolylineData;
+                    getElevationFromRoute(currentPolyLineData2.getPolyLinePoints(), 2);
+                } else if (currentPolyLineData3 == null && currentPolylineData.getIndex() == 3) {
+                    currentPolyLineData3 = currentPolylineData;
+                    getElevationFromRoute(currentPolyLineData3.getPolyLinePoints(), 3);
+                } else {
+                    switch (polyLineIndex) {
+                        case 1:
+                            onButtonShowPopupWindowClick(currentPolyLineData1);
+                            break;
+                        case 2:
+                            onButtonShowPopupWindowClick(currentPolyLineData2);
+                            break;
+                        case 3:
+                            onButtonShowPopupWindowClick(currentPolyLineData3);
+                            break;
+                    }
+                }
             }
         });
 
@@ -165,6 +209,7 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
 
         TextView popupText = popupView.findViewById(R.id.popupText);
         popupText.setText(polyLineData.getDistance() + " metres" + "\n"
+                + polyLineData.getElevationGain() + "elevation gain" + "\n"
                 + polyLineData.getTime() + " minutes" + "\n"
                 + polyLineData.getCalories() + " calories");
 
@@ -255,9 +300,9 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
         directionsResult2 = createDirectionResult(address, address4);
         directionsResult3 = createDirectionResult(address, address5);
 
-        createRoute(directionsResult1, Color.BLUE, "blue route");
-        createRoute(directionsResult2, Color.GREEN, "green route");
-        createRoute(directionsResult3, Color.YELLOW, "yellow route");
+        createRoute(directionsResult1, Color.BLUE, 1);
+        createRoute(directionsResult2, Color.GREEN, 2);
+        createRoute(directionsResult3, Color.YELLOW, 3);
 
     }
 
@@ -277,12 +322,15 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
                 .title(directionsResult.routes[0].legs[0].startAddress));
     }
 
-    private void addPolyline(DirectionsResult results, GoogleMap mMap, int color, String tag) {
+    private void addPolyline(DirectionsResult results, GoogleMap mMap, int color, int index) {
         List<LatLng> decodedPath = PolyUtil.decode(results.routes[0].overviewPolyline.getEncodedPath());
         PolyLineData polyLineData = new PolyLineData();
         polyLineData.setDistance(results.routes[0].legs[0].distance.inMeters);
         polyLineData.setTime(0);
         polyLineData.setCalories(0);
+        polyLineData.setElevationGain(0);
+        polyLineData.setPolyLinePoints(decodedPath);
+        polyLineData.setIndex(index);
         //TODO projet decoded Path a zjistit body a z nich prevyseni :)
         mMap.addPolyline(new PolylineOptions().color(color).clickable(true).addAll(decodedPath)).setTag(polyLineData);
 
@@ -308,10 +356,10 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
         return directionsResult;
     }
 
-    private void createRoute(DirectionsResult directionsResult, int color, String tag) {
+    private void createRoute(DirectionsResult directionsResult, int color, int index) {
         if (directionsResult != null) {
             addMarkers(directionsResult, mMap);
-            addPolyline(directionsResult, mMap, color, tag);
+            addPolyline(directionsResult, mMap, color, index);
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(directionsResult.routes[0].legs[0].startLocation.lat,
                     directionsResult.routes[0].legs[0].startLocation.lng
             ), 12.5f));
@@ -321,6 +369,14 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
     private void updateLocation() {
         myLocation = new LatLng(lat, lon);
 
+    }
+
+    private void getElevationFromRoute(List<LatLng> distancePoints, int index) {
+        this.distancePoints = distancePoints;
+        for (LatLng point : distancePoints) {
+            //spusti async task
+            elevationService.getElevation(point.latitude, point.longitude);
+        }
     }
 
     @Override
@@ -335,5 +391,36 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
                         GeneratedMapActivity.super.onBackPressed();
                     }
                 }).create().show();
+    }
+
+    @Override
+    public void processFinish(Double output) {
+        elevations.add(output);
+        // count elevationGain
+        if (elevations.size() == distancePoints.size()) {
+            System.out.println("pocitam elevation Gain");
+            for (int i = 0; i < elevations.size() - 1; i++) {
+                if (elevations.get(i + 1) > elevations.get(i)) {
+                    elevationGain = elevationGain + (elevations.get(i + 1) - elevations.get(i));
+                }
+            }
+            switch (polyLineIndex) {
+                case 1:
+                    currentPolyLineData1.setElevationGain((int) elevationGain);
+                    onButtonShowPopupWindowClick(currentPolyLineData1);
+                    break;
+                case 2:
+                    currentPolyLineData2.setElevationGain((int) elevationGain);
+                    onButtonShowPopupWindowClick(currentPolyLineData2);
+                    break;
+                case 3:
+                    currentPolyLineData3.setElevationGain((int) elevationGain);
+                    onButtonShowPopupWindowClick(currentPolyLineData3);
+                    break;
+                default:
+                    System.out.println("nic");
+            }
+
+        }
     }
 }
