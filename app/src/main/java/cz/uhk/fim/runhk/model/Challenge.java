@@ -17,6 +17,8 @@ public class Challenge {
     private boolean finished;
     private String date;
     private ArrayList<LocationModel> distancePoints;
+    private int caloriesBurnt;
+    private int elevationGain;
 
     public Challenge(int level, double distance, int exps, String time, boolean finished) {
         this.level = level;
@@ -27,6 +29,22 @@ public class Challenge {
     }
 
     public Challenge() {
+    }
+
+    public int getElevationGain() {
+        return elevationGain;
+    }
+
+    public void setElevationGain(int elevationGain) {
+        this.elevationGain = elevationGain;
+    }
+
+    public int getCaloriesBurnt() {
+        return caloriesBurnt;
+    }
+
+    public void setCaloriesBurnt(int caloriesBurnt) {
+        this.caloriesBurnt = caloriesBurnt;
     }
 
     public int getLevel() {

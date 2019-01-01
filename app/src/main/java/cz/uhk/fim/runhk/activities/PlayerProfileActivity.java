@@ -119,6 +119,7 @@ public class PlayerProfileActivity extends NavigationDrawerActivity {
                         intent.putExtra("distance", runData.getDistance());
                         intent.putExtra("time", runData.getTime());
                         intent.putExtra("elevation", runData.getElevation());
+                        intent.putExtra("calories", runData.getCalories());
                         startActivity(intent);
 
                     }

@@ -1,5 +1,6 @@
 package cz.uhk.fim.runhk.database;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -13,19 +14,25 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 import cz.uhk.fim.runhk.model.Challenge;
 import cz.uhk.fim.runhk.model.LocationModel;
 import cz.uhk.fim.runhk.model.Player;
+import cz.uhk.fim.runhk.model.RunData;
+import cz.uhk.fim.runhk.service.AsyncResponse;
+import cz.uhk.fim.runhk.service.ElevationService;
 import cz.uhk.fim.runhk.service.LevelService;
 
-public class DatabaseHelper {
+public class DatabaseHelper implements AsyncResponse {
 
     private FirebaseUser currentUser;
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
     private DatabaseReference questReference;
+    private ElevationService elevationService;
 
     ChallengeResultInterface challengeResultInterface;
     LevelService levelService;
@@ -35,24 +42,36 @@ public class DatabaseHelper {
     private double distanceToDo;
     private int exps;
     private int currentQuestExps;
+    private List<Double> elevations;
+    private List<LocationModel> distancePoints;
+    private Challenge finishedChallenge;
+    private Player player;
+    private double runDistance;
 
     public void saveQuest(double distance, ArrayList<LocationModel> distancePointsList, String time, long elapsedTime) {
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         firebaseDatabase = FirebaseDatabase.getInstance();
+        elevationService = new ElevationService();
+        elevationService.delegate = this;
+        elevations = new ArrayList<>();
+        distancePoints = distancePointsList;
         finished = false;
+        runDistance = distance;
         getVysledek(distance, distancePointsList, time, elapsedTime);
+
     }
 
     public boolean getVysledek(final double distance, final ArrayList<LocationModel> distancePointsLocation, final String time, final long elapsedTime) {
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         firebaseDatabase = FirebaseDatabase.getInstance();
-        questReference = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("challengeToDo");
+        questReference = firebaseDatabase.getReference("user").child(currentUser.getUid());
 
         ValueEventListener postListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // Get Post object and use the values to update the UI
-                Challenge challenge = dataSnapshot.getValue(Challenge.class);
+                player = dataSnapshot.getValue(Player.class);
+                Challenge challenge = player.getChallengeToDo();
                 currentQuestExps = challenge.getExps();
                 if (!finished) {
                     if (distance >= challenge.getDistanceToDo()) {
@@ -68,17 +87,9 @@ public class DatabaseHelper {
                         challenge.setDistancePoints(distancePointsLocation);
                         challenge.setTime(time);
                         challenge.setElaspedTime(elapsedTime);
-                        DatabaseReference databaseReferenceTemp = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("finished");
-                        databaseReferenceTemp.push().setValue(challenge);
+                        finishedChallenge = challenge;
 
-
-                        double distanceBonus = distance - challenge.getDistanceToDo();
-                        int bonusExps = (int) (distanceBonus * 0.1);
-                        // nstavit hodjnoty plejerovi
-                        updatePlayer(bonusExps);
-                        questReference.removeValue();
-                        createQuest();
-                        runDataProvider.processAndSaveRunData();
+                        getElevationGain(distancePointsLocation);
                     } else {
                         finished = false;
                     }
@@ -94,6 +105,76 @@ public class DatabaseHelper {
         };
         questReference.addListenerForSingleValueEvent(postListener);
         return finished;
+    }
+
+    private void getElevationGain(List<LocationModel> distancePoints) {
+        for (LocationModel point : distancePoints) {
+            //spusti async task
+            elevationService.getElevation(point.latitude, point.longitude);
+        }
+    }
+
+    @Override
+    public void processFinish(Double output) {
+        elevations.add(output);
+        if (elevations.size() == distancePoints.size()) {
+            //TODO teprve ted ukladat vse
+            int elevationGain = getElevationGainForRoute();
+            finishedChallenge.setElevationGain(elevationGain);
+
+            //TODO vyppocitat elevation gain uz zde a oite teprve spocitat kalorie
+            finishedChallenge.setCaloriesBurnt(getCaloriesBurnt(player.getWeight(), finishedChallenge.getDistance(), finishedChallenge.getElaspedTime(), elevationGain));
+            DatabaseReference databaseReferenceTemp = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("finished");
+            databaseReferenceTemp.push().setValue(finishedChallenge);
+
+            //TODO dopocitat expy
+            /*double distanceBonus = runDistance - challenge.getDistanceToDo();
+            int bonusExps = (int) (distanceBonus * 0.1);*/
+            // nstavit hodnoty plejerovi
+            updatePlayer(0);
+            questReference.child("challengeToDo'").removeValue();
+            createQuest();
+            runDataProvider.processAndSaveRunData();
+        }
+    }
+
+    private int getElevationGainForRoute() {
+        int elevationGain = 0;
+        for (int i = 0; i < elevations.size() - 1; i++) {
+            if (elevations.get(i + 1) > elevations.get(i)) {
+                elevationGain = (int) (elevationGain + (elevations.get(i + 1) - elevations.get(i)));
+            }
+        }
+        return elevationGain;
+    }
+
+    //TODO elevationGain...
+    private int getCaloriesBurnt(int weight, double distance, long elaspedTime, int elevationGain) {
+        double METS = getMets(distance, elaspedTime);
+        double duration = elaspedTime / 3600000.0;
+        return (int) ((1.05 * METS * duration * weight) + (1.25 * elevationGain));
+    }
+
+    private double getMets(double distance, long elaspedTime) {
+        double METS = 0;
+        double distanceKm = distance / 1000;
+        double elapsedTimeMins = elaspedTime / 60;
+        double pace = elapsedTimeMins / distanceKm;
+
+        // TODO / do nejake strukturz...
+        if (pace < 3.4) METS = 18;
+        if (pace < 3.75 && pace > 3.4) METS = 16;
+        if (pace < 4 && pace > 3.75) METS = 15;
+        if (pace < 4.4 && pace > 4) METS = 14;
+        if (pace < 4.7 && pace > 4.4) METS = 13.5;
+        if (pace < 5 && pace > 4.7) METS = 12.5;
+        if (pace < 5.3 && pace > 5) METS = 11.5;
+        if (pace < 5.6 && pace > 5.3) METS = 11;
+        if (pace < 6.25 && pace > 5.6) METS = 10;
+        if (pace < 7.2 && pace > 6.25) METS = 9;
+        if (pace > 7.2) METS = 8;
+
+        return METS;
     }
 
 

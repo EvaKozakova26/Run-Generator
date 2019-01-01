@@ -5,6 +5,7 @@ public class RunData {
     private long time;
     private double distance;
     private double elevation;
+    private int calories;
 
     public long getTime() {
         return time;
@@ -28,5 +29,13 @@ public class RunData {
 
     public void setElevation(double elevation) {
         this.elevation = elevation;
+    }
+
+    public int getCalories() {
+        return calories;
+    }
+
+    public void setCalories(int calories) {
+        this.calories = calories;
     }
 }

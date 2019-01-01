@@ -25,35 +25,25 @@ import cz.uhk.fim.runhk.service.ElevationService;
 /**
  * Vytahne vsechny behy uzivatele, zpracuje data a posle do MapsActivity data pro vygenerovani trasy
  */
-public class RunDataProvider implements AsyncResponse {
+public class RunDataProvider {
 
     private FirebaseUser currentUser;
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
     private DatabaseReference databaseReferenceRunData;
-    private ElevationService elevationService;
 
     private List<Challenge> challengeList;
     private List<LatLng> distancePoints;
-    private List<Double> elevations;
 
     public RunData runData = new RunData();
-
-    public RunDataProvider() {
-        //this to set delegate/listener back to this class
-        elevationService = new ElevationService();
-        elevationService.delegate = this;
-    }
 
     public void processAndSaveRunData() {
         challengeList = new ArrayList<>();
         distancePoints = new ArrayList<>();
-        elevations = new ArrayList<>();
 
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("finished");
-
 
         ValueEventListener postListener = new ValueEventListener() {
             @Override
@@ -77,16 +67,18 @@ public class RunDataProvider implements AsyncResponse {
     private RunData processData() {
         List<Long> elapsedTimeList = new ArrayList<>();
         List<Double> distances = new ArrayList<>();
+        List<Integer> caloriesList = new ArrayList<>();
+        List<Integer> elevationList = new ArrayList<>();
         for (Challenge challenge : challengeList) {
             elapsedTimeList.add(challenge.getElaspedTime());
             distances.add(challenge.getDistance());
+            caloriesList.add(challenge.getCaloriesBurnt());
+            elevationList.add(challenge.getElevationGain());
             for (LocationModel locationModel : challenge.getDistancePoints()) {
                 LatLng latLng = new LatLng(locationModel.getLatitude(), locationModel.getLongitude());
                 distancePoints.add(latLng);
             }
         }
-
-        getElevationGain(distancePoints);
 
         long sumTime = 0;
         for (int i = 0; i < elapsedTimeList.size(); i++) {
@@ -100,42 +92,25 @@ public class RunDataProvider implements AsyncResponse {
         }
         double avgDistance = sumDistance / distances.size();
 
+        int sumCalories = 0;
+        for (int i = 0; i < caloriesList.size(); i++) {
+            sumCalories = sumCalories + caloriesList.get(i);
+        }
+        int avgCalories = sumCalories / caloriesList.size();
+
+        int sumElevations = 0;
+        for (int i = 0; i < elevationList.size(); i++) {
+            sumElevations = sumElevations + elevationList.get(i);
+        }
+        int avgElevationGain = sumElevations / elevationList.size();
+
         runData.setDistance(avgDistance);
         runData.setTime(avgElapsedTime);
-
-        System.out.println("return");
+        runData.setCalories(avgCalories);
+        runData.setElevation(avgElevationGain);
+        databaseReferenceRunData = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("runData");
+        databaseReferenceRunData.setValue(runData);
         return runData;
 
-    }
-
-    private void getElevationGain(List<LatLng> distancePoints) {
-        for (LatLng point : distancePoints) {
-            //spusti async task
-            elevationService.getElevation(point.latitude, point.longitude);
-        }
-    }
-
-    private double getAvgElevation(List<Double> elevations) {
-        double elevationGain = 0;
-
-        for (int i = 0; i < elevations.size() - 1; i++) {
-            if (elevations.get(i + 1) > elevations.get(i)) {
-                elevationGain = elevationGain + (elevations.get(i + 1) - elevations.get(i));
-            }
-        }
-        return elevationGain / challengeList.size();
-    }
-
-    @Override
-    public void processFinish(Double output) {
-        System.out.println("process finish");
-        elevations.add(output);
-        if (elevations.size() == distancePoints.size()) {
-            runData.setElevation(getAvgElevation(elevations));
-            System.out.println("elev do rundata");
-            databaseReferenceRunData = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("runData");
-            System.out.println("ukl8d8m");
-            databaseReferenceRunData.setValue(runData);
-        }
     }
 }

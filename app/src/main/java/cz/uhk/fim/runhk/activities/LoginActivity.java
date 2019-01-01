@@ -38,6 +38,20 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_log_in);
 
+       /* Button btnLogin = findViewById(R.id.btnLogin);
+        btnLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivityForResult(
+                        AuthUI.getInstance()
+                                .createSignInIntentBuilder()
+                                .setLogo(R.drawable.ic_person_black_24dp)      // Set logo drawable
+                                .setTheme(R.style.Theme_AppCompat_Light)
+                                .build(),
+                        RC_SIGN_IN);
+            }
+        });*/
+
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser != null) {
             Intent intent = new Intent(LoginActivity.this, PlayerProfileActivity.class);

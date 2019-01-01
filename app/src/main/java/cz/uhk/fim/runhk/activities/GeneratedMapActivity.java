@@ -68,6 +68,7 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
     private double avgDistance;
     private long avgTime;
     private double avgElevation;
+    private int avgCalories;
     private List<Double> elevations;
     private List<LatLng> distancePoints;
     private PolyLineData currentPolylineData;
@@ -112,6 +113,7 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
         avgDistance = intent.getDoubleExtra("distance", 0);
         avgTime = intent.getLongExtra("time", 0);
         avgElevation = intent.getDoubleExtra("elevation", 0);
+        avgCalories = intent.getIntExtra("calories", 0);
 
         listLaTLon = new ArrayList<>();
 
