@@ -80,6 +80,8 @@ public class DetailChallengeFragment extends Fragment implements OnMapReadyCallb
         double distance = getArguments().getDouble("distance", 0);
         pointsList = getArguments().getParcelableArrayList("points");
         int exps = getArguments().getInt("exps");
+        int calories = getArguments().getInt("calories");
+        int elevation = getArguments().getInt("elevation");
         String time = getArguments().getString("time");
 
         latitude = pointsList.get(0).latitude;
@@ -90,13 +92,19 @@ public class DetailChallengeFragment extends Fragment implements OnMapReadyCallb
         mapFragment.getMapAsync(this);
 
         TextView textViewDistance = view.findViewById(R.id.textViewDetailDistance);
-        textViewDistance.setText(String.format("%.2f", distance) + " meters");
+        textViewDistance.setText(String.format("%.2f", distance / 1000) + " km");
 
         TextView textViewExps = view.findViewById(R.id.textViewDetailExps);
         textViewExps.setText(String.valueOf(exps) + " points");
 
         TextView textViewTime = view.findViewById(R.id.textViewDetailTime);
         textViewTime.setText(time);
+
+        TextView textViewCalories = view.findViewById(R.id.textViewDetailCalories);
+        textViewCalories.setText(String.valueOf(calories) + " kcals");
+
+        TextView textViewElevation = view.findViewById(R.id.textViewDetailElevation);
+        textViewElevation.setText(String.valueOf(elevation) + " m");
 
         return view;
     }

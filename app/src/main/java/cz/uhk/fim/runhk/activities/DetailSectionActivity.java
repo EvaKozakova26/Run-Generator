@@ -17,6 +17,8 @@ public class DetailSectionActivity extends AppCompatActivity {
         setContentView(R.layout.activity_detail_section);
 
         double distance = getIntent().getDoubleExtra("distance", 0);
+        int calories = getIntent().getIntExtra("calories", 0);
+        int elevation = getIntent().getIntExtra("elevation", 0);
         ArrayList<LocationModel> pointsList = getIntent().getParcelableArrayListExtra("points");
         int exps = getIntent().getIntExtra("exps", 0);
         String time = getIntent().getStringExtra("time");
@@ -25,6 +27,8 @@ public class DetailSectionActivity extends AppCompatActivity {
         bundle.putDouble("distance", distance);
         bundle.putParcelableArrayList("points", pointsList);
         bundle.putInt("exps", exps);
+        bundle.putInt("calories", calories);
+        bundle.putInt("elevation", elevation);
         bundle.putString("time", time);
         DetailChallengeFragment detailChallengeFragment = new DetailChallengeFragment();
         detailChallengeFragment.setArguments(bundle);

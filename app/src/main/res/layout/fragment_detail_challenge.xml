@@ -36,6 +36,22 @@
             android:text="DISTANCE"
             android:textSize="20dp" />
 
+        <TextView
+            android:layout_marginLeft="10dp"
+            android:id="@+id/textViewDetailCalories"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Kcals"
+            android:textSize="20dp" />
+
+        <TextView
+            android:layout_marginLeft="10dp"
+            android:id="@+id/textViewDetailElevation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="elev"
+            android:textSize="20dp" />
+
 
     </LinearLayout>
 
