@@ -70,9 +70,9 @@ public class DatabaseHelper implements AsyncResponse {
                 player = dataSnapshot.getValue(Player.class);
                 Challenge challenge = player.getChallengeToDo();
                 currentQuestExps = challenge.getExps();
-                if (!finished) {
-                    if (distance >= challenge.getDistanceToDo()) {
-                        finished = true;
+
+
+                finished = true;
                         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
                         Date date = new Date();
                         System.out.println(dateFormat.format(date));
@@ -87,11 +87,6 @@ public class DatabaseHelper implements AsyncResponse {
                         finishedChallenge = challenge;
 
                         getElevationGain(distancePointsLocation);
-                    } else {
-                        finished = false;
-                    }
-
-                }
 
             }
 
@@ -104,19 +99,22 @@ public class DatabaseHelper implements AsyncResponse {
         return finished;
     }
 
-    private void getElevationGain(List<LocationModel> distancePoints) {
-        List<LocationModel> sortedDistancePoints = getSortedDistancePoints(distancePoints);
+    private void getElevationGain(List<LocationModel> distancePointsAll) {
+        List<LocationModel> sortedDistancePoints = getSortedDistancePoints(distancePointsAll);
+
         for (LocationModel point : sortedDistancePoints) {
             //spusti async task
             elevationService.getElevation(point.latitude, point.longitude);
         }
     }
 
-    private List<LocationModel> getSortedDistancePoints(List<LocationModel> distancePoints) {
+    private List<LocationModel> getSortedDistancePoints(List<LocationModel> distancePointsAll) {
         List<LocationModel> sortedDistancePoints = new ArrayList<>();
-        for (int i = 0; i < distancePoints.size(); i++) {
-            sortedDistancePoints.add(distancePoints.get(i + 2));
+        for (int i = 0; i < distancePointsAll.size(); i += 2) {
+            sortedDistancePoints.add(distancePointsAll.get(i));
         }
+        distancePoints.clear();
+        distancePoints.addAll(sortedDistancePoints);
         return sortedDistancePoints;
     }
 
