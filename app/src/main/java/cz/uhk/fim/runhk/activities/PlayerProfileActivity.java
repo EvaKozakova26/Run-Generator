@@ -72,15 +72,6 @@ public class PlayerProfileActivity extends NavigationDrawerActivity {
         context = this;
         setPlayerStatsAndInfo();
 
-        Button btnGo = findViewById(R.id.btnGo);
-        btnGo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(PlayerProfileActivity.this, NewChallengeDetailActivity.class);
-                startActivity(intent);
-            }
-        });
-
         Button btnQuests = findViewById(R.id.btnQuestList);
         btnQuests.setOnClickListener(new View.OnClickListener() {
             @Override

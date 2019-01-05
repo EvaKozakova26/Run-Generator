@@ -19,6 +19,7 @@ import java.util.Random;
 import cz.uhk.fim.runhk.model.Challenge;
 import cz.uhk.fim.runhk.model.LocationModel;
 import cz.uhk.fim.runhk.model.Player;
+import cz.uhk.fim.runhk.model.RunData;
 import cz.uhk.fim.runhk.service.AsyncResponse;
 import cz.uhk.fim.runhk.service.ElevationService;
 import cz.uhk.fim.runhk.service.LevelService;
@@ -44,6 +45,7 @@ public class DatabaseHelper implements AsyncResponse {
     private Challenge finishedChallenge;
     private Player player;
     private double runDistance;
+    private RunData runData;
 
     public void saveQuest(double distance, ArrayList<LocationModel> distancePointsList, String time, long elapsedTime) {
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -68,25 +70,22 @@ public class DatabaseHelper implements AsyncResponse {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // Get Post object and use the values to update the UI
                 player = dataSnapshot.getValue(Player.class);
-                Challenge challenge = player.getChallengeToDo();
-                currentQuestExps = challenge.getExps();
-
+                Challenge challenge = new Challenge();
+                currentQuestExps = 100;
 
                 finished = true;
-                        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
-                        Date date = new Date();
-                        System.out.println(dateFormat.format(date));
+                DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+                Date date = new Date();
+                System.out.println(dateFormat.format(date));
 
-                        // najit v dbquest, dát na true a uložit ho pod child("FINISHED");
-                        challenge.setDate(dateFormat.format(date));
-                        challenge.setFinished(true);
-                        challenge.setDistance(distance);
-                        challenge.setDistancePoints(distancePointsLocation);
-                        challenge.setTime(time);
-                        challenge.setElaspedTime(elapsedTime);
-                        finishedChallenge = challenge;
-
-                        getElevationGain(distancePointsLocation);
+                challenge.setDate(dateFormat.format(date));
+                challenge.setFinished(true);
+                challenge.setDistance(distance);
+                challenge.setDistancePoints(distancePointsLocation);
+                challenge.setTime(time);
+                challenge.setElaspedTime(elapsedTime);
+                finishedChallenge = challenge;
+                getElevationGain(distancePointsLocation);
 
             }
 
@@ -122,25 +121,60 @@ public class DatabaseHelper implements AsyncResponse {
     public void processFinish(Double output) {
         elevations.add(output);
         if (elevations.size() == distancePoints.size()) {
-            //TODO teprve ted ukladat vse
             int elevationGain = getElevationGainForRoute();
             finishedChallenge.setElevationGain(elevationGain);
-
-            //TODO vyppocitat elevation gain uz zde a oite teprve spocitat kalorie
             finishedChallenge.setCaloriesBurnt(getCaloriesBurnt(player.getWeight(), finishedChallenge.getDistance(), finishedChallenge.getElaspedTime(), elevationGain));
-            DatabaseReference databaseReferenceTemp = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("finished");
-            databaseReferenceTemp.push().setValue(finishedChallenge);
 
-            //TODO dopocitat expy
-            /*double distanceBonus = runDistance - challenge.getDistanceToDo();
-            int bonusExps = (int) (distanceBonus * 0.1);*/
-            // nstavit hodnoty plejerovi
-            updatePlayer(0);
-            questReference.child("challengeToDo'").removeValue();
-            createQuest();
-            runDataProvider.processAndSaveRunData();
+            DatabaseReference runDataReference = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("runData");
+            ValueEventListener runDataListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    RunData runData = dataSnapshot.getValue(RunData.class);
+                    int bonusExps = getBonusExps(finishedChallenge, runData);
+                    finishedChallenge.setExps(bonusExps);
+                    System.out.println("whz here");
+                    DatabaseReference databaseReferenceTemp = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("finished");
+                    databaseReferenceTemp.push().setValue(finishedChallenge);
+                    // nstavit hodnoty plejerovi
+                    updatePlayer(bonusExps);
+                    runDataProvider.processAndSaveRunData();
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            };
+            runDataReference.addListenerForSingleValueEvent(runDataListener);
         }
     }
+
+    private int getBonusExps(Challenge finishedChallenge, RunData runData) {
+        int bonusExps = 0;
+
+        if (finishedChallenge.getDistance() > runData.getDistance()) {
+            double distanceExps = 0.1 * (finishedChallenge.getDistance() - runData.getDistance());
+            bonusExps = (int) (bonusExps + distanceExps);
+        }
+
+        if (finishedChallenge.getElevationGain() > runData.getElevation()) {
+            double elevationExps = 0.2 * (finishedChallenge.getElevationGain() - runData.getElevation());
+            bonusExps = (int) (bonusExps + elevationExps);
+        }
+
+        if (finishedChallenge.getElaspedTime() > runData.getTime()) {
+            bonusExps = bonusExps + 100;
+
+        }
+
+        if (finishedChallenge.getCaloriesBurnt() > runData.getCalories()) {
+            int caloriesExps = finishedChallenge.getCaloriesBurnt() - runData.getCalories();
+            bonusExps = (bonusExps + caloriesExps);
+        }
+
+        return bonusExps;
+    }
+
 
     private int getElevationGainForRoute() {
         int elevationGain = 0;
@@ -179,53 +213,6 @@ public class DatabaseHelper implements AsyncResponse {
         if (pace > 7.2) METS = 8;
 
         return METS;
-    }
-
-
-    private void createQuest() {
-        currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        firebaseDatabase = FirebaseDatabase.getInstance();
-        databaseReference = firebaseDatabase.getReference().child("user").child(currentUser.getUid()).child("level");
-
-        ValueEventListener postListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // Get Post object and use the values to update the UI
-                int level = dataSnapshot.getValue(Integer.class);
-                Random random = new Random();
-
-                if (level >= 1 && level <= 5) {
-                    distanceToDo = random.nextInt(1000) + 500;
-                }
-                if (level >= 6 && level <= 10) {
-                    distanceToDo = random.nextInt(1500) + 1500;
-                }
-                if (level >= 11 && level <= 15) {
-                    distanceToDo = random.nextInt(3000) + 3000;
-                }
-                if (level >= 16 && level <= 20) {
-                    distanceToDo = random.nextInt(6000) + 6000;
-                }
-
-                exps = (int) (distanceToDo / 10);
-
-                Challenge currentChallengeToDo = new Challenge();
-                currentChallengeToDo.setDistanceToDo(distanceToDo);
-                currentChallengeToDo.setExps(exps);
-
-                firebaseDatabase = FirebaseDatabase.getInstance();
-                databaseReference = firebaseDatabase.getReference().child("user").child(currentUser.getUid()).child("challengeToDo");
-                databaseReference.setValue(currentChallengeToDo);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Getting Post failed, log a message
-
-                // ...
-            }
-        };
-        databaseReference.addListenerForSingleValueEvent(postListener);
     }
 
     private void updatePlayer(final int bonusExps) {
