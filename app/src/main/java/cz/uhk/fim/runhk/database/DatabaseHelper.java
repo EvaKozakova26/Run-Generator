@@ -1,6 +1,5 @@
 package cz.uhk.fim.runhk.database;
 
-import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -16,12 +15,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
 import cz.uhk.fim.runhk.model.Challenge;
 import cz.uhk.fim.runhk.model.LocationModel;
 import cz.uhk.fim.runhk.model.Player;
-import cz.uhk.fim.runhk.model.RunData;
 import cz.uhk.fim.runhk.service.AsyncResponse;
 import cz.uhk.fim.runhk.service.ElevationService;
 import cz.uhk.fim.runhk.service.LevelService;
@@ -108,10 +105,19 @@ public class DatabaseHelper implements AsyncResponse {
     }
 
     private void getElevationGain(List<LocationModel> distancePoints) {
-        for (LocationModel point : distancePoints) {
+        List<LocationModel> sortedDistancePoints = getSortedDistancePoints(distancePoints);
+        for (LocationModel point : sortedDistancePoints) {
             //spusti async task
             elevationService.getElevation(point.latitude, point.longitude);
         }
+    }
+
+    private List<LocationModel> getSortedDistancePoints(List<LocationModel> distancePoints) {
+        List<LocationModel> sortedDistancePoints = new ArrayList<>();
+        for (int i = 0; i < distancePoints.size(); i++) {
+            sortedDistancePoints.add(distancePoints.get(i + 2));
+        }
+        return sortedDistancePoints;
     }
 
     @Override

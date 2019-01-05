@@ -382,11 +382,20 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
     }
 
     private void getElevationFromRoute(List<LatLng> distancePoints, int index) {
+        distancePoints = getSortedDistancePoints(distancePoints);
         this.distancePoints = distancePoints;
         for (LatLng point : distancePoints) {
             //spusti async task
             elevationService.getElevation(point.latitude, point.longitude);
         }
+    }
+
+    private List<LatLng> getSortedDistancePoints(List<LatLng> distancePoints) {
+        List<LatLng> sortedDistancePoints = new ArrayList<>();
+        for (int i = 0; i < distancePoints.size() - 1; i += 2) {
+            sortedDistancePoints.add(distancePoints.get(i));
+        }
+        return sortedDistancePoints;
     }
 
     @Override
