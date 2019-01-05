@@ -16,6 +16,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -50,6 +51,7 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import cz.uhk.fim.runhk.R;
+import cz.uhk.fim.runhk.database.DatabaseHelper;
 import cz.uhk.fim.runhk.fragments.ChallengeLocationFragment;
 import cz.uhk.fim.runhk.model.PolyLineData;
 import cz.uhk.fim.runhk.service.AsyncResponse;
@@ -60,8 +62,8 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
     private GoogleMap mMap;
     private SupportMapFragment mapFragment;
 
-    double lat = 49.627378;
-    double lon = 16.52206;
+    double lat = 0;
+    double lon = 0;
     double prevLat;
     double prevLng;
     private double distance;
@@ -74,20 +76,20 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
     private PolyLineData currentPolylineData;
     private List<Double> listLaTLon;
 
-
     private double elevationGain;
     private int polyLineIndex;
-
+    private List<Polyline> polylines;
 
     private String address;
     private String address3;
     private String address4;
     private String address5;
-
     private LatLng myLocation;
 
     private ChallengeLocationFragment challengeLocationFragment;
     private ElevationService elevationService;
+    DatabaseHelper databaseHelper;
+
 
     private DirectionsResult directionsResult1;
     private DirectionsResult directionsResult2;
@@ -98,6 +100,8 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
     private PolyLineData currentPolyLineData3;
 
     private FusedLocationProviderClient fusedLocationProviderClient;
+    private long expecteDistance;
+    private double expectedDuration;
 
 
     @SuppressLint("MissingPermission")
@@ -116,11 +120,14 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
         avgCalories = intent.getIntExtra("calories", 0);
 
         listLaTLon = new ArrayList<>();
+        polylines = new ArrayList<>();
 
         elevations = new ArrayList<>();
         elevationService = new ElevationService();
         distancePoints = new ArrayList<>();
         elevationService.delegate = this;
+        databaseHelper = new DatabaseHelper();
+
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         getLastKnownLocation();
@@ -161,9 +168,6 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
         mMap.setOnPolylineClickListener(new GoogleMap.OnPolylineClickListener() {
             @Override
             public void onPolylineClick(Polyline polyline) {
-                Snackbar snackbar = Snackbar.make(mapFragment.getView(), "Run this route?", Snackbar.LENGTH_INDEFINITE);
-                snackbar.setAction("RUN", onRunClickListener);
-                snackbar.show();
                 currentPolylineData = (PolyLineData) polyline.getTag();
                 polyLineIndex = currentPolylineData.getIndex();
                 System.out.println("current index " + polyLineIndex);
@@ -198,13 +202,6 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
 
     }
 
-    View.OnClickListener onRunClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            // Do something here
-        }
-    };
-
     private void onButtonShowPopupWindowClick(PolyLineData polyLineData) {
         LayoutInflater inflater = (LayoutInflater)
                 getSystemService(LAYOUT_INFLATER_SERVICE);
@@ -217,11 +214,29 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
         boolean focusable = true; // lets taps outside the popup also dismiss it
         final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
 
+        int minutes = (int) polyLineData.getTime();
+        int seconds = minutes % 60;
+
         TextView popupText = popupView.findViewById(R.id.popupText);
-        popupText.setText(polyLineData.getDistance() + " metres" + "\n"
-                + polyLineData.getElevationGain() + "elevation gain" + "\n"
-                + polyLineData.getTime() + " minutes" + "\n"
-                + polyLineData.getCalories() + " calories");
+        popupText.setText(polyLineData.getDistance() / 1000.0 + " km" + "\n"
+                + polyLineData.getElevationGain() + " elevation gain" + "\n"
+                + minutes + ":" + seconds + " minutes" + "\n"
+                + polyLineData.getCalories() + " kcals");
+
+        Button btnRunPopup = popupView.findViewById(R.id.btnRunPopup);
+        btnRunPopup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int routeIndex = currentPolylineData.getIndex();
+                int routeColor = getRouteColor(routeIndex);
+                for (Polyline polyline : polylines) {
+                    if (polyline.getColor() != routeColor) {
+                        polyline.remove();
+                    }
+                }
+                popupWindow.dismiss();
+            }
+        });
 
         // show the popup window
         // which view you pass in doesn't matter, it is only used for the window tolken
@@ -235,6 +250,22 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
                 return true;
             }
         });
+    }
+
+    private int getRouteColor(int routeIndex) {
+        int color = 0;
+        switch (routeIndex) {
+            case 1:
+                color = Color.BLUE;
+                break;
+            case 2:
+                color = Color.GREEN;
+                break;
+            case 3:
+                color = Color.YELLOW;
+                break;
+        }
+        return color;
     }
 
 
@@ -256,7 +287,7 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
                 mMap.addPolyline(new PolylineOptions()
                         .clickable(false)
                         .jointType(JointType.ROUND)
-                        .color(Color.BLUE)
+                        .color(Color.BLACK)
                         .startCap(new RoundCap())
                         .endCap(new RoundCap())
                         .add(
@@ -271,6 +302,7 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
 
                 distance = distance + currentDistance;
                 challengeLocationFragment.updateDistance(distance);
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lon), 15f));
 
             }
         }
@@ -335,14 +367,30 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
     private void addPolyline(DirectionsResult results, GoogleMap mMap, int color, int index) {
         List<LatLng> decodedPath = PolyUtil.decode(results.routes[0].overviewPolyline.getEncodedPath());
         PolyLineData polyLineData = new PolyLineData();
-        polyLineData.setDistance(results.routes[0].legs[0].distance.inMeters);
-        polyLineData.setTime(0);
+        expecteDistance = results.routes[0].legs[0].distance.inMeters;
+        expectedDuration = getExpectedDuration(avgTime, expecteDistance);
+        polyLineData.setDistance(expecteDistance);
+        polyLineData.setTime(getExpectedDuration(avgTime, expecteDistance));
         polyLineData.setCalories(0);
         polyLineData.setElevationGain(0);
         polyLineData.setPolyLinePoints(decodedPath);
         polyLineData.setIndex(index);
-        //TODO projet decoded Path a zjistit body a z nich prevyseni :)
-        mMap.addPolyline(new PolylineOptions().color(color).clickable(true).addAll(decodedPath)).setTag(polyLineData);
+        Polyline polyline = mMap.addPolyline(new PolylineOptions().color(color).clickable(true).addAll(decodedPath));
+        polyline.setTag(polyLineData);
+        polylines.add(polyline);
+
+    }
+
+    private int getExpectedCaloriesBurn(int weight, double expectedDistance, double expectedDuration, int expectedElevationGain) {
+        return databaseHelper.getCaloriesBurnt(weight, expectedDistance, (long) expectedDuration, expectedElevationGain);
+    }
+
+    private double getExpectedDuration(long avgTotalTime, long expectedDistance) {
+        double duration = (avgTotalTime / 1000) / 60.0; //tominutes
+        double avgPace = duration / (avgDistance / 1000);
+
+        double result = avgPace * (expectedDistance / 1000.0);
+        return result;
 
     }
 
@@ -426,14 +474,17 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
             switch (polyLineIndex) {
                 case 1:
                     currentPolyLineData1.setElevationGain((int) elevationGain);
+                    currentPolyLineData1.setCalories(getExpectedCaloriesBurn(65, expecteDistance, expectedDuration, (int) elevationGain));
                     onButtonShowPopupWindowClick(currentPolyLineData1);
                     break;
                 case 2:
                     currentPolyLineData2.setElevationGain((int) elevationGain);
+                    currentPolyLineData2.setCalories(getExpectedCaloriesBurn(65, expecteDistance, expectedDuration, (int) elevationGain));
                     onButtonShowPopupWindowClick(currentPolyLineData2);
                     break;
                 case 3:
                     currentPolyLineData3.setElevationGain((int) elevationGain);
+                    currentPolyLineData3.setCalories(getExpectedCaloriesBurn(65, expecteDistance, expectedDuration, (int) elevationGain));
                     onButtonShowPopupWindowClick(currentPolyLineData3);
                     break;
                 default:

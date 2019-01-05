@@ -155,7 +155,7 @@ public class DatabaseHelper implements AsyncResponse {
     }
 
     //TODO elevationGain...
-    private int getCaloriesBurnt(int weight, double distance, long elaspedTime, int elevationGain) {
+    public int getCaloriesBurnt(int weight, double distance, long elaspedTime, int elevationGain) {
         double METS = getMets(distance, elaspedTime);
         double duration = elaspedTime / 3600000.0;
         return (int) ((1.05 * METS * duration * weight) + (1.25 * elevationGain));

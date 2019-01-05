@@ -8,7 +8,7 @@ import java.util.List;
 public class PolyLineData {
 
     private long distance;
-    private int time;
+    private double time;
     private int calories;
     private int elevationGain;
     private List<LatLng> polyLinePoints;
@@ -31,11 +31,11 @@ public class PolyLineData {
         this.distance = distance;
     }
 
-    public int getTime() {
+    public double getTime() {
         return time;
     }
 
-    public void setTime(int time) {
+    public void setTime(double time) {
         this.time = time;
     }
 
