@@ -28,13 +28,20 @@ public class DifficultyActivity extends AppCompatActivity {
         btnEasy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                System.out.println("onClick");
-                System.out.println("posilm distance + " + avgDistance);
                 Intent intent = new Intent(DifficultyActivity.this, GeneratedMapActivity.class);
                 intent.putExtra("distance", avgDistance);
                 intent.putExtra("time", avgTime);
                 intent.putExtra("elevation", avgElevation);
                 intent.putExtra("calories", avgCalories);
+                startActivity(intent);
+            }
+        });
+
+        Button btnCustom = findViewById(R.id.btnCustomRun);
+        btnCustom.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(DifficultyActivity.this, MapsActivity.class);
                 startActivity(intent);
             }
         });

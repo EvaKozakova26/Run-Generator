@@ -39,6 +39,6 @@
     <string name="run">RUN</string>
     <string name="startChallenge">START</string>
     <string name="generateRun">GENERATE RUN</string>
-    <string name="easy">EASY</string>
-    <string name="hard">HARD</string>
+    <string name="easy">GENERATE RUN</string>
+    <string name="hard">CUSTOM RUN</string>
 </resources>
