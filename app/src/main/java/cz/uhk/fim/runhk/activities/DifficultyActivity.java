@@ -43,6 +43,7 @@ public class DifficultyActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(DifficultyActivity.this, MapsActivity.class);
                 startActivity(intent);
+                finish();
             }
         });
     }

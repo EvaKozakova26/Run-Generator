@@ -56,7 +56,7 @@
         android:textSize="20dp"
         android:fontFamily="@string/fui_sign_in_with_google"
 
-        android:background="@drawable/buttonshape"
+        android:background="@color/colorPrimary"
         android:shadowColor="#A8A8A8"
         android:shadowDx="0"
         android:shadowDy="0" />

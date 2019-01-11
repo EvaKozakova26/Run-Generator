@@ -35,21 +35,16 @@ import cz.uhk.fim.runhk.model.RunData;
 public class PlayerProfileActivity extends NavigationDrawerActivity {
 
     //TODO - private
-    FirebaseDatabase firebaseDatabase;
-    DatabaseReference databaseReference;
-    FirebaseUser currentUser;
-    ProgressBar progressBar;
+    private FirebaseDatabase firebaseDatabase;
+    private DatabaseReference databaseReference;
+    private FirebaseUser currentUser;
+    private ProgressBar progressBar;
 
-    ImageView imageViewProfile;
+    private ImageView imageViewProfile;
 
-    FirebaseStorage storage;
-    StorageReference imgReference;
-
-    private double distanceToDo;
-    private Context context;
-
-    LevelService levelService;
-    private RunDataProvider runDataProvider;
+    private FirebaseStorage storage;
+    private StorageReference imgReference;
+    private LevelService levelService;
 
 
     @Override
@@ -69,7 +64,6 @@ public class PlayerProfileActivity extends NavigationDrawerActivity {
         imageViewProfile = findViewById(R.id.imgProfile);
         storage = FirebaseStorage.getInstance();
 
-        context = this;
         setPlayerStatsAndInfo();
 
         Button btnQuests = findViewById(R.id.btnQuestList);
@@ -94,12 +88,6 @@ public class PlayerProfileActivity extends NavigationDrawerActivity {
         btnGenerate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
                 databaseReference = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("runData");
                 ValueEventListener eventListener = new ValueEventListener() {
                     @Override

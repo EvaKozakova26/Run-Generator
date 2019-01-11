@@ -24,6 +24,7 @@ import cz.uhk.fim.runhk.R;
 import cz.uhk.fim.runhk.model.Challenge;
 import cz.uhk.fim.runhk.model.LocationModel;
 import cz.uhk.fim.runhk.model.Player;
+import cz.uhk.fim.runhk.model.RunData;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -115,6 +116,15 @@ public class LoginActivity extends AppCompatActivity {
                             player.setWeight(0);
                             databaseReference = firebaseDatabase.getReference("user");
                             databaseReference.child(currentUser.getUid()).setValue(player);
+
+                            RunData runData = new RunData();
+                            runData.setElevation(0);
+                            runData.setCalories(0);
+                            runData.setDistance(0);
+                            runData.setTime(0);
+                            databaseReference = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("runData");
+                            databaseReference.setValue(runData);
+
 
                             Intent intent = new Intent(LoginActivity.this, PlayerEditInfoActivity.class);
                             finish();

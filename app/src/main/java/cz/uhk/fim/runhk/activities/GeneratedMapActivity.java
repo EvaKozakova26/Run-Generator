@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -85,6 +86,7 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
     private String address4;
     private String address5;
     private LatLng myLocation;
+    private PopupWindow popupWindowLoad;
 
     private ChallengeLocationFragment challengeLocationFragment;
     private ElevationService elevationService;
@@ -172,6 +174,7 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
                 polyLineIndex = currentPolylineData.getIndex();
                 System.out.println("current index " + polyLineIndex);
                 elevations.clear();
+                onPolylineLoadClick();
 
                 if (currentPolyLineData1 == null && currentPolylineData.getIndex() == 1) {
                     currentPolyLineData1 = currentPolylineData;
@@ -202,15 +205,29 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
 
     }
 
+    private void onPolylineLoadClick() {
+        LayoutInflater inflater = (LayoutInflater)
+                getSystemService(LAYOUT_INFLATER_SERVICE);
+        View popupView = inflater.inflate(R.layout.popup_load, null);
+        int width = 600;
+        int height = 600;
+        boolean focusable = true; // lets taps outside the popup also dismiss it
+        final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
+        popupWindowLoad = popupWindow;
+        popupWindow.showAtLocation(mapFragment.getView(), Gravity.CENTER, 0, -150);
+    }
+
     private void onButtonShowPopupWindowClick(PolyLineData polyLineData) {
+        popupWindowLoad.dismiss();
+
         LayoutInflater inflater = (LayoutInflater)
                 getSystemService(LAYOUT_INFLATER_SERVICE);
         View popupView = inflater.inflate(R.layout.popup_layout, null);
-        popupView.setAlpha(0.6f);
+
 
         // create the popup window
-        int width = LinearLayout.LayoutParams.WRAP_CONTENT;
-        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+        int width = 600;
+        int height = 600;
         boolean focusable = true; // lets taps outside the popup also dismiss it
         final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
 
@@ -240,7 +257,7 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
 
         // show the popup window
         // which view you pass in doesn't matter, it is only used for the window tolken
-        popupWindow.showAtLocation(mapFragment.getView(), Gravity.CENTER, 0, 0);
+        popupWindow.showAtLocation(mapFragment.getView(), Gravity.CENTER, 0, -200);
 
         // dismiss the popup window when touched
         popupView.setOnTouchListener(new View.OnTouchListener() {

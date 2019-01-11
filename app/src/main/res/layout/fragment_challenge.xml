@@ -45,13 +45,19 @@
                 android:id="@+id/btnPlay"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/ic_play_arrow_black_24dp" />
+                android:background="@color/borderColor"
+                android:layout_marginRight="5dp"
+                android:layout_marginBottom="10dp"
+                android:text="START" />
 
             <Button
                 android:id="@+id/btnStop"
-                android:background="@drawable/ic_stop_black_24dp"
+                android:background="@color/btnStopColor"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginBottom="10dp"
+                android:text="STOP" />
 
         </LinearLayout>
 
@@ -64,7 +70,8 @@
                 android:id="@+id/btnSave"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/save" />
+                android:text="@string/save"
+                android:background="@color/fui_bgGoogle" />
 
         </LinearLayout>
 

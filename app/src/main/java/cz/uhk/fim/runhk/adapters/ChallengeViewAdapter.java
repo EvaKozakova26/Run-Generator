@@ -61,15 +61,23 @@ public class ChallengeViewAdapter extends RecyclerView.Adapter<ChallengeViewAdap
 
     public class FinishedQuestsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView textViewDate;
+        private TextView textViewDistance;
+        private TextView textViewExps;
 
         public FinishedQuestsViewHolder(View itemView) {
             super(itemView);
             textViewDate = itemView.findViewById(R.id.textViewDate);
+            textViewDistance = itemView.findViewById(R.id.textViewListDistance);
+            textViewExps = itemView.findViewById(R.id.textViewListExps);
             itemView.setOnClickListener(this);
         }
 
         public void setQuest(final Challenge challenge) {
             textViewDate.setText(challenge.getDate());
+            double distance = challenge.getDistance() / 1000;
+            String distanceString = String.format("%.2f", distance);
+            textViewDistance.setText(distanceString + " km");
+            textViewExps.setText(String.valueOf(challenge.getExps()) + " points");
         }
 
 
