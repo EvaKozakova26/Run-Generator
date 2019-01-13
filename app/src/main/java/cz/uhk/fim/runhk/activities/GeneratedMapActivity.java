@@ -404,7 +404,7 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
 
     private double getExpectedDuration(long avgTotalTime, long expectedDistance) {
         double duration = (avgTotalTime / 1000) / 60.0; //tominutes
-        double avgPace = duration / (avgDistance / 1000);
+        double avgPace = duration / (avgDistance / 1000); // pace per minute
 
         double result = avgPace * (expectedDistance / 1000.0);
         return result;
@@ -529,7 +529,6 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
                             System.out.println("ouh");
                         }
                     }
-
                 });
     }
 }

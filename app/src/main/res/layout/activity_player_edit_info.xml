@@ -7,25 +7,43 @@
     tools:context=".activities.PlayerEditInfoActivity"
     android:orientation="vertical">
 
-    <EditText
-        android:id="@+id/editTextNickname"
+    <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="your nickname" />
+        android:layout_height="wrap_content">
 
-    <EditText
-        android:id="@+id/editTextAge"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="number"
-        android:hint="your age" />
+        <EditText
+            android:id="@+id/editTextNickname"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="nickname" />
 
-    <EditText
-        android:id="@+id/editTextWeight"
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="number"
-        android:hint="your weight in kg" />
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/editTextAge"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:hint="your age" />
+
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/editTextWeight"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:hint="your weight in kg" />
+
+    </android.support.design.widget.TextInputLayout>
 
     <LinearLayout
         android:layout_marginTop="80dp"

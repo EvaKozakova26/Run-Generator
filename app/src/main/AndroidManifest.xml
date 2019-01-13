@@ -60,7 +60,8 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".activities.NewChallengeDetailActivity" />
         <activity android:name=".activities.GeneratedMapActivity" />
-        <activity android:name=".activities.DifficultyActivity"></activity>
+        <activity android:name=".activities.DifficultyActivity" />
+        <activity android:name=".activities.MyRunDataActivity"></activity>
     </application>
 
 </manifest>

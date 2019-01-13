@@ -111,6 +111,31 @@ public class PlayerProfileActivity extends NavigationDrawerActivity {
             }
         });
 
+        Button btnMyData = findViewById(R.id.btnMyData);
+        btnMyData.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                databaseReference = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("runData");
+                ValueEventListener eventListener = new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        RunData runData = dataSnapshot.getValue(RunData.class);
+                        Intent intent = new Intent(PlayerProfileActivity.this, MyRunDataActivity.class);
+                        intent.putExtra("distance", runData.getDistance());
+                        intent.putExtra("time", runData.getTime());
+                        intent.putExtra("elevation", runData.getElevation());
+                        intent.putExtra("calories", runData.getCalories());
+                        startActivity(intent);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                    }
+                };
+                databaseReference.addValueEventListener(eventListener);
+            }
+        });
+
     }
 
     @Override

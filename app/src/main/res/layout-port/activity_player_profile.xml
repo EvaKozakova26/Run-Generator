@@ -65,6 +65,15 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:background="@drawable/button_shape_profile"
+        android:layout_marginBottom="10dp"
         android:text="@string/generateRun" />
+
+    <Button
+        android:id="@+id/btnMyData"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/button_shape_profile"
+        android:text="MY DATA" />
 
 </LinearLayout>
