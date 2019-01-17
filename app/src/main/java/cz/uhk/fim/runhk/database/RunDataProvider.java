@@ -37,7 +37,7 @@ public class RunDataProvider {
 
     public RunData runData = new RunData();
 
-    public void processAndSaveRunData() {
+    public void processAndSaveRunData(final int weight) {
         challengeList = new ArrayList<>();
         distancePoints = new ArrayList<>();
 
@@ -53,7 +53,7 @@ public class RunDataProvider {
                     challengeList.add(challenge);
 
                 }
-                processData();
+                processData(weight);
             }
 
             @Override
@@ -64,7 +64,7 @@ public class RunDataProvider {
         databaseReference.addValueEventListener(postListener);
     }
 
-    private RunData processData() {
+    private RunData processData(int weight) {
         List<Long> elapsedTimeList = new ArrayList<>();
         List<Double> distances = new ArrayList<>();
         List<Integer> caloriesList = new ArrayList<>();
@@ -108,6 +108,7 @@ public class RunDataProvider {
         runData.setTime(avgElapsedTime);
         runData.setCalories(avgCalories);
         runData.setElevation(avgElevationGain);
+        runData.setPlayerWeight(weight);
         databaseReferenceRunData = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("runData");
         databaseReferenceRunData.setValue(runData);
         return runData;

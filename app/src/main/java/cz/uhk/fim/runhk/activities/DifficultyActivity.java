@@ -13,6 +13,7 @@ public class DifficultyActivity extends AppCompatActivity {
     private long avgTime;
     private double avgElevation;
     private int avgCalories;
+    private int weight;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,6 +24,7 @@ public class DifficultyActivity extends AppCompatActivity {
         avgTime = getIntent().getLongExtra("time", 0);
         avgElevation = getIntent().getDoubleExtra("elevation", 0);
         avgCalories = getIntent().getIntExtra("calories", 0);
+        weight = getIntent().getIntExtra("weight", 0);
 
         Button btnEasy = findViewById(R.id.btnEasyRun);
         btnEasy.setOnClickListener(new View.OnClickListener() {
@@ -33,6 +35,7 @@ public class DifficultyActivity extends AppCompatActivity {
                 intent.putExtra("time", avgTime);
                 intent.putExtra("elevation", avgElevation);
                 intent.putExtra("calories", avgCalories);
+                intent.putExtra("weight", weight);
                 startActivity(intent);
             }
         });

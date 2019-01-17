@@ -64,7 +64,7 @@ public class ChallengeViewAdapter extends RecyclerView.Adapter<ChallengeViewAdap
         private TextView textViewDistance;
         private TextView textViewExps;
 
-        public FinishedQuestsViewHolder(View itemView) {
+        FinishedQuestsViewHolder(View itemView) {
             super(itemView);
             textViewDate = itemView.findViewById(R.id.textViewDate);
             textViewDistance = itemView.findViewById(R.id.textViewListDistance);
@@ -72,7 +72,7 @@ public class ChallengeViewAdapter extends RecyclerView.Adapter<ChallengeViewAdap
             itemView.setOnClickListener(this);
         }
 
-        public void setQuest(final Challenge challenge) {
+        void setQuest(final Challenge challenge) {
             textViewDate.setText(challenge.getDate());
             double distance = challenge.getDistance() / 1000;
             String distanceString = String.format("%.2f", distance);

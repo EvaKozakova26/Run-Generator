@@ -67,7 +67,7 @@ public class MyRunDataActivity extends AppCompatActivity {
     }
 
     private void setDefault() {
-        runDataProvider.processAndSaveRunData();
+        runDataProvider.processAndSaveRunData(61);
         finish();
         startActivity(getIntent());
     }

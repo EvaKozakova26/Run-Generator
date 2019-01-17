@@ -4,13 +4,11 @@ import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
 import android.view.Gravity;
@@ -18,7 +16,6 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
@@ -72,6 +69,7 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
     private long avgTime;
     private double avgElevation;
     private int avgCalories;
+    private int playerWeight;
     private List<Double> elevations;
     private List<LatLng> distancePoints;
     private PolyLineData currentPolylineData;
@@ -120,6 +118,7 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
         avgTime = intent.getLongExtra("time", 0);
         avgElevation = intent.getDoubleExtra("elevation", 0);
         avgCalories = intent.getIntExtra("calories", 0);
+        playerWeight = intent.getIntExtra("weight", 0);
 
         listLaTLon = new ArrayList<>();
         polylines = new ArrayList<>();
@@ -209,7 +208,7 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
         LayoutInflater inflater = (LayoutInflater)
                 getSystemService(LAYOUT_INFLATER_SERVICE);
         View popupView = inflater.inflate(R.layout.popup_load, null);
-        int width = 600;
+        int width = 800;
         int height = 600;
         boolean focusable = true; // lets taps outside the popup also dismiss it
         final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
@@ -226,7 +225,7 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
 
 
         // create the popup window
-        int width = 600;
+        int width = 800;
         int height = 600;
         boolean focusable = true; // lets taps outside the popup also dismiss it
         final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
@@ -234,11 +233,35 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
         int minutes = (int) polyLineData.getTime();
         int seconds = minutes % 60;
 
+        String textDistanceDifference;
+        int distanceDifference = (int) ((polyLineData.getDistance() - avgDistance));
+        if (distanceDifference >= 0) {
+            textDistanceDifference = " +" + distanceDifference;
+        } else {
+            textDistanceDifference = String.valueOf(distanceDifference);
+        }
+
+        String textElevationDifference;
+        int elevationDifference = (int) ((polyLineData.getElevationGain() - avgElevation));
+        if (elevationDifference >= 0) {
+            textElevationDifference = " +" + elevationDifference;
+        } else {
+            textElevationDifference = String.valueOf(elevationDifference);
+        }
+
+        String textCaloriesDifference;
+        int caloriesDifference = ((polyLineData.getCalories() - avgCalories));
+        if (caloriesDifference >= 0) {
+            textCaloriesDifference = " +" + caloriesDifference;
+        } else {
+            textCaloriesDifference = String.valueOf(caloriesDifference);
+        }
+
         TextView popupText = popupView.findViewById(R.id.popupText);
-        popupText.setText(polyLineData.getDistance() / 1000.0 + " km" + "\n"
-                + polyLineData.getElevationGain() + " elevation gain" + "\n"
+        popupText.setText(polyLineData.getDistance() / 1000.0 + " km" + " (" + textDistanceDifference + ")" + "\n"
+                + polyLineData.getElevationGain() + " elevation gain" + " (" + textElevationDifference + ")" + "\n"
                 + minutes + ":" + seconds + " minutes" + "\n"
-                + polyLineData.getCalories() + " kcals");
+                + polyLineData.getCalories() + " (" + textCaloriesDifference + ")" + " kcals");
 
         Button btnRunPopup = popupView.findViewById(R.id.btnRunPopup);
         btnRunPopup.setOnClickListener(new View.OnClickListener() {
@@ -341,9 +364,10 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
         int randomHeading = r.nextInt(360);
         int randomHeading2 = r.nextInt(360);
         int randomHeading3 = r.nextInt(360);
-        LatLng waypoint = SphericalUtil.computeOffset(myLocation, avgDistance / 2, randomHeading);
+        LatLng waypoint = SphericalUtil.computeOffset(myLocation, avgDistance / 2.5, randomHeading);
         LatLng waypoint2 = SphericalUtil.computeOffset(myLocation, avgDistance / 2, randomHeading2);
-        LatLng waypoint3 = SphericalUtil.computeOffset(myLocation, avgDistance / 2, randomHeading3);
+        LatLng waypoint3 = SphericalUtil.computeOffset(myLocation, avgDistance / 1.7, randomHeading3);
+
 
         addresses3 = geocoder.getFromLocation(waypoint.latitude, waypoint.longitude, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
         addresses4 = geocoder.getFromLocation(waypoint2.latitude, waypoint2.longitude, 1);
@@ -384,10 +408,11 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
     private void addPolyline(DirectionsResult results, GoogleMap mMap, int color, int index) {
         List<LatLng> decodedPath = PolyUtil.decode(results.routes[0].overviewPolyline.getEncodedPath());
         PolyLineData polyLineData = new PolyLineData();
-        expecteDistance = results.routes[0].legs[0].distance.inMeters;
+        //TODO dynamicky na n pocet legs
+        expecteDistance = results.routes[0].legs[0].distance.inMeters + results.routes[0].legs[1].distance.inMeters;
         expectedDuration = getExpectedDuration(avgTime, expecteDistance);
         polyLineData.setDistance(expecteDistance);
-        polyLineData.setTime(getExpectedDuration(avgTime, expecteDistance));
+        polyLineData.setTime(expectedDuration);
         polyLineData.setCalories(0);
         polyLineData.setElevationGain(0);
         polyLineData.setPolyLinePoints(decodedPath);
@@ -399,6 +424,7 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
     }
 
     private int getExpectedCaloriesBurn(int weight, double expectedDistance, double expectedDuration, int expectedElevationGain) {
+        System.out.println("coount calories");
         return databaseHelper.getCaloriesBurnt(weight, expectedDistance, (long) expectedDuration, expectedElevationGain);
     }
 
@@ -491,17 +517,17 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
             switch (polyLineIndex) {
                 case 1:
                     currentPolyLineData1.setElevationGain((int) elevationGain);
-                    currentPolyLineData1.setCalories(getExpectedCaloriesBurn(65, expecteDistance, expectedDuration, (int) elevationGain));
+                    currentPolyLineData1.setCalories(getExpectedCaloriesBurn(playerWeight, currentPolyLineData1.getDistance(), currentPolyLineData1.getTime() * 60000, (int) elevationGain));
                     onButtonShowPopupWindowClick(currentPolyLineData1);
                     break;
                 case 2:
                     currentPolyLineData2.setElevationGain((int) elevationGain);
-                    currentPolyLineData2.setCalories(getExpectedCaloriesBurn(65, expecteDistance, expectedDuration, (int) elevationGain));
+                    currentPolyLineData2.setCalories(getExpectedCaloriesBurn(playerWeight, currentPolyLineData2.getDistance(), currentPolyLineData2.getTime() * 60000, (int) elevationGain));
                     onButtonShowPopupWindowClick(currentPolyLineData2);
                     break;
                 case 3:
                     currentPolyLineData3.setElevationGain((int) elevationGain);
-                    currentPolyLineData3.setCalories(getExpectedCaloriesBurn(65, expecteDistance, expectedDuration, (int) elevationGain));
+                    currentPolyLineData3.setCalories(getExpectedCaloriesBurn(playerWeight, currentPolyLineData3.getDistance(), currentPolyLineData3.getTime() * 60000, (int) elevationGain));
                     onButtonShowPopupWindowClick(currentPolyLineData3);
                     break;
                 default:

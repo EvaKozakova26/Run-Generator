@@ -7,6 +7,16 @@ public class RunData {
     private double elevation;
     private int calories;
 
+    public int getPlayerWeight() {
+        return playerWeight;
+    }
+
+    public void setPlayerWeight(int playerWeight) {
+        this.playerWeight = playerWeight;
+    }
+
+    private int playerWeight;
+
     public long getTime() {
         return time;
     }

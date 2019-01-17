@@ -132,12 +132,11 @@ public class DatabaseHelper implements AsyncResponse {
                     RunData runData = dataSnapshot.getValue(RunData.class);
                     int bonusExps = getBonusExps(finishedChallenge, runData);
                     finishedChallenge.setExps(bonusExps);
-                    System.out.println("whz here");
                     DatabaseReference databaseReferenceTemp = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("finished");
                     databaseReferenceTemp.push().setValue(finishedChallenge);
                     // nstavit hodnoty plejerovi
                     updatePlayer(bonusExps);
-                    runDataProvider.processAndSaveRunData();
+                    runDataProvider.processAndSaveRunData(player.getWeight());
                 }
 
                 @Override
@@ -150,7 +149,7 @@ public class DatabaseHelper implements AsyncResponse {
     }
 
     private int getBonusExps(Challenge finishedChallenge, RunData runData) {
-        int bonusExps = 0;
+        int bonusExps = 100;
 
         if (finishedChallenge.getDistance() > runData.getDistance()) {
             double distanceExps = 0.1 * (finishedChallenge.getDistance() - runData.getDistance());
@@ -186,11 +185,11 @@ public class DatabaseHelper implements AsyncResponse {
         return elevationGain;
     }
 
-    //TODO elevationGain...
     public int getCaloriesBurnt(int weight, double distance, long elaspedTime, int elevationGain) {
         double METS = getMets(distance, elaspedTime);
         double duration = elaspedTime / 3600000.0;
-        return (int) ((1.05 * METS * duration * weight) + (1.25 * elevationGain));
+        double result = ((1.05 * METS * duration * weight) + (1.25 * elevationGain));
+        return (int) result;
     }
 
     private double getMets(double distance, long elaspedTime) {
