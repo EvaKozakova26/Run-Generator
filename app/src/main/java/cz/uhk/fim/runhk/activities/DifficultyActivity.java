@@ -37,6 +37,7 @@ public class DifficultyActivity extends AppCompatActivity {
                 intent.putExtra("calories", avgCalories);
                 intent.putExtra("weight", weight);
                 startActivity(intent);
+                finish();
             }
         });
 
@@ -45,6 +46,11 @@ public class DifficultyActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(DifficultyActivity.this, MapsActivity.class);
+                intent.putExtra("distance", avgDistance);
+                intent.putExtra("time", avgTime);
+                intent.putExtra("elevation", avgElevation);
+                intent.putExtra("calories", avgCalories);
+                intent.putExtra("weight", weight);
                 startActivity(intent);
                 finish();
             }

@@ -54,11 +54,14 @@ import cz.uhk.fim.runhk.fragments.ChallengeLocationFragment;
 import cz.uhk.fim.runhk.model.PolyLineData;
 import cz.uhk.fim.runhk.service.AsyncResponse;
 import cz.uhk.fim.runhk.service.ElevationService;
+import cz.uhk.fim.runhk.service.RouteDataProvider;
 
 public class GeneratedMapActivity extends FragmentActivity implements OnMapReadyCallback, ChallengeLocationFragment.onLocationUpdateInterface, AsyncResponse {
 
     private GoogleMap mMap;
     private SupportMapFragment mapFragment;
+
+    private RouteDataProvider routeDataProvider;
 
     double lat = 0;
     double lon = 0;
@@ -128,6 +131,7 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
         distancePoints = new ArrayList<>();
         elevationService.delegate = this;
         databaseHelper = new DatabaseHelper();
+        routeDataProvider = new RouteDataProvider();
 
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
@@ -379,9 +383,9 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
     }
 
     private void getRoute() {
-        directionsResult1 = createDirectionResult(address, address3);
-        directionsResult2 = createDirectionResult(address, address4);
-        directionsResult3 = createDirectionResult(address, address5);
+        directionsResult1 = routeDataProvider.createDirectionResult(address, address3, address);
+        directionsResult2 = routeDataProvider.createDirectionResult(address, address4, address);
+        directionsResult3 = routeDataProvider.createDirectionResult(address, address5, address);
 
         createRoute(directionsResult1, Color.BLUE, 1);
         createRoute(directionsResult2, Color.GREEN, 2);
@@ -389,15 +393,6 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
 
     }
 
-    private GeoApiContext getGeoContext() {
-        GeoApiContext geoApiContext = new GeoApiContext();
-        return geoApiContext.setQueryRateLimit(3)
-                .setApiKey("AIzaSyDS6vXNVTJFOUkJTcVhHfsEhuFOwmtkNxk")
-                .setConnectTimeout(1, TimeUnit.SECONDS)
-                .setReadTimeout(1, TimeUnit.SECONDS)
-                .setWriteTimeout(1, TimeUnit.SECONDS);
-
-    }
 
     private void addMarkers(DirectionsResult directionsResult, GoogleMap map) {
         map.addMarker(new MarkerOptions()
@@ -410,7 +405,7 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
         PolyLineData polyLineData = new PolyLineData();
         //TODO dynamicky na n pocet legs
         expecteDistance = results.routes[0].legs[0].distance.inMeters + results.routes[0].legs[1].distance.inMeters;
-        expectedDuration = getExpectedDuration(avgTime, expecteDistance);
+        expectedDuration = routeDataProvider.getExpectedDuration(avgTime, expecteDistance, avgDistance);
         polyLineData.setDistance(expecteDistance);
         polyLineData.setTime(expectedDuration);
         polyLineData.setCalories(0);
@@ -423,39 +418,8 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
 
     }
 
-    private int getExpectedCaloriesBurn(int weight, double expectedDistance, double expectedDuration, int expectedElevationGain) {
-        System.out.println("coount calories");
-        return databaseHelper.getCaloriesBurnt(weight, expectedDistance, (long) expectedDuration, expectedElevationGain);
-    }
 
-    private double getExpectedDuration(long avgTotalTime, long expectedDistance) {
-        double duration = (avgTotalTime / 1000) / 60.0; //tominutes
-        double avgPace = duration / (avgDistance / 1000); // pace per minute
 
-        double result = avgPace * (expectedDistance / 1000.0);
-        return result;
-
-    }
-
-    private DirectionsResult createDirectionResult(String startAddress, String waypoint) {
-        DirectionsResult directionsResult = new DirectionsResult();
-        try {
-            directionsResult = DirectionsApi.newRequest(getGeoContext())
-                    .mode(TravelMode.WALKING)
-                    .origin(startAddress)
-                    .destination(startAddress)
-                    .alternatives(true)
-                    .waypoints(waypoint)
-                    .await();
-        } catch (ApiException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return directionsResult;
-    }
 
     private void createRoute(DirectionsResult directionsResult, int color, int index) {
         if (directionsResult != null) {
@@ -493,7 +457,7 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
     public void onBackPressed() {
         new AlertDialog.Builder(this)
                 .setTitle("Really Exit?")
-                .setMessage("Are you sure you want to exit? You will have to start your challenge again")
+                .setMessage("Are you sure you want to exit? You will have to start your run again")
                 .setNegativeButton(android.R.string.no, null)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 
@@ -517,17 +481,17 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
             switch (polyLineIndex) {
                 case 1:
                     currentPolyLineData1.setElevationGain((int) elevationGain);
-                    currentPolyLineData1.setCalories(getExpectedCaloriesBurn(playerWeight, currentPolyLineData1.getDistance(), currentPolyLineData1.getTime() * 60000, (int) elevationGain));
+                    currentPolyLineData1.setCalories(routeDataProvider.getExpectedCaloriesBurn(playerWeight, currentPolyLineData1.getDistance(), currentPolyLineData1.getTime() * 60000, (int) elevationGain));
                     onButtonShowPopupWindowClick(currentPolyLineData1);
                     break;
                 case 2:
                     currentPolyLineData2.setElevationGain((int) elevationGain);
-                    currentPolyLineData2.setCalories(getExpectedCaloriesBurn(playerWeight, currentPolyLineData2.getDistance(), currentPolyLineData2.getTime() * 60000, (int) elevationGain));
+                    currentPolyLineData2.setCalories(routeDataProvider.getExpectedCaloriesBurn(playerWeight, currentPolyLineData2.getDistance(), currentPolyLineData2.getTime() * 60000, (int) elevationGain));
                     onButtonShowPopupWindowClick(currentPolyLineData2);
                     break;
                 case 3:
                     currentPolyLineData3.setElevationGain((int) elevationGain);
-                    currentPolyLineData3.setCalories(getExpectedCaloriesBurn(playerWeight, currentPolyLineData3.getDistance(), currentPolyLineData3.getTime() * 60000, (int) elevationGain));
+                    currentPolyLineData3.setCalories(routeDataProvider.getExpectedCaloriesBurn(playerWeight, currentPolyLineData3.getDistance(), currentPolyLineData3.getTime() * 60000, (int) elevationGain));
                     onButtonShowPopupWindowClick(currentPolyLineData3);
                     break;
                 default:
