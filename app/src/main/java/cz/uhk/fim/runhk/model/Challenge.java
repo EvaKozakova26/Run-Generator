@@ -13,12 +13,12 @@ public class Challenge {
     private double distanceToDo;
     private int exps;
     private String time;
-    private long elaspedTime;
+    private double elaspedTime;
     private boolean finished;
     private String date;
     private ArrayList<LocationModel> distancePoints;
-    private int caloriesBurnt;
-    private int elevationGain;
+    private double caloriesBurnt;
+    private double elevationGain;
 
     public Challenge(int level, double distance, int exps, String time, boolean finished) {
         this.level = level;
@@ -31,19 +31,19 @@ public class Challenge {
     public Challenge() {
     }
 
-    public int getElevationGain() {
+    public double getElevationGain() {
         return elevationGain;
     }
 
-    public void setElevationGain(int elevationGain) {
+    public void setElevationGain(double elevationGain) {
         this.elevationGain = elevationGain;
     }
 
-    public int getCaloriesBurnt() {
+    public double getCaloriesBurnt() {
         return caloriesBurnt;
     }
 
-    public void setCaloriesBurnt(int caloriesBurnt) {
+    public void setCaloriesBurnt(double caloriesBurnt) {
         this.caloriesBurnt = caloriesBurnt;
     }
 
@@ -111,11 +111,11 @@ public class Challenge {
         this.distancePoints = distancePoints;
     }
 
-    public long getElaspedTime() {
+    public double getElaspedTime() {
         return elaspedTime;
     }
 
-    public void setElaspedTime(long elaspedTime) {
+    public void setElaspedTime(double elaspedTime) {
         this.elaspedTime = elaspedTime;
     }
 }

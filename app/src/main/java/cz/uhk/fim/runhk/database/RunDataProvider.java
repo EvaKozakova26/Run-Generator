@@ -21,6 +21,7 @@ import cz.uhk.fim.runhk.model.LocationModel;
 import cz.uhk.fim.runhk.model.RunData;
 import cz.uhk.fim.runhk.service.AsyncResponse;
 import cz.uhk.fim.runhk.service.ElevationService;
+import cz.uhk.fim.runhk.service.Math.MedianCounter;
 
 /**
  * Vytahne vsechny behy uzivatele, zpracuje data a posle do MapsActivity data pro vygenerovani trasy
@@ -31,6 +32,8 @@ public class RunDataProvider {
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
     private DatabaseReference databaseReferenceRunData;
+
+    private MedianCounter medianCounter;
 
     private List<Challenge> challengeList;
     private List<LatLng> distancePoints;
@@ -65,10 +68,11 @@ public class RunDataProvider {
     }
 
     private RunData processData(int weight) {
-        List<Long> elapsedTimeList = new ArrayList<>();
+        List<Double> elapsedTimeList = new ArrayList<>();
         List<Double> distances = new ArrayList<>();
-        List<Integer> caloriesList = new ArrayList<>();
-        List<Integer> elevationList = new ArrayList<>();
+        List<Double> caloriesList = new ArrayList<>();
+        List<Double> elevationList = new ArrayList<>();
+        medianCounter = new MedianCounter();
         for (Challenge challenge : challengeList) {
             elapsedTimeList.add(challenge.getElaspedTime());
             distances.add(challenge.getDistance());
@@ -80,29 +84,10 @@ public class RunDataProvider {
             }
         }
 
-        long sumTime = 0;
-        for (int i = 0; i < elapsedTimeList.size(); i++) {
-            sumTime = sumTime + elapsedTimeList.get(i);
-        }
-        long avgElapsedTime = sumTime / elapsedTimeList.size();
-
-        double sumDistance = 0;
-        for (int i = 0; i < distances.size(); i++) {
-            sumDistance = sumDistance + distances.get(i);
-        }
-        double avgDistance = sumDistance / distances.size();
-
-        int sumCalories = 0;
-        for (int i = 0; i < caloriesList.size(); i++) {
-            sumCalories = sumCalories + caloriesList.get(i);
-        }
-        int avgCalories = sumCalories / caloriesList.size();
-
-        int sumElevations = 0;
-        for (int i = 0; i < elevationList.size(); i++) {
-            sumElevations = sumElevations + elevationList.get(i);
-        }
-        int avgElevationGain = sumElevations / elevationList.size();
+        long avgElapsedTime = (long) medianCounter.getMedian(elapsedTimeList);
+        double avgDistance = medianCounter.getMedian(distances);
+        int avgCalories = (int) medianCounter.getMedian(caloriesList);
+        int avgElevationGain = (int) medianCounter.getMedian(elevationList);
 
         runData.setDistance(avgDistance);
         runData.setTime(avgElapsedTime);

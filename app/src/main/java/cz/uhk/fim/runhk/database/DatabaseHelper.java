@@ -123,7 +123,7 @@ public class DatabaseHelper implements AsyncResponse {
         if (elevations.size() == distancePoints.size()) {
             int elevationGain = getElevationGainForRoute();
             finishedChallenge.setElevationGain(elevationGain);
-            finishedChallenge.setCaloriesBurnt(getCaloriesBurnt(player.getWeight(), finishedChallenge.getDistance(), finishedChallenge.getElaspedTime(), elevationGain));
+            finishedChallenge.setCaloriesBurnt(getCaloriesBurnt(player.getWeight(), finishedChallenge.getDistance(), (long) finishedChallenge.getElaspedTime(), elevationGain));
 
             DatabaseReference runDataReference = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("runData");
             ValueEventListener runDataListener = new ValueEventListener() {
@@ -167,7 +167,7 @@ public class DatabaseHelper implements AsyncResponse {
         }
 
         if (finishedChallenge.getCaloriesBurnt() > runData.getCalories()) {
-            int caloriesExps = finishedChallenge.getCaloriesBurnt() - runData.getCalories();
+            int caloriesExps = (int) (finishedChallenge.getCaloriesBurnt() - runData.getCalories());
             bonusExps = (bonusExps + caloriesExps);
         }
 

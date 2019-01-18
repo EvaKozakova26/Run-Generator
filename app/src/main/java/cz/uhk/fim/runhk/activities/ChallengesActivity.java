@@ -94,8 +94,8 @@ public class ChallengesActivity extends AppCompatActivity implements OnItemClick
             DetailChallengeFragment detailChallengeFragment = new DetailChallengeFragment();
             Bundle bundle = new Bundle();
             bundle.putDouble("distance", challenge.getDistance());
-            bundle.putInt("calories", challenge.getCaloriesBurnt());
-            bundle.putInt("elevation", challenge.getElevationGain());
+            bundle.putInt("calories", (int) challenge.getCaloriesBurnt());
+            bundle.putInt("elevation", (int) challenge.getElevationGain());
             bundle.putParcelableArrayList("points", challenge.getDistancePoints());
             bundle.putInt("exps", challenge.getExps());
             bundle.putString("time", challenge.getTime());
