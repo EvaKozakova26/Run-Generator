@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
 
 import cz.uhk.fim.runhk.model.Challenge;
 import cz.uhk.fim.runhk.model.LocationModel;
@@ -34,7 +33,7 @@ public class DatabaseHelper implements AsyncResponse {
 
     ChallengeResultInterface challengeResultInterface;
     LevelService levelService;
-    private RunDataProvider runDataProvider = new RunDataProvider();
+    private RunDataProcessor runDataProcessor = new RunDataProcessor();
 
     private boolean finished;
     private double distanceToDo;
@@ -136,7 +135,7 @@ public class DatabaseHelper implements AsyncResponse {
                     databaseReferenceTemp.push().setValue(finishedChallenge);
                     // nstavit hodnoty plejerovi
                     updatePlayer(bonusExps);
-                    runDataProvider.processAndSaveRunData(player.getWeight());
+                    runDataProcessor.processAndSaveRunData(player.getWeight());
                 }
 
                 @Override

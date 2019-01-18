@@ -26,7 +26,7 @@ import cz.uhk.fim.runhk.service.Math.MedianCounter;
 /**
  * Vytahne vsechny behy uzivatele, zpracuje data a posle do MapsActivity data pro vygenerovani trasy
  */
-public class RunDataProvider {
+public class RunDataProcessor {
 
     private FirebaseUser currentUser;
     private FirebaseDatabase firebaseDatabase;

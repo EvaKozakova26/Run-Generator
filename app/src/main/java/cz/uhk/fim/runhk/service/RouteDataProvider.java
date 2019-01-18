@@ -46,17 +46,13 @@ public class RouteDataProvider {
     }
 
     public int getExpectedCaloriesBurn(int weight, double expectedDistance, double expectedDuration, int expectedElevationGain) {
-        System.out.println("coount calories");
         return databaseHelper.getCaloriesBurnt(weight, expectedDistance, (long) expectedDuration, expectedElevationGain);
     }
 
     public double getExpectedDuration(long avgTotalTime, long expectedDistance, double avgDistance) {
-        double duration = (avgTotalTime / 1000) / 60.0; //tominutes
+        double duration = (avgTotalTime / 1000.0) / 60.0; //tominutes
         double avgPace = duration / (avgDistance / 1000); // pace per minute
-
-        double result = avgPace * (expectedDistance / 1000.0);
-        return result;
-
+        return avgPace * (expectedDistance / 1000.0);
     }
 
 }

@@ -3,18 +3,16 @@ package cz.uhk.fim.runhk.activities;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.Editable;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import cz.uhk.fim.runhk.R;
-import cz.uhk.fim.runhk.database.RunDataProvider;
+import cz.uhk.fim.runhk.database.RunDataProcessor;
 
 public class MyRunDataActivity extends AppCompatActivity {
 
-    private RunDataProvider runDataProvider;
+    private RunDataProcessor runDataProcessor;
 
     private double defaultDistance;
     private long defaultTime;
@@ -33,7 +31,7 @@ public class MyRunDataActivity extends AppCompatActivity {
         double elevation = intent.getDoubleExtra("elevation", 0);
         int calories = intent.getIntExtra("calories", 0);
 
-        runDataProvider = new RunDataProvider();
+        runDataProcessor = new RunDataProcessor();
 
         final EditText txtRunDistance = findViewById(R.id.editTextDistance);
         txtRunDistance.setText(String.format("%.2f", distance / 1000));
@@ -67,7 +65,7 @@ public class MyRunDataActivity extends AppCompatActivity {
     }
 
     private void setDefault() {
-        runDataProvider.processAndSaveRunData(61);
+        runDataProcessor.processAndSaveRunData(61);
         finish();
         startActivity(getIntent());
     }

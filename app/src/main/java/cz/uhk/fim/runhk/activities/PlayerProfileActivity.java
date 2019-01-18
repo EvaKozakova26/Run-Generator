@@ -1,6 +1,5 @@
 package cz.uhk.fim.runhk.activities;
 
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -27,7 +26,6 @@ import com.squareup.picasso.Picasso;
 import java.util.HashMap;
 
 import cz.uhk.fim.runhk.R;
-import cz.uhk.fim.runhk.database.RunDataProvider;
 import cz.uhk.fim.runhk.service.LevelService;
 import cz.uhk.fim.runhk.model.Player;
 import cz.uhk.fim.runhk.model.RunData;
