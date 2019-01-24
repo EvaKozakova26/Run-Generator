@@ -234,8 +234,9 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
         boolean focusable = true; // lets taps outside the popup also dismiss it
         final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
 
-        int minutes = (int) polyLineData.getTime();
-        int seconds = minutes % 60;
+        double minutes = polyLineData.getTime();
+        double decimals = minutes % 1;
+        int seconds = (int) (decimals * 60);
 
         String textDistanceDifference;
         int distanceDifference = (int) ((polyLineData.getDistance() - avgDistance));
@@ -264,7 +265,7 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
         TextView popupText = popupView.findViewById(R.id.popupText);
         popupText.setText(polyLineData.getDistance() / 1000.0 + " km" + " (" + textDistanceDifference + ")" + "\n"
                 + polyLineData.getElevationGain() + " elevation gain" + " (" + textElevationDifference + ")" + "\n"
-                + minutes + ":" + seconds + " minutes" + "\n"
+                + (int) minutes + ":" + seconds + " minutes" + "\n"
                 + polyLineData.getCalories() + " (" + textCaloriesDifference + ")" + " kcals");
 
         Button btnRunPopup = popupView.findViewById(R.id.btnRunPopup);
