@@ -52,7 +52,7 @@ import cz.uhk.fim.runhk.model.LocationModel;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ChallengeLocationFragment extends Fragment implements View.OnClickListener, DatabaseHelper.ChallengeResultInterface {
+public class ChallengeLocationFragment extends Fragment implements View.OnClickListener {
 
     private static final String TAG = ChallengeLocationFragment.class.getSimpleName();
 
@@ -85,8 +85,6 @@ public class ChallengeLocationFragment extends Fragment implements View.OnClickL
 
     private String time = "";
     private long elapsedTime = 0;
-    double lat;
-    double lon;
 
     private DatabaseHelper databaseHelper;
     private List<Double> listLaTLon;
@@ -115,8 +113,6 @@ public class ChallengeLocationFragment extends Fragment implements View.OnClickL
         listLaTLon = new ArrayList<>();
         mRequestingLocationUpdates = false;
         distancePointsList = new ArrayList<>();
-
-        databaseHelper.setChallengeResultInterface(this);
 
         mLocationRequestHighAccuracy = new LocationRequest();
         mLocationRequestHighAccuracy.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
@@ -155,19 +151,6 @@ public class ChallengeLocationFragment extends Fragment implements View.OnClickL
                 elapsedTime = (SystemClock.elapsedRealtime() - chronometer.getBase());
                 saveChallenge(distance, time, elapsedTime);
             default:
-        }
-    }
-
-    @Override
-    public void onChallengeResultCalled(boolean finished) {
-        String message;
-        if (finished) {
-            message = "Congratulations, you have accomplished this challenge";
-            Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
-        } else {
-            message = "You have not run a requested distance";
-            Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
-
         }
     }
 
@@ -252,32 +235,7 @@ public class ChallengeLocationFragment extends Fragment implements View.OnClickL
                     startLocationUpdates();
                 }
             } else {
-                // Permission denied.
-
-                // Notify the user via a SnackBar that they have rejected a core permission for the
-                // app, which makes the Activity useless. In a real app, core permissions would
-                // typically be best requested during a welcome-screen flow.
-
-                // Additionally, it is important to remember that a permission might have been
-                // rejected without asking the user for permission (device policy or "Never ask
-                // again" prompts). Therefore, a user interface affordance is typically implemented
-                // when permissions are denied. Otherwise, your app could appear unresponsive to
-                // touches or interactions which have required permissions.
-             /*   showSnackbar(R.string.permission_denied_explanation,
-                        R.string.settings, new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                // Build intent that displays the App settings screen.
-                                Intent intent = new Intent();
-                                intent.setAction(
-                                        Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                                Uri uri = Uri.fromParts("package",
-                                        BuildConfig.APPLICATION_ID, null);
-                                intent.setData(uri);
-                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                startActivity(intent);
-                            }
-                        });*/
+                Log.i(TAG, "Permission denied.");
             }
         }
     }
@@ -410,10 +368,6 @@ public class ChallengeLocationFragment extends Fragment implements View.OnClickL
                 mCurrentLocation = savedInstanceState.getParcelable(KEY_LOCATION);
             }
 
-            /*// Update the value of mLastUpdateTime from the Bundle and update the UI.
-            if (savedInstanceState.keySet().contains(KEY_LAST_UPDATED_TIME_STRING)) {
-                mLastUpdateTime = savedInstanceState.getString(KEY_LAST_UPDATED_TIME_STRING);
-            }*/
             updateLocation();
         }
     }
@@ -476,34 +430,5 @@ public class ChallengeLocationFragment extends Fragment implements View.OnClickL
         startActivity(intent);
     }
 
-    //TODO nastavit lastKnownLocation při startu aktivity (mapa)
-    @SuppressLint("StaticFieldLeak")
-    private void getLastKnownLocation() {
-        new AsyncTask<Void, Void, List<Double>>() {
-
-            @SuppressLint("MissingPermission")
-            @Override
-            protected List<Double> doInBackground(Void... voids) {
-
-                fusedLocationProviderClient.getLastLocation()
-                        .addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
-                            @Override
-                            public void onSuccess(Location location) {
-                                if (location == null) {
-                                    lat = 50;
-                                    lon = 50;
-                                } else {
-
-                                    lat = location.getLatitude();
-                                    lon = location.getLongitude();
-                                }
-                                listLaTLon.add(lat);
-                                listLaTLon.add(lon);
-                            }
-                        });
-                return listLaTLon;
-            }
-        }.execute();
-    }
 }
 

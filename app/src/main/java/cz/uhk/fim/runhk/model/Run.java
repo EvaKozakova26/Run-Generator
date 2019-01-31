@@ -6,7 +6,7 @@ import java.util.ArrayList;
  * Created by EvaKozakova on 02.04.2018.
  */
 
-public class Challenge {
+public class Run {
 
     private int level;
     private double distance;
@@ -20,7 +20,7 @@ public class Challenge {
     private double caloriesBurnt;
     private double elevationGain;
 
-    public Challenge(int level, double distance, int exps, String time, boolean finished) {
+    public Run(int level, double distance, int exps, String time, boolean finished) {
         this.level = level;
         this.distance = distance;
         this.exps = exps;
@@ -28,7 +28,7 @@ public class Challenge {
         this.finished = finished;
     }
 
-    public Challenge() {
+    public Run() {
     }
 
     public double getElevationGain() {

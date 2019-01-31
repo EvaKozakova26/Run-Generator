@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cz.uhk.fim.runhk.R;
-import cz.uhk.fim.runhk.model.Challenge;
+import cz.uhk.fim.runhk.model.Run;
 import cz.uhk.fim.runhk.model.LocationModel;
 import cz.uhk.fim.runhk.model.Player;
 import cz.uhk.fim.runhk.model.RunData;
@@ -39,6 +39,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_log_in);
 
+        //pro testovani
        /* Button btnLogin = findViewById(R.id.btnLogin);
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -98,20 +99,20 @@ public class LoginActivity extends AppCompatActivity {
                             distancePointsList.add(locationModel);
 
                             // ulozi pvni challenge do db
-                            Challenge challenge = new Challenge();
-                            challenge.setDistanceToDo(1000);
-                            challenge.setExps(50);
-                            challenge.setFinished(false);
-                            challenge.setLevel(1);
-                            challenge.setDate("");
-                            challenge.setTime("");
-                            challenge.setDistancePoints(distancePointsList);
+                            Run run = new Run();
+                            run.setDistanceToDo(1000);
+                            run.setExps(50);
+                            run.setFinished(false);
+                            run.setLevel(1);
+                            run.setDate("");
+                            run.setTime("");
+                            run.setDistancePoints(distancePointsList);
 
-                            List<Challenge> challenges = new ArrayList<>();
+                            List<Run> runs = new ArrayList<>();
 
                             // ulozi hrace
-                            Player player = new Player("", currentUser.getEmail(), "", 1, 10, challenges);
-                            player.setChallengeToDo(challenge);
+                            Player player = new Player("", currentUser.getEmail(), "", 1, 10, runs);
+                            player.setRunToDo(run);
                             player.setAge(0);
                             player.setWeight(0);
                             databaseReference = firebaseDatabase.getReference("user");

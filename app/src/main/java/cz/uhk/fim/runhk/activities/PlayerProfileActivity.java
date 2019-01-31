@@ -26,13 +26,12 @@ import com.squareup.picasso.Picasso;
 import java.util.HashMap;
 
 import cz.uhk.fim.runhk.R;
-import cz.uhk.fim.runhk.service.LevelService;
+import cz.uhk.fim.runhk.service.helper.utils.LevelUtils;
 import cz.uhk.fim.runhk.model.Player;
 import cz.uhk.fim.runhk.model.RunData;
 
 public class PlayerProfileActivity extends NavigationDrawerActivity {
 
-    //TODO - private
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
     private FirebaseUser currentUser;
@@ -42,8 +41,6 @@ public class PlayerProfileActivity extends NavigationDrawerActivity {
 
     private FirebaseStorage storage;
     private StorageReference imgReference;
-    private LevelService levelService;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,8 +50,6 @@ public class PlayerProfileActivity extends NavigationDrawerActivity {
         getLayoutInflater().inflate(R.layout.activity_player_profile, frameLayout);
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         firebaseDatabase = FirebaseDatabase.getInstance();
-        levelService = new LevelService();
-
 
         progressBar = findViewById(R.id.progress_exps);
         progressBar.setIndeterminate(false);
@@ -68,7 +63,7 @@ public class PlayerProfileActivity extends NavigationDrawerActivity {
         btnQuests.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(PlayerProfileActivity.this, ChallengesActivity.class);
+                Intent intent = new Intent(PlayerProfileActivity.this, RunsListActivity.class);
                 startActivity(intent);
             }
         });
@@ -149,7 +144,7 @@ public class PlayerProfileActivity extends NavigationDrawerActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Player player = dataSnapshot.getValue(Player.class);
 
-                HashMap<Integer, Integer> levelMap = levelService.getLevelMap();
+                HashMap<Integer, Integer> levelMap = LevelUtils.getLevelMap();
                 int maxLevelExps =  levelMap.get(player.getLevel());
                 progressBar.setMax(maxLevelExps);
 

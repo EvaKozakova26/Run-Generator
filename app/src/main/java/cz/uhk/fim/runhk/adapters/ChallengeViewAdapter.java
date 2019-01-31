@@ -11,11 +11,11 @@ import android.widget.TextView;
 import java.util.List;
 
 import cz.uhk.fim.runhk.R;
-import cz.uhk.fim.runhk.model.Challenge;
+import cz.uhk.fim.runhk.model.Run;
 
 public class ChallengeViewAdapter extends RecyclerView.Adapter<ChallengeViewAdapter.FinishedQuestsViewHolder> {
 
-    private List<Challenge> challengeList;
+    private List<Run> runList;
 
     private OnItemClickedInterface onItemClickedInterface;
 
@@ -24,8 +24,8 @@ public class ChallengeViewAdapter extends RecyclerView.Adapter<ChallengeViewAdap
 
     FinishedQuestsViewHolder viewHolder;
 
-    public ChallengeViewAdapter(List<Challenge> challengeList, boolean isLandscape) {
-        this.challengeList = challengeList;
+    public ChallengeViewAdapter(List<Run> runList, boolean isLandscape) {
+        this.runList = runList;
         this.isLandscape = isLandscape;
     }
 
@@ -42,8 +42,8 @@ public class ChallengeViewAdapter extends RecyclerView.Adapter<ChallengeViewAdap
 
     @Override
     public void onBindViewHolder(@NonNull FinishedQuestsViewHolder holder, int position) {
-        Challenge challenge = challengeList.get(position);
-        holder.setQuest(challenge);
+        Run run = runList.get(position);
+        holder.setQuest(run);
         if (isLandscape) {
             holder.itemView.setBackgroundColor(selected_position == position ? Color.rgb(123, 241, 163) : Color.TRANSPARENT);
         }
@@ -51,7 +51,7 @@ public class ChallengeViewAdapter extends RecyclerView.Adapter<ChallengeViewAdap
 
     @Override
     public int getItemCount() {
-        return challengeList.size();
+        return runList.size();
     }
 
     public void setOnItemClickedInterface(OnItemClickedInterface onItemClickedInterface) {
@@ -72,12 +72,12 @@ public class ChallengeViewAdapter extends RecyclerView.Adapter<ChallengeViewAdap
             itemView.setOnClickListener(this);
         }
 
-        void setQuest(final Challenge challenge) {
-            textViewDate.setText(challenge.getDate());
-            double distance = challenge.getDistance() / 1000;
+        void setQuest(final Run run) {
+            textViewDate.setText(run.getDate());
+            double distance = run.getDistance() / 1000;
             String distanceString = String.format("%.2f", distance);
             textViewDistance.setText(distanceString + " km");
-            textViewExps.setText(String.valueOf(challenge.getExps()) + " points");
+            textViewExps.setText(String.valueOf(run.getExps()) + " points");
         }
 
 

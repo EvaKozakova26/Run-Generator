@@ -15,36 +15,28 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import cz.uhk.fim.runhk.model.Challenge;
+import cz.uhk.fim.runhk.model.Run;
 import cz.uhk.fim.runhk.model.LocationModel;
 import cz.uhk.fim.runhk.model.Player;
 import cz.uhk.fim.runhk.model.RunData;
 import cz.uhk.fim.runhk.service.AsyncResponse;
 import cz.uhk.fim.runhk.service.ElevationService;
-import cz.uhk.fim.runhk.service.LevelService;
+import cz.uhk.fim.runhk.service.helper.utils.LevelUtils;
+import cz.uhk.fim.runhk.service.helper.utils.MetsUtils;
 
 public class DatabaseHelper implements AsyncResponse {
 
     private FirebaseUser currentUser;
     private FirebaseDatabase firebaseDatabase;
-    private DatabaseReference databaseReference;
-    private DatabaseReference questReference;
     private ElevationService elevationService;
 
-    ChallengeResultInterface challengeResultInterface;
-    LevelService levelService;
     private RunDataProcessor runDataProcessor = new RunDataProcessor();
 
-    private boolean finished;
-    private double distanceToDo;
-    private int exps;
     private int currentQuestExps;
     private List<Double> elevations;
     private List<LocationModel> distancePoints;
-    private Challenge finishedChallenge;
+    private Run finishedRun;
     private Player player;
-    private double runDistance;
-    private RunData runData;
 
     public void saveQuest(double distance, ArrayList<LocationModel> distancePointsList, String time, long elapsedTime) {
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -53,37 +45,33 @@ public class DatabaseHelper implements AsyncResponse {
         elevationService.delegate = this;
         elevations = new ArrayList<>();
         distancePoints = distancePointsList;
-        finished = false;
-        runDistance = distance;
-        getVysledek(distance, distancePointsList, time, elapsedTime);
+        getResult(distance, distancePointsList, time, elapsedTime);
 
     }
 
-    public boolean getVysledek(final double distance, final ArrayList<LocationModel> distancePointsLocation, final String time, final long elapsedTime) {
+    private void getResult(final double distance, final ArrayList<LocationModel> distancePointsLocation, final String time, final long elapsedTime) {
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         firebaseDatabase = FirebaseDatabase.getInstance();
-        questReference = firebaseDatabase.getReference("user").child(currentUser.getUid());
+        DatabaseReference questReference = firebaseDatabase.getReference("user").child(currentUser.getUid());
 
         ValueEventListener postListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // Get Post object and use the values to update the UI
                 player = dataSnapshot.getValue(Player.class);
-                Challenge challenge = new Challenge();
+                Run run = new Run();
                 currentQuestExps = 100;
 
-                finished = true;
                 DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
                 Date date = new Date();
-                System.out.println(dateFormat.format(date));
 
-                challenge.setDate(dateFormat.format(date));
-                challenge.setFinished(true);
-                challenge.setDistance(distance);
-                challenge.setDistancePoints(distancePointsLocation);
-                challenge.setTime(time);
-                challenge.setElaspedTime(elapsedTime);
-                finishedChallenge = challenge;
+                run.setDate(dateFormat.format(date));
+                run.setFinished(true);
+                run.setDistance(distance);
+                run.setDistancePoints(distancePointsLocation);
+                run.setTime(time);
+                run.setElaspedTime(elapsedTime);
+                finishedRun = run;
                 getElevationGain(distancePointsLocation);
 
             }
@@ -94,7 +82,6 @@ public class DatabaseHelper implements AsyncResponse {
             }
         };
         questReference.addListenerForSingleValueEvent(postListener);
-        return finished;
     }
 
     private void getElevationGain(List<LocationModel> distancePointsAll) {
@@ -121,18 +108,18 @@ public class DatabaseHelper implements AsyncResponse {
         elevations.add(output);
         if (elevations.size() == distancePoints.size()) {
             int elevationGain = getElevationGainForRoute();
-            finishedChallenge.setElevationGain(elevationGain);
-            finishedChallenge.setCaloriesBurnt(getCaloriesBurnt(player.getWeight(), finishedChallenge.getDistance(), (long) finishedChallenge.getElaspedTime(), elevationGain));
+            finishedRun.setElevationGain(elevationGain);
+            finishedRun.setCaloriesBurnt(getCaloriesBurnt(player.getWeight(), finishedRun.getDistance(), (long) finishedRun.getElaspedTime(), elevationGain));
 
             DatabaseReference runDataReference = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("runData");
             ValueEventListener runDataListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     RunData runData = dataSnapshot.getValue(RunData.class);
-                    int bonusExps = getBonusExps(finishedChallenge, runData);
-                    finishedChallenge.setExps(bonusExps);
+                    int bonusExps = getBonusExps(finishedRun, runData);
+                    finishedRun.setExps(bonusExps);
                     DatabaseReference databaseReferenceTemp = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("finished");
-                    databaseReferenceTemp.push().setValue(finishedChallenge);
+                    databaseReferenceTemp.push().setValue(finishedRun);
                     // nstavit hodnoty plejerovi
                     updatePlayer(bonusExps);
                     runDataProcessor.processAndSaveRunData(player.getWeight());
@@ -147,26 +134,26 @@ public class DatabaseHelper implements AsyncResponse {
         }
     }
 
-    private int getBonusExps(Challenge finishedChallenge, RunData runData) {
+    private int getBonusExps(Run finishedRun, RunData runData) {
         int bonusExps = 100;
 
-        if (finishedChallenge.getDistance() > runData.getDistance()) {
-            double distanceExps = 0.1 * (finishedChallenge.getDistance() - runData.getDistance());
+        if (finishedRun.getDistance() > runData.getDistance()) {
+            double distanceExps = 0.1 * (finishedRun.getDistance() - runData.getDistance());
             bonusExps = (int) (bonusExps + distanceExps);
         }
 
-        if (finishedChallenge.getElevationGain() > runData.getElevation()) {
-            double elevationExps = 0.2 * (finishedChallenge.getElevationGain() - runData.getElevation());
+        if (finishedRun.getElevationGain() > runData.getElevation()) {
+            double elevationExps = 0.2 * (finishedRun.getElevationGain() - runData.getElevation());
             bonusExps = (int) (bonusExps + elevationExps);
         }
 
-        if (finishedChallenge.getElaspedTime() > runData.getTime()) {
+        if (finishedRun.getElaspedTime() > runData.getTime()) {
             bonusExps = bonusExps + 100;
 
         }
 
-        if (finishedChallenge.getCaloriesBurnt() > runData.getCalories()) {
-            int caloriesExps = (int) (finishedChallenge.getCaloriesBurnt() - runData.getCalories());
+        if (finishedRun.getCaloriesBurnt() > runData.getCalories()) {
+            int caloriesExps = (int) (finishedRun.getCaloriesBurnt() - runData.getCalories());
             bonusExps = (bonusExps + caloriesExps);
         }
 
@@ -192,25 +179,10 @@ public class DatabaseHelper implements AsyncResponse {
     }
 
     private double getMets(double distance, long elaspedTime) {
-        double METS = 0;
         double distanceKm = distance / 1000;
-        double elapsedTimeMins = elaspedTime / 60;
+        double elapsedTimeMins = elaspedTime / 60.0;
         double pace = elapsedTimeMins / distanceKm;
-
-        // TODO / do nejake strukturz...
-        if (pace < 3.4) METS = 18;
-        if (pace < 3.75 && pace > 3.4) METS = 16;
-        if (pace < 4 && pace > 3.75) METS = 15;
-        if (pace < 4.4 && pace > 4) METS = 14;
-        if (pace < 4.7 && pace > 4.4) METS = 13.5;
-        if (pace < 5 && pace > 4.7) METS = 12.5;
-        if (pace < 5.3 && pace > 5) METS = 11.5;
-        if (pace < 5.6 && pace > 5.3) METS = 11;
-        if (pace < 6.25 && pace > 5.6) METS = 10;
-        if (pace < 7.2 && pace > 6.25) METS = 9;
-        if (pace > 7.2) METS = 8;
-
-        return METS;
+        return MetsUtils.getMETS(pace);
     }
 
     private void updatePlayer(final int bonusExps) {
@@ -223,8 +195,7 @@ public class DatabaseHelper implements AsyncResponse {
                 databaseReferenceTemp.child("exps").setValue(finalExps);
 
                 int playerLevel = player.getLevel();
-                levelService = new LevelService();
-                HashMap<Integer, Integer> levelMap = levelService.getLevelMap();
+                HashMap<Integer, Integer> levelMap = LevelUtils.getLevelMap();
 
                 try {
                     if (finalExps > levelMap.get(playerLevel)) {
@@ -261,39 +232,5 @@ public class DatabaseHelper implements AsyncResponse {
         databaseReferenceTemp.addListenerForSingleValueEvent(postListener);
 
             }
-
-    private void setLevel(final int exps) {
-        final DatabaseReference databaseReferenceTemp = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("level");
-        ValueEventListener postListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                int playerLevel = dataSnapshot.getValue(Integer.class);
-
-                levelService = new LevelService();
-                HashMap<Integer, Integer> levelMap = levelService.getLevelMap();
-                String maxLevelExps = levelMap.get(playerLevel).toString();
-                int levelExps = Integer.parseInt(maxLevelExps);
-
-                if (exps > levelExps) {
-                    databaseReferenceTemp.setValue(playerLevel + 1);
-                }
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        };
-        databaseReferenceTemp.addListenerForSingleValueEvent(postListener);
-    }
-
-    public void setChallengeResultInterface(ChallengeResultInterface challengeResultInterface) {
-        this.challengeResultInterface = challengeResultInterface;
-    }
-
-    public interface ChallengeResultInterface {
-        void onChallengeResultCalled(boolean finished);
-    }
 
 }

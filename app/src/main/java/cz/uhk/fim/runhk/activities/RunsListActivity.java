@@ -23,9 +23,9 @@ import cz.uhk.fim.runhk.R;
 import cz.uhk.fim.runhk.adapters.ChallengeViewAdapter;
 import cz.uhk.fim.runhk.adapters.OnItemClickedInterface;
 import cz.uhk.fim.runhk.fragments.DetailChallengeFragment;
-import cz.uhk.fim.runhk.model.Challenge;
+import cz.uhk.fim.runhk.model.Run;
 
-public class ChallengesActivity extends AppCompatActivity implements OnItemClickedInterface {
+public class RunsListActivity extends AppCompatActivity implements OnItemClickedInterface {
 
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
@@ -36,7 +36,7 @@ public class ChallengesActivity extends AppCompatActivity implements OnItemClick
 
     private RecyclerView.LayoutManager layoutManager;
 
-    private List<Challenge> challengeList;
+    private List<Run> runList;
 
     boolean isLandscape;
 
@@ -54,7 +54,7 @@ public class ChallengesActivity extends AppCompatActivity implements OnItemClick
         layoutManager = new LinearLayoutManager(this); // kontext - odkaz na pozadovanoou tridu
         recyclerView.setLayoutManager(layoutManager);
 
-        challengeList = new ArrayList<>();
+        runList = new ArrayList<>();
 
         if (findViewById(R.id.fragmentDetailContainer) != null) {
             isLandscape = true;
@@ -64,13 +64,13 @@ public class ChallengesActivity extends AppCompatActivity implements OnItemClick
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    Challenge challenge = snapshot.getValue(Challenge.class);
-                    challengeList.add(challenge);
+                    Run run = snapshot.getValue(Run.class);
+                    runList.add(run);
 
                 }
-                Collections.reverse(challengeList);
-                adapter = new ChallengeViewAdapter(challengeList, isLandscape);
-                adapter.setOnItemClickedInterface(ChallengesActivity.this);
+                Collections.reverse(runList);
+                adapter = new ChallengeViewAdapter(runList, isLandscape);
+                adapter.setOnItemClickedInterface(RunsListActivity.this);
                 recyclerView.setAdapter(adapter);
 
             }
@@ -87,30 +87,30 @@ public class ChallengesActivity extends AppCompatActivity implements OnItemClick
 
     @Override
     public void onButtonClicked(int position) {
-        Challenge challenge = challengeList.get(position);
-        Toast.makeText(this, String.valueOf(challenge.getDistance()), Toast.LENGTH_SHORT).show();
+        Run run = runList.get(position);
+        Toast.makeText(this, String.valueOf(run.getDistance()), Toast.LENGTH_SHORT).show();
 
         if (isLandscape) {
             DetailChallengeFragment detailChallengeFragment = new DetailChallengeFragment();
             Bundle bundle = new Bundle();
-            bundle.putDouble("distance", challenge.getDistance());
-            bundle.putInt("calories", (int) challenge.getCaloriesBurnt());
-            bundle.putInt("elevation", (int) challenge.getElevationGain());
-            bundle.putParcelableArrayList("points", challenge.getDistancePoints());
-            bundle.putInt("exps", challenge.getExps());
-            bundle.putString("time", challenge.getTime());
+            bundle.putDouble("distance", run.getDistance());
+            bundle.putInt("calories", (int) run.getCaloriesBurnt());
+            bundle.putInt("elevation", (int) run.getElevationGain());
+            bundle.putParcelableArrayList("points", run.getDistancePoints());
+            bundle.putInt("exps", run.getExps());
+            bundle.putString("time", run.getTime());
             detailChallengeFragment.setArguments(bundle);
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragmentDetailContainer, detailChallengeFragment) // kam to chci a co
                     .commit();
         } else {
             Intent intent = new Intent(this, DetailSectionActivity.class);
-            intent.putExtra("distance", challenge.getDistance());
-            intent.putExtra("points", challenge.getDistancePoints());
-            intent.putExtra("exps", challenge.getExps());
-            intent.putExtra("time", challenge.getTime());
-            intent.putExtra("calories", challenge.getCaloriesBurnt());
-            intent.putExtra("elevation", challenge.getElevationGain());
+            intent.putExtra("distance", run.getDistance());
+            intent.putExtra("points", run.getDistancePoints());
+            intent.putExtra("exps", run.getExps());
+            intent.putExtra("time", run.getTime());
+            intent.putExtra("calories", run.getCaloriesBurnt());
+            intent.putExtra("elevation", run.getElevationGain());
             startActivity(intent);
         }
 

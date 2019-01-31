@@ -12,12 +12,6 @@ import cz.uhk.fim.runhk.database.RunDataProcessor;
 
 public class MyRunDataActivity extends AppCompatActivity {
 
-    private RunDataProcessor runDataProcessor;
-
-    private double defaultDistance;
-    private long defaultTime;
-    private EditText txtDataTime;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,20 +19,21 @@ public class MyRunDataActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         double distance = intent.getDoubleExtra("distance", 0);
-        defaultDistance = distance;
         long time = intent.getLongExtra("time", 0);
-        defaultTime = time;
         double elevation = intent.getDoubleExtra("elevation", 0);
         int calories = intent.getIntExtra("calories", 0);
-
-        runDataProcessor = new RunDataProcessor();
 
         final EditText txtRunDistance = findViewById(R.id.editTextDistance);
         txtRunDistance.setText(String.format("%.2f", distance / 1000));
 
+        double elapsedTimeMins = time / 60.0;
+        double pace = elapsedTimeMins / distance;
+        double decimals = pace % 1;
+        int seconds = (int) (decimals * 60);
+        int minutes = (int) pace;
 
-        txtDataTime = findViewById(R.id.textViewTime);
-        txtDataTime.setText(String.valueOf(time));
+        EditText txtDataTime = findViewById(R.id.textViewTime);
+        txtDataTime.setText(String.valueOf(minutes) + ":" + String.valueOf(seconds));
 
         EditText txtDataElevation = findViewById(R.id.textViewElevation);
         txtDataElevation.setText(String.valueOf(elevation) + " m");
@@ -46,35 +41,6 @@ public class MyRunDataActivity extends AppCompatActivity {
         EditText txtDataCalories = findViewById(R.id.textViewCalories);
         txtDataCalories.setText(String.valueOf(calories) + " kcals");
 
-        Button btnRecount = findViewById(R.id.btnRecount);
-        btnRecount.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                recountData(String.valueOf(txtRunDistance.getText()));
-            }
-        });
-
-        Button btnDefault = findViewById(R.id.btnSetDefault);
-        btnDefault.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                setDefault();
-            }
-        });
-
     }
 
-    private void setDefault() {
-        runDataProcessor.processAndSaveRunData(61);
-        finish();
-        startActivity(getIntent());
-    }
-
-    private void recountData(String runDistance) {
-        double distance = Double.parseDouble(runDistance);
-
-        double newTime = ((distance + defaultTime) / defaultDistance);
-        txtDataTime.setText(String.valueOf(newTime));
-
-    }
 }

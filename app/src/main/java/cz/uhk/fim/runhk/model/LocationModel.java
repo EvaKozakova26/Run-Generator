@@ -12,7 +12,7 @@ public class LocationModel implements Parcelable {
     public double latitude;
     public double longitude;
 
-
+    //musi tu byt kvuli firebase
     public LocationModel() {
     }
 

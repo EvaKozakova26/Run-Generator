@@ -17,6 +17,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.JointType;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
 
@@ -56,12 +57,8 @@ public class DetailChallengeFragment extends Fragment implements OnMapReadyCallb
 
     private GoogleMap mMap;
     SupportMapFragment mapFragment;
-    private ElevationService elevationService;
 
     private ArrayList<LocationModel> pointsList;
-
-    private double latitude;
-    private double longitude;
 
     private List<Double> elevationList;
 
@@ -74,7 +71,6 @@ public class DetailChallengeFragment extends Fragment implements OnMapReadyCallb
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_detail_challenge, container, false);
 
-        elevationService = new ElevationService();
         elevationList = new ArrayList<>();
 
         double distance = getArguments().getDouble("distance", 0);
@@ -83,9 +79,6 @@ public class DetailChallengeFragment extends Fragment implements OnMapReadyCallb
         int calories = getArguments().getInt("calories");
         int elevation = getArguments().getInt("elevation");
         String time = getArguments().getString("time");
-
-        latitude = pointsList.get(0).latitude;
-        longitude = pointsList.get(0).longitude;
 
         mapFragment = (SupportMapFragment) getChildFragmentManager()
                 .findFragmentById(R.id.mapDetail);
@@ -121,14 +114,13 @@ public class DetailChallengeFragment extends Fragment implements OnMapReadyCallb
         double prevLat = pointsList.get(0).getLatitude();
         double prevLng = pointsList.get(0).getLongitude();
 
-
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(prevLat, prevLng), 12.5f));
 
         for (LocationModel location : pointsList) {
             currentLat = location.getLatitude();
             currentLng = location.getLongitude();
 
-            mMap.addPolyline(new PolylineOptions().clickable(false).add(
+            mMap.addPolyline(new PolylineOptions().clickable(false).jointType(JointType.ROUND).add(
                     new LatLng(prevLat, prevLng),
                     new LatLng(currentLat, currentLng)
             ));

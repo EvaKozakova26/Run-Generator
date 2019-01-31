@@ -1,4 +1,4 @@
-package cz.uhk.fim.runhk.service.Math;
+package cz.uhk.fim.runhk.service.helper.utils;
 
 import java.util.ArrayList;
 import java.util.Collections;

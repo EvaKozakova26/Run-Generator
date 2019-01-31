@@ -55,6 +55,8 @@ import cz.uhk.fim.runhk.model.PolyLineData;
 import cz.uhk.fim.runhk.service.AsyncResponse;
 import cz.uhk.fim.runhk.service.ElevationService;
 import cz.uhk.fim.runhk.service.RouteDataProvider;
+import cz.uhk.fim.runhk.service.helper.utils.PolylineUtils;
+import cz.uhk.fim.runhk.service.helper.utils.StringLabelUtils;
 
 public class GeneratedMapActivity extends FragmentActivity implements OnMapReadyCallback, ChallengeLocationFragment.onLocationUpdateInterface, AsyncResponse {
 
@@ -76,7 +78,6 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
     private List<Double> elevations;
     private List<LatLng> distancePoints;
     private PolyLineData currentPolylineData;
-    private List<Double> listLaTLon;
 
     private double elevationGain;
     private int polyLineIndex;
@@ -93,18 +94,11 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
     private ElevationService elevationService;
     DatabaseHelper databaseHelper;
 
-
-    private DirectionsResult directionsResult1;
-    private DirectionsResult directionsResult2;
-    private DirectionsResult directionsResult3;
-
     private PolyLineData currentPolyLineData1;
     private PolyLineData currentPolyLineData2;
     private PolyLineData currentPolyLineData3;
 
     private FusedLocationProviderClient fusedLocationProviderClient;
-    private long expecteDistance;
-    private double expectedDuration;
 
 
     @SuppressLint("MissingPermission")
@@ -123,7 +117,6 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
         avgCalories = intent.getIntExtra("calories", 0);
         playerWeight = intent.getIntExtra("weight", 0);
 
-        listLaTLon = new ArrayList<>();
         polylines = new ArrayList<>();
 
         elevations = new ArrayList<>();
@@ -238,29 +231,9 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
         double decimals = minutes % 1;
         int seconds = (int) (decimals * 60);
 
-        String textDistanceDifference;
-        int distanceDifference = (int) ((polyLineData.getDistance() - avgDistance));
-        if (distanceDifference >= 0) {
-            textDistanceDifference = " +" + distanceDifference;
-        } else {
-            textDistanceDifference = String.valueOf(distanceDifference);
-        }
-
-        String textElevationDifference;
-        int elevationDifference = (int) ((polyLineData.getElevationGain() - avgElevation));
-        if (elevationDifference >= 0) {
-            textElevationDifference = " +" + elevationDifference;
-        } else {
-            textElevationDifference = String.valueOf(elevationDifference);
-        }
-
-        String textCaloriesDifference;
-        int caloriesDifference = ((polyLineData.getCalories() - avgCalories));
-        if (caloriesDifference >= 0) {
-            textCaloriesDifference = " +" + caloriesDifference;
-        } else {
-            textCaloriesDifference = String.valueOf(caloriesDifference);
-        }
+        String textDistanceDifference = StringLabelUtils.createDiffString((int) polyLineData.getDistance(), (int) avgDistance);
+        String textElevationDifference = StringLabelUtils.createDiffString(polyLineData.getElevationGain(), (int) avgElevation);
+        String textCaloriesDifference = StringLabelUtils.createDiffString(polyLineData.getCalories(), avgCalories);
 
         TextView popupText = popupView.findViewById(R.id.popupText);
         popupText.setText(polyLineData.getDistance() / 1000.0 + " km" + " (" + textDistanceDifference + ")" + "\n"
@@ -273,7 +246,7 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
             @Override
             public void onClick(View view) {
                 int routeIndex = currentPolylineData.getIndex();
-                int routeColor = getRouteColor(routeIndex);
+                int routeColor = PolylineUtils.getRouteColor(routeIndex);
                 for (Polyline polyline : polylines) {
                     if (polyline.getColor() != routeColor) {
                         polyline.remove();
@@ -297,28 +270,9 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
         });
     }
 
-    private int getRouteColor(int routeIndex) {
-        int color = 0;
-        switch (routeIndex) {
-            case 1:
-                color = Color.BLUE;
-                break;
-            case 2:
-                color = Color.GREEN;
-                break;
-            case 3:
-                color = Color.YELLOW;
-                break;
-        }
-        return color;
-    }
-
-
     @Override
     public void onLocationUpdate(Location currentLocation) {
-        if (currentLocation == null) {
-            return;
-        } else {
+        if (currentLocation != null) {
             prevLat = lat;
             prevLng = lon;
 
@@ -356,27 +310,23 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
     private void getAddressFromLocation() throws IOException {
         // ziskani adresy
         Geocoder geocoder;
-        List<Address> addresses;
-        List<Address> addresses3;
-        List<Address> addresses4;
-        List<Address> addresses5;
         geocoder = new Geocoder(this, Locale.getDefault());
 
-        addresses = geocoder.getFromLocation(myLocation.latitude, myLocation.longitude, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+        List<Address> addresses = geocoder.getFromLocation(myLocation.latitude, myLocation.longitude, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
         address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
 
         Random r = new Random();
         int randomHeading = r.nextInt(360);
         int randomHeading2 = r.nextInt(360);
         int randomHeading3 = r.nextInt(360);
+
         LatLng waypoint = SphericalUtil.computeOffset(myLocation, avgDistance / 2.5, randomHeading);
         LatLng waypoint2 = SphericalUtil.computeOffset(myLocation, avgDistance / 2, randomHeading2);
         LatLng waypoint3 = SphericalUtil.computeOffset(myLocation, avgDistance / 1.7, randomHeading3);
 
-
-        addresses3 = geocoder.getFromLocation(waypoint.latitude, waypoint.longitude, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
-        addresses4 = geocoder.getFromLocation(waypoint2.latitude, waypoint2.longitude, 1);
-        addresses5 = geocoder.getFromLocation(waypoint3.latitude, waypoint3.longitude, 1);
+        List<Address> addresses3 = geocoder.getFromLocation(waypoint.latitude, waypoint.longitude, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+        List<Address> addresses4 = geocoder.getFromLocation(waypoint2.latitude, waypoint2.longitude, 1);
+        List<Address> addresses5 = geocoder.getFromLocation(waypoint3.latitude, waypoint3.longitude, 1);
 
         address3 = addresses3.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
         address4 = addresses4.get(0).getAddressLine(0);
@@ -384,9 +334,9 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
     }
 
     private void getRoute() {
-        directionsResult1 = routeDataProvider.createDirectionResult(address, address3, address);
-        directionsResult2 = routeDataProvider.createDirectionResult(address, address4, address);
-        directionsResult3 = routeDataProvider.createDirectionResult(address, address5, address);
+        DirectionsResult directionsResult1 = routeDataProvider.createDirectionResult(address, address3, address);
+        DirectionsResult directionsResult2 = routeDataProvider.createDirectionResult(address, address4, address);
+        DirectionsResult directionsResult3 = routeDataProvider.createDirectionResult(address, address5, address);
 
         createRoute(directionsResult1, Color.BLUE, 1);
         createRoute(directionsResult2, Color.GREEN, 2);
@@ -405,8 +355,8 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
         List<LatLng> decodedPath = PolyUtil.decode(results.routes[0].overviewPolyline.getEncodedPath());
         PolyLineData polyLineData = new PolyLineData();
         //TODO dynamicky na n pocet legs
-        expecteDistance = results.routes[0].legs[0].distance.inMeters + results.routes[0].legs[1].distance.inMeters;
-        expectedDuration = routeDataProvider.getExpectedDuration(avgTime, expecteDistance, avgDistance);
+        long expecteDistance = results.routes[0].legs[0].distance.inMeters + results.routes[0].legs[1].distance.inMeters;
+        double expectedDuration = routeDataProvider.getExpectedDuration(avgTime, expecteDistance, avgDistance);
         polyLineData.setDistance(expecteDistance);
         polyLineData.setTime(expectedDuration);
         polyLineData.setCalories(0);
@@ -419,9 +369,6 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
 
     }
 
-
-
-
     private void createRoute(DirectionsResult directionsResult, int color, int index) {
         if (directionsResult != null) {
             addMarkers(directionsResult, mMap);
@@ -430,11 +377,6 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
                     directionsResult.routes[0].legs[0].startLocation.lng
             ), 12.5f));
         }
-    }
-
-    private void updateLocation() {
-        myLocation = new LatLng(listLaTLon.get(0), listLaTLon.get(1));
-
     }
 
     private void getElevationFromRoute(List<LatLng> distancePoints, int index) {
@@ -458,7 +400,7 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
     public void onBackPressed() {
         new AlertDialog.Builder(this)
                 .setTitle("Really Exit?")
-                .setMessage("Are you sure you want to exit? You will have to start your run again")
+                .setMessage("Are you sure you want to exit? Generated runs will be lost")
                 .setNegativeButton(android.R.string.no, null)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 

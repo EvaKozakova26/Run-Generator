@@ -48,6 +48,7 @@ import cz.uhk.fim.runhk.model.PolyLineData;
 import cz.uhk.fim.runhk.service.AsyncResponse;
 import cz.uhk.fim.runhk.service.ElevationService;
 import cz.uhk.fim.runhk.service.RouteDataProvider;
+import cz.uhk.fim.runhk.service.helper.utils.StringLabelUtils;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, ChallengeLocationFragment.onLocationUpdateInterface, AsyncResponse {
 
@@ -198,29 +199,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         double decimals = minutes % 1;
         int seconds = (int) (decimals * 60);
 
-        String textDistanceDifference;
-        int distanceDifference = (int) ((polyLineData.getDistance() - avgDistance));
-        if (distanceDifference >= 0) {
-            textDistanceDifference = " +" + distanceDifference;
-        } else {
-            textDistanceDifference = String.valueOf(distanceDifference);
-        }
-
-        String textElevationDifference;
-        int elevationDifference = (int) ((polyLineData.getElevationGain() - avgElevation));
-        if (elevationDifference >= 0) {
-            textElevationDifference = " +" + elevationDifference;
-        } else {
-            textElevationDifference = String.valueOf(elevationDifference);
-        }
-
-        String textCaloriesDifference;
-        int caloriesDifference = ((polyLineData.getCalories() - avgCalories));
-        if (caloriesDifference >= 0) {
-            textCaloriesDifference = " +" + caloriesDifference;
-        } else {
-            textCaloriesDifference = String.valueOf(caloriesDifference);
-        }
+        String textDistanceDifference = StringLabelUtils.createDiffString((int) polyLineData.getDistance(), (int) avgDistance);
+        String textElevationDifference = StringLabelUtils.createDiffString(polyLineData.getElevationGain(), (int) avgElevation);
+        String textCaloriesDifference = StringLabelUtils.createDiffString(polyLineData.getCalories(), avgCalories);
 
         TextView popupText = popupView.findViewById(R.id.popupText);
         popupText.setText(polyLineData.getDistance() / 1000.0 + " km" + " (" + textDistanceDifference + ")" + "\n"
@@ -363,7 +344,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onBackPressed() {
         new AlertDialog.Builder(this)
                 .setTitle("Really Exit?")
-                .setMessage("Are you sure you want to exit? You will have to start your run again")
+                .setMessage("Are you sure you want to exit? Your run will be lost")
                 .setNegativeButton(android.R.string.no, null)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 
