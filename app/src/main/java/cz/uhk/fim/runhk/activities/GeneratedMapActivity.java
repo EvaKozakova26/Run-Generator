@@ -236,8 +236,8 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
         String textCaloriesDifference = StringLabelUtils.createDiffString(polyLineData.getCalories(), avgCalories);
 
         TextView popupText = popupView.findViewById(R.id.popupText);
-        popupText.setText(polyLineData.getDistance() / 1000.0 + " km" + " (" + textDistanceDifference + ")" + "\n"
-                + polyLineData.getElevationGain() + " elevation gain" + " (" + textElevationDifference + ")" + "\n"
+        popupText.setText(polyLineData.getDistance() / 1000.0 + " km" + " (" + textDistanceDifference + " m" + ")" + "\n"
+                + polyLineData.getElevationGain() + " elevation gain" + " (" + textElevationDifference + " m" + ")" + "\n"
                 + (int) minutes + ":" + seconds + " minutes" + "\n"
                 + polyLineData.getCalories() + " (" + textCaloriesDifference + ")" + " kcals");
 
