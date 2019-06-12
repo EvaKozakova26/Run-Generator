@@ -4,6 +4,4 @@ Ve fitness světe jsou poslední dobou velice rozšířené zařízení a aplika
 
 # Návrh řešení
 
-_Konzultováno a schváleno garantem předmětu_
-
 Aplikace bude sledovat běžeckou trasu pomocí GPS senzoru systému Android. Dále bude měřen čas, uběhnutá vzdálenost a převýšení. Na základě těchto údajů a údajů poskytnutých uživatelem bude spočítán i odhad kalorického výdeje. Cílem aplikace je možnost vygenerovat uživateli ideální běžeckou trasu na základě zpracovaných dat z předchozích běhů. Využití SMART principů je právě schopnost aplikace adaptovat se na potřeby a schopnosti konkrétního uživatele.
