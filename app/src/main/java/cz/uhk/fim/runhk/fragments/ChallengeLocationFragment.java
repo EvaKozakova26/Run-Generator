@@ -83,12 +83,7 @@ public class ChallengeLocationFragment extends Fragment implements View.OnClickL
     Chronometer chronometer;
     TextView textViewDistance;
 
-    private String time = "";
-    private long elapsedTime = 0;
-
     private DatabaseHelper databaseHelper;
-    private List<Double> listLaTLon;
-    private LocationModel locationModel;
     private ArrayList<LocationModel> distancePointsList;
 
     double distance;
@@ -110,7 +105,6 @@ public class ChallengeLocationFragment extends Fragment implements View.OnClickL
         chronometer.setText("");
         textViewDistance = view.findViewById(R.id.textViewDistance);
         databaseHelper = new DatabaseHelper();
-        listLaTLon = new ArrayList<>();
         mRequestingLocationUpdates = false;
         distancePointsList = new ArrayList<>();
 
@@ -147,8 +141,8 @@ public class ChallengeLocationFragment extends Fragment implements View.OnClickL
                 stopLocationUpdates();
                 break;
             case R.id.btnSave:
-                time = (String) chronometer.getText();
-                elapsedTime = (SystemClock.elapsedRealtime() - chronometer.getBase());
+                String time = (String) chronometer.getText();
+                long elapsedTime = (SystemClock.elapsedRealtime() - chronometer.getBase());
                 saveChallenge(distance, time, elapsedTime);
             default:
         }
@@ -254,7 +248,7 @@ public class ChallengeLocationFragment extends Fragment implements View.OnClickL
 
     private void updateLocation() {
         if (mCurrentLocation != null && onLocationUpdateInterface != null) {
-            locationModel = new LocationModel(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
+            LocationModel locationModel = new LocationModel(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
             distancePointsList.add(locationModel);
             onLocationUpdateInterface.onLocationUpdate(mCurrentLocation);
         } else {

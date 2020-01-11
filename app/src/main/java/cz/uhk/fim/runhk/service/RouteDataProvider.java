@@ -25,11 +25,7 @@ public class RouteDataProvider {
                     .alternatives(true)
                     .waypoints(waypoint)
                     .await();
-        } catch (ApiException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (ApiException | InterruptedException | IOException e) {
             e.printStackTrace();
         }
         return directionsResult;

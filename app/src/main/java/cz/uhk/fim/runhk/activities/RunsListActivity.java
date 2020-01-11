@@ -24,17 +24,12 @@ import cz.uhk.fim.runhk.adapters.ChallengeViewAdapter;
 import cz.uhk.fim.runhk.adapters.OnItemClickedInterface;
 import cz.uhk.fim.runhk.fragments.DetailChallengeFragment;
 import cz.uhk.fim.runhk.model.Run;
+import cz.uhk.fim.runhk.utils.DatabaseUtils;
 
 public class RunsListActivity extends AppCompatActivity implements OnItemClickedInterface {
 
-    private FirebaseDatabase firebaseDatabase;
-    private DatabaseReference databaseReference;
-    private FirebaseUser currentUser;
-
     private RecyclerView recyclerView;
     private ChallengeViewAdapter adapter;
-
-    private RecyclerView.LayoutManager layoutManager;
 
     private List<Run> runList;
 
@@ -46,12 +41,9 @@ public class RunsListActivity extends AppCompatActivity implements OnItemClicked
         setContentView(R.layout.activity_challenges);
         recyclerView = findViewById(R.id.recyclerView);
 
-        currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        firebaseDatabase = FirebaseDatabase.getInstance();
-        //TODO refactor - used more times
-        databaseReference = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("finished");
+        DatabaseReference databaseReference = DatabaseUtils.getUserDatabaseReference().child("finished");
 
-        layoutManager = new LinearLayoutManager(this); // kontext - odkaz na pozadovanoou tridu
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this); // kontext - odkaz na pozadovanoou tridu
         recyclerView.setLayoutManager(layoutManager);
 
         runList = new ArrayList<>();

@@ -1,12 +1,9 @@
 package cz.uhk.fim.runhk.database;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -15,28 +12,17 @@ import java.util.List;
 import cz.uhk.fim.runhk.model.Run;
 import cz.uhk.fim.runhk.model.LocationModel;
 import cz.uhk.fim.runhk.model.RunData;
-import cz.uhk.fim.runhk.service.helper.utils.MedianCounter;
+import cz.uhk.fim.runhk.utils.MedianCounterUtils;
+import cz.uhk.fim.runhk.utils.DatabaseUtils;
 
 /**
  * Vytahne vsechny behy uzivatele, zpracuje data a posle do MapsActivity data pro vygenerovani trasy
  */
 public class RunDataProcessor {
 
-    private FirebaseUser currentUser;
-    private FirebaseDatabase firebaseDatabase;
-
-    private List<Run> runList;
-    private List<LatLng> distancePoints;
-
-    private RunData runData = new RunData();
-
     void processAndSaveRunData(final int weight) {
-        runList = new ArrayList<>();
-        distancePoints = new ArrayList<>();
-
-        currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        firebaseDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference databaseReference = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("finished");
+        final List<Run> runList = new ArrayList<>();
+        DatabaseReference userDatabaseReference = DatabaseUtils.getUserDatabaseReference().child("finished");
 
         ValueEventListener postListener = new ValueEventListener() {
             @Override
@@ -46,7 +32,7 @@ public class RunDataProcessor {
                     runList.add(run);
 
                 }
-                processData(weight);
+                updateRunData(recountRunData(weight, runList));
             }
 
             @Override
@@ -54,15 +40,22 @@ public class RunDataProcessor {
 
             }
         };
-        databaseReference.addValueEventListener(postListener);
+        userDatabaseReference.addValueEventListener(postListener);
     }
 
-    private RunData processData(int weight) {
+
+    private void updateRunData(RunData runData) {
+        DatabaseReference databaseReferenceRunData = DatabaseUtils.getUserDatabaseReference().child("runData");
+        databaseReferenceRunData.setValue(runData);
+    }
+
+    private RunData recountRunData(int weight, List<Run> runList) {
         List<Double> elapsedTimeList = new ArrayList<>();
         List<Double> distances = new ArrayList<>();
         List<Double> caloriesList = new ArrayList<>();
         List<Double> elevationList = new ArrayList<>();
-        MedianCounter medianCounter = new MedianCounter();
+        List<LatLng> distancePoints = new ArrayList<>();
+
         for (Run run : runList) {
             elapsedTimeList.add(run.getElaspedTime());
             distances.add(run.getDistance());
@@ -74,18 +67,16 @@ public class RunDataProcessor {
             }
         }
 
-        long avgElapsedTime = (long) medianCounter.getMedian(elapsedTimeList);
-        double avgDistance = medianCounter.getMedian(distances);
-        int avgCalories = (int) medianCounter.getMedian(caloriesList);
-        int avgElevationGain = (int) medianCounter.getMedian(elevationList);
-
+        long avgElapsedTime = (long) MedianCounterUtils.getMedian(elapsedTimeList);
+        double avgDistance = MedianCounterUtils.getMedian(distances);
+        int avgCalories = (int) MedianCounterUtils.getMedian(caloriesList);
+        int avgElevationGain = (int) MedianCounterUtils.getMedian(elevationList);
+        RunData runData = new RunData();
         runData.setDistance(avgDistance);
         runData.setTime(avgElapsedTime);
         runData.setCalories(avgCalories);
         runData.setElevation(avgElevationGain);
         runData.setPlayerWeight(weight);
-        DatabaseReference databaseReferenceRunData = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("runData");
-        databaseReferenceRunData.setValue(runData);
         return runData;
 
     }

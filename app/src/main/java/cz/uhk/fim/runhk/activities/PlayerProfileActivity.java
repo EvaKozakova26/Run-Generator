@@ -26,7 +26,7 @@ import com.squareup.picasso.Picasso;
 import java.util.HashMap;
 
 import cz.uhk.fim.runhk.R;
-import cz.uhk.fim.runhk.service.helper.utils.LevelUtils;
+import cz.uhk.fim.runhk.utils.LevelUtils;
 import cz.uhk.fim.runhk.model.Player;
 import cz.uhk.fim.runhk.model.RunData;
 

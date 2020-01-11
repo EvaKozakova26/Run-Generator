@@ -1,12 +1,15 @@
-package cz.uhk.fim.runhk.service.helper.utils;
+package cz.uhk.fim.runhk.utils;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class MedianCounter {
+public class MedianCounterUtils {
 
-    public double getMedian(List<Double> valuesList) {
+    private MedianCounterUtils() {
+    }
+
+    public static double getMedian(List<Double> valuesList) {
         List<Double> sortedList = getSortedList(valuesList);
         if (isEven(sortedList.size())) {
             int middleElement = sortedList.size() / 2;
@@ -19,13 +22,13 @@ public class MedianCounter {
 
     }
 
-    private List<Double> getSortedList(List<Double> valuesList) {
+    private static List<Double> getSortedList(List<Double> valuesList) {
         List<Double> doublesList = new ArrayList<>(valuesList);
         Collections.sort(doublesList);
         return doublesList;
     }
 
-    private boolean isEven(int listSize) {
+    private static boolean isEven(int listSize) {
         return listSize % 2 == 0;
     }
 }

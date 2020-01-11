@@ -33,13 +33,13 @@ public class MyRunDataActivity extends AppCompatActivity {
         int minutes = (int) pace;
 
         EditText txtDataTime = findViewById(R.id.textViewTime);
-        txtDataTime.setText(String.valueOf(minutes) + ":" + String.valueOf(seconds));
+        txtDataTime.setText((minutes) + ":" + (seconds));
 
         EditText txtDataElevation = findViewById(R.id.textViewElevation);
-        txtDataElevation.setText(String.valueOf(elevation) + " m");
+        txtDataElevation.setText((elevation) + " m");
 
         EditText txtDataCalories = findViewById(R.id.textViewCalories);
-        txtDataCalories.setText(String.valueOf(calories) + " kcals");
+        txtDataCalories.setText((calories) + " kcals");
 
     }
 

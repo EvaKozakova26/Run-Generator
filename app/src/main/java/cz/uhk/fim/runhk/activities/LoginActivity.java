@@ -2,6 +2,7 @@ package cz.uhk.fim.runhk.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -99,30 +100,14 @@ public class LoginActivity extends AppCompatActivity {
                             distancePointsList.add(locationModel);
 
                             // ulozi pvni challenge do db
-                            Run run = new Run();
-                            run.setDistanceToDo(1000);
-                            run.setExps(50);
-                            run.setFinished(false);
-                            run.setLevel(1);
-                            run.setDate("");
-                            run.setTime("");
-                            run.setDistancePoints(distancePointsList);
-
-                            List<Run> runs = new ArrayList<>();
+                            Run run = getDefaultRun(distancePointsList);
 
                             // ulozi hrace
-                            Player player = new Player("", currentUser.getEmail(), "", 1, 10, runs);
-                            player.setRunToDo(run);
-                            player.setAge(0);
-                            player.setWeight(0);
+                            Player player = createPlayer(run);
                             databaseReference = firebaseDatabase.getReference("user");
                             databaseReference.child(currentUser.getUid()).setValue(player);
 
-                            RunData runData = new RunData();
-                            runData.setElevation(0);
-                            runData.setCalories(0);
-                            runData.setDistance(0);
-                            runData.setTime(0);
+                            RunData runData = createDefaultRunData();
                             databaseReference = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("runData");
                             databaseReference.setValue(runData);
 
@@ -148,5 +133,37 @@ public class LoginActivity extends AppCompatActivity {
 
             }
         }
+    }
+
+    @NonNull
+    private RunData createDefaultRunData() {
+        RunData runData = new RunData();
+        runData.setElevation(0);
+        runData.setCalories(0);
+        runData.setDistance(0);
+        runData.setTime(0);
+        return runData;
+    }
+
+    @NonNull
+    private Player createPlayer(Run run) {
+        Player player = new Player("", currentUser.getEmail(), "", 1, 10, new ArrayList<Run>());
+        player.setRunToDo(run);
+        player.setAge(0);
+        player.setWeight(0);
+        return player;
+    }
+
+    @NonNull
+    private Run getDefaultRun(ArrayList<LocationModel> distancePointsList) {
+        Run run = new Run();
+        run.setDistanceToDo(1000);
+        run.setExps(50);
+        run.setFinished(false);
+        run.setLevel(1);
+        run.setDate("");
+        run.setTime("");
+        run.setDistancePoints(distancePointsList);
+        return run;
     }
 }

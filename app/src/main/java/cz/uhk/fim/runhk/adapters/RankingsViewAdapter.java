@@ -17,8 +17,6 @@ public class RankingsViewAdapter extends RecyclerView.Adapter<RankingsViewAdapte
 
     private List<Player> playersList;
 
-    RankingsViewHolder viewHolder;
-
     public RankingsViewAdapter(List<Player> playersList) {
         this.playersList = playersList;
     }
@@ -26,12 +24,9 @@ public class RankingsViewAdapter extends RecyclerView.Adapter<RankingsViewAdapte
     @NonNull
     @Override
     public RankingsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         View view = layoutInflater.inflate(R.layout.item_player, null);
-
-        viewHolder = new RankingsViewHolder(view);
-        return viewHolder;
+        return new RankingsViewHolder(view);
     }
 
     @Override

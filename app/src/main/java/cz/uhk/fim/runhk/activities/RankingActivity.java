@@ -21,12 +21,8 @@ import cz.uhk.fim.runhk.model.Player;
 
 public class RankingActivity extends AppCompatActivity {
 
-    private FirebaseDatabase firebaseDatabase;
-
     private RecyclerView recyclerView;
     private RankingsViewAdapter adapter;
-
-    private RecyclerView.LayoutManager layoutManager;
 
     private List<Player> playerList;
 
@@ -37,11 +33,11 @@ public class RankingActivity extends AppCompatActivity {
         setContentView(R.layout.activity_ranking);
 
         recyclerView = findViewById(R.id.recyclerViewRank);
-        firebaseDatabase = FirebaseDatabase.getInstance();
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
 
         Query query = firebaseDatabase.getReference("user").orderByChild("exps");
 
-        layoutManager = new LinearLayoutManager(this); // kontext - odkaz na pozadovanoou tridu
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this); // kontext - odkaz na pozadovanoou tridu
         recyclerView.setLayoutManager(layoutManager);
 
         playerList = new ArrayList<>();

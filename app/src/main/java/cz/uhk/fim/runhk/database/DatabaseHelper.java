@@ -1,5 +1,7 @@
 package cz.uhk.fim.runhk.database;
 
+import android.support.annotation.NonNull;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -12,7 +14,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import cz.uhk.fim.runhk.model.Run;
@@ -21,8 +22,9 @@ import cz.uhk.fim.runhk.model.Player;
 import cz.uhk.fim.runhk.model.RunData;
 import cz.uhk.fim.runhk.service.AsyncResponse;
 import cz.uhk.fim.runhk.service.ElevationService;
-import cz.uhk.fim.runhk.service.helper.utils.LevelUtils;
-import cz.uhk.fim.runhk.service.helper.utils.MetsUtils;
+import cz.uhk.fim.runhk.utils.LevelUtils;
+import cz.uhk.fim.runhk.utils.MetsUtils;
+import cz.uhk.fim.runhk.utils.DatabaseUtils;
 
 public class DatabaseHelper implements AsyncResponse {
 
@@ -50,28 +52,14 @@ public class DatabaseHelper implements AsyncResponse {
     }
 
     private void getResult(final double distance, final ArrayList<LocationModel> distancePointsLocation, final String time, final long elapsedTime) {
-        currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        firebaseDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference questReference = firebaseDatabase.getReference("user").child(currentUser.getUid());
-
+        DatabaseReference userDatabaseReference = DatabaseUtils.getUserDatabaseReference();
         ValueEventListener postListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // Get Post object and use the values to update the UI
                 player = dataSnapshot.getValue(Player.class);
-                Run run = new Run();
                 currentQuestExps = 100;
-
-                DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
-                Date date = new Date();
-
-                run.setDate(dateFormat.format(date));
-                run.setFinished(true);
-                run.setDistance(distance);
-                run.setDistancePoints(distancePointsLocation);
-                run.setTime(time);
-                run.setElaspedTime(elapsedTime);
-                finishedRun = run;
+                finishedRun = getRun(distance, distancePointsLocation, time, elapsedTime);
                 getElevationGain(distancePointsLocation);
 
             }
@@ -81,7 +69,21 @@ public class DatabaseHelper implements AsyncResponse {
                 // Getting Post failed, log a message
             }
         };
-        questReference.addListenerForSingleValueEvent(postListener);
+        userDatabaseReference.addListenerForSingleValueEvent(postListener);
+    }
+
+    @NonNull
+    private Run getRun(double distance, ArrayList<LocationModel> distancePointsLocation, String time, long elapsedTime) {
+        Run run = new Run();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+        Date date = new Date();
+        run.setDate(dateFormat.format(date));
+        run.setFinished(true);
+        run.setDistance(distance);
+        run.setDistancePoints(distancePointsLocation);
+        run.setTime(time);
+        run.setElaspedTime(elapsedTime);
+        return run;
     }
 
     private void getElevationGain(List<LocationModel> distancePointsAll) {
@@ -186,50 +188,24 @@ public class DatabaseHelper implements AsyncResponse {
     }
 
     private void updatePlayer(final int bonusExps) {
-        final DatabaseReference databaseReferenceTemp = firebaseDatabase.getReference("user").child(currentUser.getUid());
+        final DatabaseReference userDatabaseReference = DatabaseUtils.getUserDatabaseReference();
         ValueEventListener postListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Player player = dataSnapshot.getValue(Player.class);
                 int finalExps = currentQuestExps + player.getExps() + bonusExps;
-                databaseReferenceTemp.child("exps").setValue(finalExps);
+                userDatabaseReference.child("exps").setValue(finalExps);
 
                 int playerLevel = player.getLevel();
-                HashMap<Integer, Integer> levelMap = LevelUtils.getLevelMap();
-
-                try {
-                    if (finalExps > levelMap.get(playerLevel)) {
-                        databaseReferenceTemp.child("level").setValue(playerLevel + 1);
-                    }
-                    if (finalExps > levelMap.get(playerLevel + 1)) {
-                        databaseReferenceTemp.child("level").setValue(playerLevel + 2);
-                    }
-                    if (finalExps > levelMap.get(playerLevel + 2)) {
-                        databaseReferenceTemp.child("level").setValue(playerLevel + 3);
-                    }
-                    if (finalExps > levelMap.get(playerLevel + 3)) {
-                        databaseReferenceTemp.child("level").setValue(playerLevel + 4);
-                    }
-                    if (finalExps > levelMap.get(playerLevel + 5)) {
-                        databaseReferenceTemp.child("level").setValue(playerLevel + 6);
-                    }
-                    if (finalExps > levelMap.get(playerLevel + 7)) {
-                        databaseReferenceTemp.child("level").setValue(playerLevel + 8);
-                    }
-                    if (finalExps > levelMap.get(playerLevel + 9)) {
-                        databaseReferenceTemp.child("level").setValue(playerLevel + 9);
-                    }
-                } catch (RuntimeException e) {
-                    e.printStackTrace();
-                }
-
+                int currentLevel = LevelUtils.getCurrentLevel(finalExps, playerLevel);
+                userDatabaseReference.child("level").setValue(currentLevel);
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
             }
         };
-        databaseReferenceTemp.addListenerForSingleValueEvent(postListener);
+        userDatabaseReference.addListenerForSingleValueEvent(postListener);
 
             }
 

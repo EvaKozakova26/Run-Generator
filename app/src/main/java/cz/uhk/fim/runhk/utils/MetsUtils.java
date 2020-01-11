@@ -1,4 +1,4 @@
-package cz.uhk.fim.runhk.service.helper.utils;
+package cz.uhk.fim.runhk.utils;
 
 public class MetsUtils {
 

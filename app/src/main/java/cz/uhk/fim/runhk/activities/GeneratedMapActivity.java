@@ -33,20 +33,15 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.RoundCap;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.maps.DirectionsApi;
-import com.google.maps.GeoApiContext;
 import com.google.maps.android.PolyUtil;
 import com.google.maps.android.SphericalUtil;
-import com.google.maps.errors.ApiException;
 import com.google.maps.model.DirectionsResult;
-import com.google.maps.model.TravelMode;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
 import cz.uhk.fim.runhk.R;
 import cz.uhk.fim.runhk.database.DatabaseHelper;
@@ -55,8 +50,8 @@ import cz.uhk.fim.runhk.model.PolyLineData;
 import cz.uhk.fim.runhk.service.AsyncResponse;
 import cz.uhk.fim.runhk.service.ElevationService;
 import cz.uhk.fim.runhk.service.RouteDataProvider;
-import cz.uhk.fim.runhk.service.helper.utils.PolylineUtils;
-import cz.uhk.fim.runhk.service.helper.utils.StringLabelUtils;
+import cz.uhk.fim.runhk.utils.PolylineUtils;
+import cz.uhk.fim.runhk.utils.StringLabelUtils;
 
 public class GeneratedMapActivity extends FragmentActivity implements OnMapReadyCallback, ChallengeLocationFragment.onLocationUpdateInterface, AsyncResponse {
 

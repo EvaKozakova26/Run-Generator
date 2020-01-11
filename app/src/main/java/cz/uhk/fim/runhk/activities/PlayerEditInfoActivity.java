@@ -25,6 +25,7 @@ import com.squareup.picasso.Picasso;
 
 import cz.uhk.fim.runhk.R;
 import cz.uhk.fim.runhk.model.Player;
+import cz.uhk.fim.runhk.utils.DatabaseUtils;
 
 public class PlayerEditInfoActivity extends AppCompatActivity {
 
@@ -53,7 +54,7 @@ public class PlayerEditInfoActivity extends AppCompatActivity {
         firebaseDatabase = FirebaseDatabase.getInstance();
         FirebaseStorage storage = FirebaseStorage.getInstance();
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        databaseReference = firebaseDatabase.getReference("user").child(currentUser.getUid());
+        databaseReference = DatabaseUtils.getUserDatabaseReference();
 
         femaleRefImg = storage.getReference().child("images/female.png");
         maleRefImg = storage.getReference().child("images/male.png");

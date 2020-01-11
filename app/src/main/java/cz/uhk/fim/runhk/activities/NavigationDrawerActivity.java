@@ -21,7 +21,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -33,22 +32,16 @@ import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
 import cz.uhk.fim.runhk.R;
+import cz.uhk.fim.runhk.utils.DatabaseUtils;
 
 public class NavigationDrawerActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     protected FrameLayout frameLayout;
 
-    FirebaseDatabase firebaseDatabase;
-    FirebaseUser currentUser;
-    DatabaseReference databaseReference;
-
-    ImageView imageViewProfile;
-    TextView textViewEmail;
-
-    FirebaseStorage storage;
-    StorageReference imgReference;
-
+    private ImageView imageViewProfile;
+    private TextView textViewEmail;
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -119,9 +112,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
     }
 
     private void setPlayerInfo() {
-        currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        firebaseDatabase = FirebaseDatabase.getInstance();
-        databaseReference = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("email");
+        DatabaseReference userDatabaseReference = DatabaseUtils.getUserDatabaseReference().child("email");
         ValueEventListener eventListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -135,17 +126,16 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
             }
         };
-        databaseReference.addListenerForSingleValueEvent(eventListener);
+        userDatabaseReference.addListenerForSingleValueEvent(eventListener);
 
 
-        storage = FirebaseStorage.getInstance();
-
-        final DatabaseReference databaseReferencetemp = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("isMale");
+        final FirebaseStorage storage = FirebaseStorage.getInstance();
+        final DatabaseReference userDatabaseReferenceTemp = DatabaseUtils.getUserDatabaseReference().child("isMale");
         ValueEventListener listener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 boolean isMale = dataSnapshot.getValue(Boolean.class);
-
+                StorageReference imgReference;
                 if (isMale) {
                     imgReference = storage.getReference().child("images/male.png");
                     imgReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
@@ -183,7 +173,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
             }
         };
-        databaseReferencetemp.addListenerForSingleValueEvent(listener);
+        userDatabaseReferenceTemp.addListenerForSingleValueEvent(listener);
     }
 
 }
