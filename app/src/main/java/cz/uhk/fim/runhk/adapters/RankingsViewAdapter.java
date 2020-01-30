@@ -41,13 +41,13 @@ public class RankingsViewAdapter extends RecyclerView.Adapter<RankingsViewAdapte
     }
 
 
-    public class RankingsViewHolder extends RecyclerView.ViewHolder {
+    class RankingsViewHolder extends RecyclerView.ViewHolder {
         private TextView textViewNickname;
         private TextView textViewLevel;
         private TextView textViewExps;
 
 
-        public RankingsViewHolder(View itemView) {
+        RankingsViewHolder(View itemView) {
             super(itemView);
             textViewNickname = itemView.findViewById(R.id.textViewPlayerNicknameRank);
             textViewLevel = itemView.findViewById(R.id.textViewPlayerLevelRank);
@@ -55,7 +55,7 @@ public class RankingsViewAdapter extends RecyclerView.Adapter<RankingsViewAdapte
 
         }
 
-        public void setPlayer(final Player player) {
+        void setPlayer(final Player player) {
             textViewNickname.setText(player.getNickname());
             textViewLevel.setText(String.valueOf(player.getLevel()));
             textViewExps.setText(String.valueOf(player.getExps()) + " experience points");

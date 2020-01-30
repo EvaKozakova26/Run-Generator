@@ -44,7 +44,7 @@ import java.util.Locale;
 import java.util.Random;
 
 import cz.uhk.fim.runhk.R;
-import cz.uhk.fim.runhk.database.DatabaseHelper;
+import cz.uhk.fim.runhk.database.RunDataHelper;
 import cz.uhk.fim.runhk.fragments.ChallengeLocationFragment;
 import cz.uhk.fim.runhk.model.PolyLineData;
 import cz.uhk.fim.runhk.service.AsyncResponse;
@@ -87,7 +87,7 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
 
     private ChallengeLocationFragment challengeLocationFragment;
     private ElevationService elevationService;
-    DatabaseHelper databaseHelper;
+    RunDataHelper runDataHelper;
 
     private PolyLineData currentPolyLineData1;
     private PolyLineData currentPolyLineData2;
@@ -118,7 +118,7 @@ public class GeneratedMapActivity extends FragmentActivity implements OnMapReady
         elevationService = new ElevationService();
         distancePoints = new ArrayList<>();
         elevationService.delegate = this;
-        databaseHelper = new DatabaseHelper();
+        runDataHelper = new RunDataHelper();
         routeDataProvider = new RouteDataProvider();
 
 

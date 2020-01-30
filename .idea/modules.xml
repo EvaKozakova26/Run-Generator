@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/RunChallenge.iml" filepath="$PROJECT_DIR$/RunChallenge.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../../../kozak/AndroidStudioProjects/RunHK/.idea/RunHK.iml" filepath="$PROJECT_DIR$/../../../kozak/AndroidStudioProjects/RunHK/.idea/RunHK.iml" />
-      <module fileurl="file://$PROJECT_DIR$/RunHK.iml" filepath="$PROJECT_DIR$/RunHK.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Run-Generator.iml" filepath="$PROJECT_DIR$/Run-Generator.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

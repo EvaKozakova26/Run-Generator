@@ -19,13 +19,13 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import cz.uhk.fim.runhk.R;
 import cz.uhk.fim.runhk.model.Run;
 import cz.uhk.fim.runhk.model.LocationModel;
 import cz.uhk.fim.runhk.model.Player;
 import cz.uhk.fim.runhk.model.RunData;
+import cz.uhk.fim.runhk.utils.Constants;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -129,7 +129,7 @@ public class LoginActivity extends AppCompatActivity {
                 };
                 userNameRef.addListenerForSingleValueEvent(eventListener);
             } else {
-                Toast.makeText(this, "Try again", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, Constants.TRY_AGAIN, Toast.LENGTH_SHORT).show();
 
             }
         }

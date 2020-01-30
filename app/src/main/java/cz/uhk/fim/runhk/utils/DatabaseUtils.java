@@ -15,7 +15,14 @@ public class DatabaseUtils {
     public static DatabaseReference getUserDatabaseReference() {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        return firebaseDatabase.getReference(USER).child(currentUser.getUid());
+        if (currentUser != null) {
+            return firebaseDatabase.getReference(USER).child(currentUser.getUid());
+        } else {
+            // TODO log
+            return firebaseDatabase.getReference();
+        }
     }
+
+    // TODO get FireBaseUSer
 
 }

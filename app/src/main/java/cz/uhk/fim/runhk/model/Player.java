@@ -1,28 +1,20 @@
 package cz.uhk.fim.runhk.model;
 
-import com.google.firebase.database.IgnoreExtraProperties;
-
 import java.util.List;
 
 /**
  * Created by EvaKozakova on 02.04.2018.
  */
-@IgnoreExtraProperties
 public class Player {
 
-    public Player() {
-    }
 
     private String nickname;
     private String email;
     private String password;
-
     private int level;
     private int exps;
-
     private int age;
     private int weight;
-
     private List<Run> runList;
     private Run runToDo;
 
@@ -68,4 +60,53 @@ public class Player {
     public void setRunToDo(Run runToDo) {
         this.runToDo = runToDo;
     }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
+    public void setExps(int exps) {
+        this.exps = exps;
+    }
+
+    public List<Run> getRunList() {
+        return runList;
+    }
+
+    public void setRunList(List<Run> runList) {
+        this.runList = runList;
+    }
+
+    public Run getRunToDo() {
+        return runToDo;
+    }
+
+    public boolean isMale() {
+        return isMale;
+    }
+
+    public void setMale(boolean male) {
+        isMale = male;
+    }
 }
+

@@ -2,14 +2,12 @@ package cz.uhk.fim.runhk.fragments;
 
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Looper;
 import android.os.SystemClock;
@@ -42,11 +40,10 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import cz.uhk.fim.runhk.R;
 import cz.uhk.fim.runhk.activities.PlayerProfileActivity;
-import cz.uhk.fim.runhk.database.DatabaseHelper;
+import cz.uhk.fim.runhk.database.RunDataHelper;
 import cz.uhk.fim.runhk.model.LocationModel;
 
 /**
@@ -83,7 +80,7 @@ public class ChallengeLocationFragment extends Fragment implements View.OnClickL
     Chronometer chronometer;
     TextView textViewDistance;
 
-    private DatabaseHelper databaseHelper;
+    private RunDataHelper runDataHelper;
     private ArrayList<LocationModel> distancePointsList;
 
     double distance;
@@ -104,7 +101,7 @@ public class ChallengeLocationFragment extends Fragment implements View.OnClickL
         chronometer = view.findViewById(R.id.chronometer);
         chronometer.setText("");
         textViewDistance = view.findViewById(R.id.textViewDistance);
-        databaseHelper = new DatabaseHelper();
+        runDataHelper = new RunDataHelper();
         mRequestingLocationUpdates = false;
         distancePointsList = new ArrayList<>();
 
@@ -417,7 +414,7 @@ public class ChallengeLocationFragment extends Fragment implements View.OnClickL
     }
 
     private void saveChallenge(double distance, String time, long elapsedTime) {
-        databaseHelper.saveQuest(distance, distancePointsList, time, elapsedTime);
+        runDataHelper.saveQuest(distance, distancePointsList, time, elapsedTime);
         Intent intent = new Intent(getActivity(), PlayerProfileActivity.class);
         intent.putExtra("distance", distance);
         getActivity().finish();

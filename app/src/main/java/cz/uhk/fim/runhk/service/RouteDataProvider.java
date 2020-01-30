@@ -9,11 +9,11 @@ import com.google.maps.model.TravelMode;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-import cz.uhk.fim.runhk.database.DatabaseHelper;
+import cz.uhk.fim.runhk.database.RunDataHelper;
 
 public class RouteDataProvider {
 
-    private DatabaseHelper databaseHelper = new DatabaseHelper();
+    private RunDataHelper runDataHelper = new RunDataHelper();
 
     public DirectionsResult createDirectionResult(String startAddress, String waypoint, String endAddress) {
         DirectionsResult directionsResult = new DirectionsResult();
@@ -42,7 +42,7 @@ public class RouteDataProvider {
     }
 
     public int getExpectedCaloriesBurn(int weight, double expectedDistance, double expectedDuration, int expectedElevationGain) {
-        return databaseHelper.getCaloriesBurnt(weight, expectedDistance, (long) expectedDuration, expectedElevationGain);
+        return runDataHelper.getCaloriesBurnt(weight, expectedDistance, (long) expectedDuration, expectedElevationGain);
     }
 
     public double getExpectedDuration(long avgTotalTime, long expectedDistance, double avgDistance) {

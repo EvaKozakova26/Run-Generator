@@ -1,6 +1,7 @@
 package cz.uhk.fim.runhk.activities;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ public class DetailSectionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_section);
 
+        // TODO make constants from hardoced Strings
         double distance = getIntent().getDoubleExtra("distance", 0);
         int calories = getIntent().getIntExtra("calories", 0);
         int elevation = getIntent().getIntExtra("elevation", 0);
@@ -23,6 +25,16 @@ public class DetailSectionActivity extends AppCompatActivity {
         int exps = getIntent().getIntExtra("exps", 0);
         String time = getIntent().getStringExtra("time");
 
+        Bundle bundle = getBundle(distance, calories, elevation, pointsList, exps, time);
+        DetailChallengeFragment detailChallengeFragment = new DetailChallengeFragment();
+        detailChallengeFragment.setArguments(bundle);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragmentDetailContainer, detailChallengeFragment) // kam to chci a co
+                .commit();
+    }
+
+    @NonNull
+    private Bundle getBundle(double distance, int calories, int elevation, ArrayList<LocationModel> pointsList, int exps, String time) {
         Bundle bundle = new Bundle();
         bundle.putDouble("distance", distance);
         bundle.putParcelableArrayList("points", pointsList);
@@ -30,10 +42,6 @@ public class DetailSectionActivity extends AppCompatActivity {
         bundle.putInt("calories", calories);
         bundle.putInt("elevation", elevation);
         bundle.putString("time", time);
-        DetailChallengeFragment detailChallengeFragment = new DetailChallengeFragment();
-        detailChallengeFragment.setArguments(bundle);
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragmentDetailContainer, detailChallengeFragment) // kam to chci a co
-                .commit();
+        return bundle;
     }
 }

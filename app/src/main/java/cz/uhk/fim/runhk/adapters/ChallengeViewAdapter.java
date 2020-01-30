@@ -22,7 +22,7 @@ public class ChallengeViewAdapter extends RecyclerView.Adapter<ChallengeViewAdap
     private int selected_position = 0;
     private boolean isLandscape;
 
-    FinishedQuestsViewHolder viewHolder;
+    private FinishedQuestsViewHolder viewHolder;
 
     public ChallengeViewAdapter(List<Run> runList, boolean isLandscape) {
         this.runList = runList;
@@ -32,12 +32,9 @@ public class ChallengeViewAdapter extends RecyclerView.Adapter<ChallengeViewAdap
     @NonNull
     @Override
     public FinishedQuestsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         View view = layoutInflater.inflate(R.layout.item_challenge, null);
-
-        viewHolder = new FinishedQuestsViewHolder(view);
-        return viewHolder;
+        return new FinishedQuestsViewHolder(view);
     }
 
     @Override
@@ -73,6 +70,7 @@ public class ChallengeViewAdapter extends RecyclerView.Adapter<ChallengeViewAdap
         }
 
         void setQuest(final Run run) {
+            //TODO resolve warnings
             textViewDate.setText(run.getDate());
             double distance = run.getDistance() / 1000;
             String distanceString = String.format("%.2f", distance);

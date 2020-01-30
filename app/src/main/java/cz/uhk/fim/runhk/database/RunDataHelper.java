@@ -26,10 +26,9 @@ import cz.uhk.fim.runhk.utils.LevelUtils;
 import cz.uhk.fim.runhk.utils.MetsUtils;
 import cz.uhk.fim.runhk.utils.DatabaseUtils;
 
-public class DatabaseHelper implements AsyncResponse {
+public class RunDataHelper implements AsyncResponse {
 
     private FirebaseUser currentUser;
-    private FirebaseDatabase firebaseDatabase;
     private ElevationService elevationService;
 
     private RunDataProcessor runDataProcessor = new RunDataProcessor();
@@ -42,7 +41,6 @@ public class DatabaseHelper implements AsyncResponse {
 
     public void saveQuest(double distance, ArrayList<LocationModel> distancePointsList, String time, long elapsedTime) {
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        firebaseDatabase = FirebaseDatabase.getInstance();
         elevationService = new ElevationService();
         elevationService.delegate = this;
         elevations = new ArrayList<>();
@@ -113,14 +111,14 @@ public class DatabaseHelper implements AsyncResponse {
             finishedRun.setElevationGain(elevationGain);
             finishedRun.setCaloriesBurnt(getCaloriesBurnt(player.getWeight(), finishedRun.getDistance(), (long) finishedRun.getElaspedTime(), elevationGain));
 
-            DatabaseReference runDataReference = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("runData");
+            DatabaseReference runDataReference = DatabaseUtils.getUserDatabaseReference().child(currentUser.getUid()).child("runData");
             ValueEventListener runDataListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     RunData runData = dataSnapshot.getValue(RunData.class);
                     int bonusExps = getBonusExps(finishedRun, runData);
                     finishedRun.setExps(bonusExps);
-                    DatabaseReference databaseReferenceTemp = firebaseDatabase.getReference("user").child(currentUser.getUid()).child("finished");
+                    DatabaseReference databaseReferenceTemp = DatabaseUtils.getUserDatabaseReference().child(currentUser.getUid()).child("finished");
                     databaseReferenceTemp.push().setValue(finishedRun);
                     // nstavit hodnoty plejerovi
                     updatePlayer(bonusExps);
@@ -207,6 +205,6 @@ public class DatabaseHelper implements AsyncResponse {
         };
         userDatabaseReference.addListenerForSingleValueEvent(postListener);
 
-            }
+    }
 
 }

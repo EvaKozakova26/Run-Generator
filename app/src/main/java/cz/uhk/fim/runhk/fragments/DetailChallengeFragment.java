@@ -66,6 +66,7 @@ public class DetailChallengeFragment extends Fragment implements OnMapReadyCallb
         // Required empty public constructor
     }
 
+    @SuppressLint("DefaultLocale")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
