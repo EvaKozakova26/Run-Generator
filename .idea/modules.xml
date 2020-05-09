@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Run-Generator.iml" filepath="$PROJECT_DIR$/Run-Generator.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Run-Generator.iml" filepath="$PROJECT_DIR$/Run-Generator.iml" group="Run-Generator" />
+      <module fileurl="file://$PROJECT_DIR$/app/Run-Generator-app.iml" filepath="$PROJECT_DIR$/app/Run-Generator-app.iml" group="Run-Generator/app" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
